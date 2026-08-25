@@ -24,11 +24,15 @@
 <!-- ================= ESPACE AVENTURE ================= -->
 <section id="aventure" class="space visible">
 
+  <!-- Sachez marche sur le chemin pendant le défilement -->
+  <div id="walker" aria-hidden="true"><img src="images/story/sachez-dos.png" alt=""></div>
+  <!-- Aide clavier du scrollytelling -->
+  <div id="kbd-hint" aria-hidden="true"><span class="k">ESPACE</span> scène suivante</div>
+
   <div class="hero">
     <div class="ball" style="width:340px;height:340px;top:-120px;left:-90px;"></div>
     <div class="ball" style="width:220px;height:220px;bottom:60px;right:-60px;"></div>
     <div class="ball" style="width:120px;height:120px;top:140px;right:18%;"></div>
-    <img class="logo" src="images/logo.png" alt="Logo Polimon 2027">
     <h1>POLIMON 2027</h1>
     <div class="tagline">ÉDUQUEZ-VOUS TOUS ! <span class="cursor">▮</span></div>
     <p class="intro">Polimon 2027 est un projet éducatif proposé par le collectif <b>DemZet</b>, qui vise à accroître vos connaissances afin de vous engager dans un <b>vote éclairé</b> aux élections présidentielles françaises de 2027, à travers une aventure fantastique librement inspirée de l'univers Pokémon.</p>
@@ -43,21 +47,25 @@
   <div class="spaces">
     <h2>&gt; CHOISIS TON ESPACE_</h2>
     <div class="grid">
-      <div class="space-card" onclick="go('aventure');scrollToStory()">
+      <div class="space-card" tabindex="0" role="button" onclick="go('aventure');scrollToStory()">
         <div class="ico">🗺️</div><h3>AVENTURE</h3>
         <p>Suis les aventures de Sachez, chapitre après chapitre, et découvre l'univers des Polimons — des idées politiques qui ont pris vie.</p>
+        <div class="go-hint">ENTRER ▸</div>
       </div>
-      <div class="space-card" onclick="go('combat')">
+      <div class="space-card" tabindex="0" role="button" onclick="go('combat')">
         <div class="ico">⚔️</div><h3>COMBAT</h3>
         <p>Fais s'affronter deux Polimons de même niveau et compare leurs visions selon les 5 grandes dimensions.</p>
+        <div class="go-hint">ENTRER ▸</div>
       </div>
-      <div class="space-card" onclick="go('polidex')">
+      <div class="space-card" tabindex="0" role="button" onclick="go('polidex')">
         <div class="ico">📕</div><h3>POLIDEX</h3>
         <p>Explore la librairie des 36 Polimons, leurs éléments, leurs dimensions et leurs lignées d'évolution.</p>
+        <div class="go-hint">ENTRER ▸</div>
       </div>
-      <div class="space-card" onclick="go('dresseurs')">
+      <div class="space-card" tabindex="0" role="button" onclick="go('dresseurs')">
         <div class="ico">🧢</div><h3>DRESSEURS</h3>
         <p>Rencontre les 12 grands dresseurs qui répandent leurs Polimons à travers le pays, et découvre leur lignée.</p>
+        <div class="go-hint">ENTRER ▸</div>
       </div>
     </div>
   </div>

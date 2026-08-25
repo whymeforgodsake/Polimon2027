@@ -526,3 +526,81 @@ footer .px{font-family:'Press Start 2P',monospace;font-size:8px;color:var(--jaun
   .scene.persoscene img,.titlecard .ep,.titlecard h3{transition:none;opacity:1;transform:none;}
   .titlecard .bar{transition:none;width:120px;}
 }
+
+/* ============================================================
+   CARTE OVERWORLD + MARCHEUR + ACCUEIL v2
+   ============================================================ */
+/* L'espace Aventure se joue sur la carte : herbe pixel + chemin
+   de terre vertical (Sachez marche dessus pendant le scroll). */
+#aventure{
+  background:
+    url(../images/map-path.png) repeat-y 42px 0,
+    url(../images/map-grass.png) repeat;
+}
+@media(max-width:1023px){
+  #aventure{background:url(../images/map-grass.png) repeat;}
+}
+/* le hero garde sa lisibilité : voile sombre au-dessus de la carte */
+.hero{
+  background:
+    radial-gradient(circle at 50% 120%, rgba(255,222,0,.20), transparent 55%),
+    linear-gradient(rgba(18,18,22,.82), rgba(18,18,22,.68));
+}
+.spaces{background:rgba(18,18,22,.62);padding-top:60px;padding-bottom:60px;max-width:none;}
+.spaces .inner{max-width:1180px;margin:0 auto;}
+.chapters{background:rgba(18,18,22,.62);max-width:none;}
+.chapters .inner{max-width:900px;margin:0 auto;padding:20px 20px 70px;}
+
+/* Sachez marche sur le chemin (fixe à l'écran, la carte défile) */
+#walker{
+  position:fixed;left:52px;top:44vh;z-index:60;pointer-events:none;
+  filter:drop-shadow(0 6px 0 rgba(0,0,0,.35));
+}
+#walker img{width:74px;display:block;}
+@keyframes walk-bob{
+  0%{transform:translateY(0) rotate(-2deg);}
+  50%{transform:translateY(-4px) rotate(2deg);}
+  100%{transform:translateY(0) rotate(-2deg);}
+}
+#walker.walking img{animation:walk-bob .34s steps(2) infinite;}
+@media(max-width:1023px){#walker{display:none;}}
+
+/* Aide clavier du scrollytelling */
+#kbd-hint{
+  position:fixed;right:18px;bottom:16px;z-index:60;
+  background:var(--noir);border:3px solid var(--jaune);color:#cfcfc6;
+  font-family:'Press Start 2P',monospace;font-size:7px;padding:9px 11px;
+  opacity:0;transition:opacity .4s;pointer-events:none;line-height:1.8;
+}
+#kbd-hint .k{background:var(--jaune);color:var(--noir);padding:3px 6px;margin-right:6px;}
+#kbd-hint.show{opacity:1;}
+@media(max-width:760px){#kbd-hint{display:none;}}
+
+/* Les 4 espaces : une seule rangée, cartes plus riches */
+.spaces .grid{grid-template-columns:repeat(4,1fr);gap:22px;max-width:1180px;margin:0 auto;}
+@media(max-width:1000px){.spaces .grid{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:520px){.spaces .grid{grid-template-columns:1fr;}}
+.space-card{
+  position:relative;display:flex;flex-direction:column;padding:26px 20px 56px;
+  border-color:#3c3c44;background:rgba(35,35,41,.92);
+  transition:transform .12s, border-color .15s, box-shadow .15s;
+}
+.space-card:hover,.space-card:focus-visible{
+  transform:translateY(-6px);border-color:var(--jaune);
+  box-shadow:0 12px 0 rgba(0,0,0,.35);outline:none;
+}
+.space-card:focus-visible{box-shadow:0 0 0 3px var(--jaune), 0 12px 0 rgba(0,0,0,.35);}
+.space-card:nth-child(1){border-top:6px solid #78c850;}
+.space-card:nth-child(2){border-top:6px solid #c03028;}
+.space-card:nth-child(3){border-top:6px solid #f08030;}
+.space-card:nth-child(4){border-top:6px solid #6890f0;}
+.space-card .go-hint{
+  position:absolute;left:0;right:0;bottom:0;padding:10px 0;
+  font-family:'Press Start 2P',monospace;font-size:8px;color:var(--jaune);
+  background:rgba(0,0,0,.28);opacity:.55;transition:opacity .15s;
+}
+.space-card:hover .go-hint,.space-card:focus-visible .go-hint{opacity:1;}
+
+/* correction : bandes pleine largeur avec contenu centré */
+.spaces{max-width:none;padding:60px max(20px, calc((100% - 1180px) / 2));}
+.chapters{max-width:none;padding:26px max(20px, calc((100% - 900px) / 2)) 80px;}

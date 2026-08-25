@@ -502,6 +502,66 @@ function closeFiche(){
 }
 document.addEventListener('keydown', e => { if(e.key === 'Escape') closeFiche(); });
 
+/* ============ NAVIGATION CLAVIER DU SCROLLYTELLING ============
+   Bonne pratique retenue : navigation discrète scène par scène.
+   Espace / ▼ = scène suivante, Maj+Espace / ▲ = scène précédente,
+   avec défilement doux — comme le bouton A d'une Game Boy.
+   On n'intercepte jamais le clavier dans un champ de saisie,
+   ni en dehors de l'espace Aventure. */
+function visibleScenes(){
+  return [...document.querySelectorAll('#story .scene')]
+    .filter(s => !s.hidden && s.offsetParent !== null);
+}
+function stepScene(dir){
+  const scenes = visibleScenes();
+  if(!scenes.length) return false;
+  const mid = window.innerHeight / 2;
+  let target = null;
+  if(dir > 0) target = scenes.find(s => s.getBoundingClientRect().top > mid + 40);
+  else        target = [...scenes].reverse().find(s => s.getBoundingClientRect().bottom < mid - 40);
+  if(!target) return false;
+  target.scrollIntoView({behavior:'smooth', block:'center'});
+  return true;
+}
+document.addEventListener('keydown', e => {
+  const t = e.target;
+  if(t && /^(INPUT|SELECT|TEXTAREA|BUTTON)$/.test(t.tagName)) return;
+  if(document.getElementById('fiche-overlay').classList.contains('open')) return;
+  if(!document.getElementById('aventure').classList.contains('visible')) return;
+  const next = (e.key === ' ' && !e.shiftKey) || e.key === 'ArrowDown' || e.key === 'PageDown';
+  const prev = (e.key === ' ' && e.shiftKey)  || e.key === 'ArrowUp'   || e.key === 'PageUp';
+  if((next && stepScene(1)) || (prev && stepScene(-1))) e.preventDefault();
+});
+/* activation clavier des cartes d'espaces */
+document.querySelectorAll('.space-card').forEach(c => {
+  c.addEventListener('keydown', e => {
+    if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); c.click(); }
+  });
+});
+
+/* ============ MARCHEUR & AIDE CLAVIER ============
+   Sachez (vu de dos) marche sur le chemin pendant le défilement ;
+   l'aide clavier s'affiche une fois arrivé dans l'histoire. */
+(function(){
+  const walker = document.getElementById('walker');
+  const hint   = document.getElementById('kbd-hint');
+  if(!walker) return;
+  let timer = null, hinted = false;
+  window.addEventListener('scroll', () => {
+    walker.classList.add('walking');
+    clearTimeout(timer);
+    timer = setTimeout(() => walker.classList.remove('walking'), 160);
+    if(hint){
+      const story = document.getElementById('story');
+      const inStory = story && story.getBoundingClientRect().top < window.innerHeight * .6
+                      && story.getBoundingClientRect().bottom > window.innerHeight * .4;
+      const aventureOn = document.getElementById('aventure').classList.contains('visible');
+      hint.classList.toggle('show', inStory && aventureOn && !hinted);
+      if(inStory && !hinted) setTimeout(() => { hinted = true; hint.classList.remove('show'); }, 6000);
+    }
+  }, {passive:true});
+})();
+
 /* ============ INIT ============ */
 initChapters();
 initCombat();

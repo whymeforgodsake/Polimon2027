@@ -470,3 +470,59 @@ footer .px{font-family:'Press Start 2P',monospace;font-size:8px;color:var(--jaun
 .dim-group .dim-intro{color:#9c9c92;font-style:italic;font-size:.88rem;margin:0 14px 12px;}
 .dim-group .dim-row{margin:0 12px 10px;}
 .wip-txt{color:#8a8a80;}
+
+/* ============================================================
+   SCROLLYTELLING ÉPISODE 1 — apparitions raffinées + parallaxe
+   ============================================================ */
+.scene{opacity:1;transform:none;transition:none;}
+.scene .art{
+  aspect-ratio:1672/941;overflow:hidden;background:#0e100c;
+  opacity:0;transform:translateY(32px) scale(.985);
+  transition:opacity .55s steps(9), transform .85s cubic-bezier(.22,.61,.36,1);
+}
+.scene.on .art{opacity:1;transform:none;}
+.scene .art img{
+  width:100%;height:100%;object-fit:cover;display:block;will-change:transform;
+}
+.scene .caption{
+  opacity:0;transform:translateY(26px);
+  transition:opacity .6s ease .18s, transform .7s cubic-bezier(.22,.61,.36,1) .18s;
+}
+.scene.on .caption{opacity:1;transform:none;}
+.cap-stack{
+  max-width:470px;margin:-34px 0 0 24px;position:relative;z-index:5;
+  display:flex;flex-direction:column;gap:30px;
+}
+.cap-stack.right{margin:-34px 24px 0 auto;}
+.cap-stack .pxbox{
+  opacity:0;transform:translateY(26px);
+  transition:opacity .6s ease .2s, transform .7s cubic-bezier(.22,.61,.36,1) .2s;
+}
+.cap-stack .pxbox:nth-child(2){transition-delay:.5s,.5s;}
+.scene.on .cap-stack .pxbox{opacity:1;transform:none;}
+.scene.persoscene img{
+  width:270px;max-height:none;border:4px solid var(--noir);box-shadow:0 0 0 3px var(--jaune);
+  opacity:0;transform:scale(.55);
+  transition:opacity .4s steps(6), transform .55s cubic-bezier(.34,1.56,.64,1) .05s;
+}
+.scene.on.persoscene img{opacity:1;transform:none;}
+.titlecard .ep,.titlecard h3{opacity:0;transition:opacity .55s ease .12s;}
+.scene.on .ep,.scene.on h3{opacity:1;}
+.titlecard .bar{width:0;transition:width .9s steps(12) .3s;}
+.scene.on .bar{width:120px;}
+.scene .starters{
+  opacity:0;transform:translateY(26px);
+  transition:opacity .6s ease .15s, transform .7s cubic-bezier(.22,.61,.36,1) .15s;
+}
+.scene.on .starters{opacity:1;transform:none;}
+#branch-scene[hidden]{display:none;}
+#branch-scene #starter-reponse{max-width:470px;}
+@media(max-width:760px){
+  .cap-stack,.cap-stack.right{margin:14px auto 0;}
+  .scene.persoscene img{width:200px;margin:0 auto;}
+}
+@media(prefers-reduced-motion: reduce){
+  .scene .art,.scene .caption,.cap-stack .pxbox,.scene .starters,
+  .scene.persoscene img,.titlecard .ep,.titlecard h3{transition:none;opacity:1;transform:none;}
+  .titlecard .bar{transition:none;width:120px;}
+}

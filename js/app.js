@@ -75,9 +75,43 @@ function chooseStarter(el){
 function selectStarter(el){
   document.querySelectorAll('.starter').forEach(s => s.classList.remove('chosen'));
   el.classList.add('chosen');
+  if(el.dataset.name) el.querySelector('.ballrow').textContent = el.dataset.name;
+  /* révèle la fin alternative correspondant au compagnon choisi */
+  const files = { a: '11a-chosen-leaf.webp', b: '11b-chosen-stone.webp', c: '11c-chosen-ember.webp' };
+  const scene = document.getElementById('branch-scene');
+  const img   = document.getElementById('branch-img');
+  if(scene && files[el.dataset.branch]){
+    img.src = 'images/story/ep1/' + files[el.dataset.branch];
+    scene.hidden = false;
+    scene.classList.remove('on');
+    requestAnimationFrame(() => requestAnimationFrame(() => scene.classList.add('on')));
+  }
   const r = document.getElementById('starter-reponse');
   r.classList.add('show');
-  r.scrollIntoView({behavior:'smooth', block:'center'});
+  (scene || r).scrollIntoView({behavior:'smooth', block:'center'});
+}
+
+/* ============ PARALLAXE DOUCE DES SCÈNES ============
+   Les illustrations glissent légèrement au défilement.
+   Désactivée si l'utilisateur préfère réduire les animations. */
+function initParallax(){
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  let ticking = false;
+  const update = () => {
+    ticking = false;
+    const vh = window.innerHeight;
+    document.querySelectorAll('#story .art').forEach(a => {
+      const r = a.getBoundingClientRect();
+      if(r.bottom < 0 || r.top > vh) return;
+      const c = (r.top + r.height / 2 - vh / 2) / vh; // -0.5 → 0.5
+      const img = a.querySelector('img');
+      if(img) img.style.transform = `translateY(${(-c * 30).toFixed(1)}px) scale(1.1)`;
+    });
+  };
+  window.addEventListener('scroll', () => {
+    if(!ticking){ ticking = true; requestAnimationFrame(update); }
+  }, {passive: true});
+  update();
 }
 
 /* ============ CHAPITRES (depuis les données) ============ */
@@ -473,6 +507,7 @@ initChapters();
 initCombat();
 initDex();
 initDresseurs();
+initParallax();
 const h0 = location.hash.replace('#','');
 go(['aventure','combat','polidex','dresseurs'].includes(h0) ? h0 : 'aventure');
 observeScenes();

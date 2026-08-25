@@ -16,6 +16,7 @@
     <a class="navlink" href="#aventure" data-nav="aventure">AVENTURE</a>
     <a class="navlink" href="#combat" data-nav="combat">COMBAT</a>
     <a class="navlink" href="#polidex" data-nav="polidex">POLIDEX</a>
+    <a class="navlink" href="#dresseurs" data-nav="dresseurs">DRESSEURS</a>
   </div>
 </nav>
 
@@ -53,6 +54,10 @@
       <div class="space-card" onclick="go('polidex')">
         <div class="ico">📕</div><h3>POLIDEX</h3>
         <p>Explore la librairie des 36 Polimons, leurs éléments, leurs dimensions et leurs lignées d'évolution.</p>
+      </div>
+      <div class="space-card" onclick="go('dresseurs')">
+        <div class="ico">🧢</div><h3>DRESSEURS</h3>
+        <p>Rencontre les 12 grands dresseurs qui répandent leurs Polimons à travers le pays, et découvre leur lignée.</p>
       </div>
     </div>
   </div>
@@ -248,6 +253,17 @@
     </div>
     <div class="dex-grid" id="dex-grid"></div>
     <div class="dex-count" id="dex-count"></div>
+  </div>
+</section>
+
+<!-- ================= ESPACE DRESSEURS ================= -->
+<section id="dresseurs" class="space">
+  <div class="dex-wrap">
+    <div class="space-header">
+      <h2>🧢 LES DRESSEURS</h2>
+      <p>En cette période d'élection, <b>12 grands dresseurs</b> répandent leurs Polimons à travers le pays. Chacun porte une lignée de 3 Polimons, du niveau Philosophie au niveau Programme. Clique sur un Polimon pour ouvrir sa fiche.</p>
+    </div>
+    <div class="trainer-grid" id="trainer-grid"><!-- rempli automatiquement depuis data/polimons.js --></div>
   </div>
 </section>
 </main>

@@ -43,7 +43,7 @@ function go(space){
 }
 window.addEventListener('hashchange', () => {
   const h = location.hash.replace('#','') || 'aventure';
-  if(['aventure','combat','polidex'].includes(h)) go(h);
+  if(['aventure','combat','polidex','dresseurs'].includes(h)) go(h);
 });
 function scrollToStory(e){
   if(e) e.preventDefault();
@@ -131,6 +131,37 @@ function spriteNode(p, size){
   return img;
 }
 
+/* ============ EFFET CARTE HOLOGRAPHIQUE ============
+   Inclinaison 3D qui suit la souris + reflet arc-en-ciel + éclat,
+   comme une carte Pokémon brillante. Aucune librairie externe. */
+function attachHolo(card){
+  const holo  = document.createElement('div'); holo.className  = 'holo';
+  const glare = document.createElement('div'); glare.className = 'glare';
+  card.append(holo, glare);
+  card.addEventListener('mousemove', e => {
+    const r  = card.getBoundingClientRect();
+    const px = (e.clientX - r.left) / r.width;
+    const py = (e.clientY - r.top)  / r.height;
+    card.classList.add('holo-on');
+    card.style.transform =
+      `perspective(750px) rotateX(${((py - .5) * -16).toFixed(2)}deg)` +
+      ` rotateY(${((px - .5) * 16).toFixed(2)}deg) scale3d(1.06,1.06,1.06)`;
+    holo.style.backgroundPosition = `${(px * 100).toFixed(1)}% ${(py * 100).toFixed(1)}%`;
+    glare.style.background =
+      `radial-gradient(circle at ${(px * 100).toFixed(1)}% ${(py * 100).toFixed(1)}%,` +
+      ` rgba(255,255,255,.34), transparent 55%)`;
+  });
+  card.addEventListener('mouseleave', () => {
+    card.classList.remove('holo-on');
+    card.style.transform = '';
+  });
+}
+/* Convertit une couleur hex en version transparente (pour les halos) */
+function tint(hex, alpha){
+  const n = parseInt(hex.slice(1), 16);
+  return `rgba(${(n>>16)&255},${(n>>8)&255},${n&255},${alpha})`;
+}
+
 /* ============ HELPERS ============ */
 function elTags(p){
   return p.elements.map(e => {
@@ -197,7 +228,12 @@ function renderCombat(){
   if(a.code === b.code){
     html = `<div class="placeholder-panel">Un Polimon ne peut pas affronter son propre reflet…<br>choisis deux idées différentes !</div>`;
   } else {
-    html = DIMENSIONS.map(d => `
+    /* Règle : le combat se joue sur la dimension correspondant au niveau
+       des Polimons (niveau 1 → dimension 1, niveau 2 → dimension 2,
+       niveau 3 → dimension 3). Les 5 dimensions restent visibles dans
+       les fiches du Polidex. */
+    const dimsShown = DIMENSIONS.filter(d => d.num === combatLevel);
+    html = dimsShown.map(d => `
       <h3>${d.icon} DIMENSION ${d.num} — ${d.label.toUpperCase()}</h3>
       <div class="cmp-row">
         <div class="cmp-cell a"><div class="who">${a.name.toUpperCase()} (${a.parti})</div>${a.dims[d.key]}</div>
@@ -238,17 +274,76 @@ function renderDex(){
     const card = document.createElement('div');
     card.className = 'dex-card';
     card.onclick = () => openFiche(p.code);
+    const c1 = ELEMENTS[p.elements[0]], c2 = ELEMENTS[p.elements[1]];
+    card.style.setProperty('--c1', c1.color);
+    card.style.setProperty('--c1-glow', tint(c1.color, .28));
+    card.style.background =
+      `linear-gradient(165deg, ${tint(c1.dark,.5)}, #232329 42%, ${tint(c2.dark,.4)})`;
     card.innerHTML = `
       <div class="code-badge">#${pad3(p.code)}</div>
       <div class="lvl" title="Niveau ${p.level}">${'★'.repeat(p.level)}</div>
       <div class="spr"></div>
       <div class="nm">${p.name.toUpperCase()}</div>
-      <div class="el">${p.elements.map(e => ELEMENTS[e].emoji).join(' ')}</div>`;
+      <div class="el">${p.elements.map(e => ELEMENTS[e].emoji).join(' ')}</div>
+      <div class="who-mini">${p.dresseur}</div>`;
     card.querySelector('.spr').appendChild(spriteNode(p, 84));
+    attachHolo(card);
     grid.appendChild(card);
   });
   document.getElementById('dex-count').textContent =
     list.length + ' / ' + POLIMONS.length + ' Polimons affichés';
+}
+
+/* ============ DRESSEURS ============
+   Les fiches des 12 dresseurs sont générées depuis data/polimons.js.
+   Photo optionnelle : dépose images/dresseurs/<id>.png (ex. 1.png pour
+   la lignée n°1) — sinon un médaillon avec les initiales s'affiche. */
+function initDresseurs(){
+  const grid = document.getElementById('trainer-grid');
+  if(!grid) return;
+  grid.innerHTML = '';
+  LINEAGES.forEach(l => {
+    const c1 = ELEMENTS[l.elements[0]], c2 = ELEMENTS[l.elements[1]];
+    const initials = l.dresseur.split(/[\s-]+/).map(w => w[0]).join('').slice(0,3).toUpperCase();
+    const card = document.createElement('div');
+    card.className = 'trainer-card';
+    card.style.setProperty('--c1', c1.color);
+    card.style.background =
+      `linear-gradient(165deg, ${tint(c1.dark,.45)}, #232329 45%, ${tint(c2.dark,.35)})`;
+    card.innerHTML = `
+      <div class="t-head">
+        <div class="t-avatar"><span class="initials">${initials}</span></div>
+        <div>
+          <div class="t-name">${l.dresseur.toUpperCase()}</div>
+          <div class="t-parti">${l.parti.toUpperCase()}</div>
+          <div>${l.elements.map(e => {
+            const d = ELEMENTS[e];
+            return `<span class="tag" style="background:${d.color}">${d.emoji} ${e.toUpperCase()}</span>`;
+          }).join('')}</div>
+        </div>
+      </div>
+      <p class="t-bio">${l.bio || ''}</p>
+      <div class="t-lineup">
+        ${l.forms.map((f,i) => `
+          <div class="t-poli" data-code="${f.code}" onclick="openFiche(${f.code})">
+            <span class="pn">${f.name.toUpperCase()}</span>
+            <span class="pl">${'★'.repeat(i+1)}</span>
+          </div>`).join('')}
+      </div>`;
+    // photo du dresseur (optionnelle), sinon initiales
+    const av = card.querySelector('.t-avatar');
+    const photo = new Image();
+    photo.onload = () => { av.innerHTML = ''; av.appendChild(photo); };
+    photo.alt = l.dresseur;
+    photo.src = 'images/dresseurs/' + l.id + '.png';
+    // vignettes des 3 Polimons de la lignée
+    card.querySelectorAll('.t-poli').forEach(el => {
+      const p = byCode(+el.dataset.code);
+      el.insertBefore(spriteNode(p, 56), el.firstChild);
+    });
+    attachHolo(card);
+    grid.appendChild(card);
+  });
 }
 
 /* fiche */
@@ -301,6 +396,7 @@ document.addEventListener('keydown', e => { if(e.key === 'Escape') closeFiche();
 initChapters();
 initCombat();
 initDex();
+initDresseurs();
 const h0 = location.hash.replace('#','');
-go(['aventure','combat','polidex'].includes(h0) ? h0 : 'aventure');
+go(['aventure','combat','polidex','dresseurs'].includes(h0) ? h0 : 'aventure');
 observeScenes();

@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Polimon 2027 — Éduquez-vous tous !</title>
+<meta name="description" content="Polimon 2027 : un projet éducatif du collectif DemZet pour un vote éclairé aux élections présidentielles françaises de 2027, librement inspiré de l'univers Pokémon.">
+<link rel="icon" href="images/logo.png">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<nav>
+  <a class="brand" href="#aventure" data-nav="aventure"><img src="images/logo.png" alt="Polimon 2027"><span>POLIMON&nbsp;2027</span></a>
+  <div class="links">
+    <a class="navlink" href="#aventure" data-nav="aventure">AVENTURE</a>
+    <a class="navlink" href="#combat" data-nav="combat">COMBAT</a>
+    <a class="navlink" href="#polidex" data-nav="polidex">POLIDEX</a>
+    <a class="navlink" href="#dresseurs" data-nav="dresseurs">DRESSEURS</a>
+  </div>
+</nav>
+
+<main>
+<!-- ================= ESPACE AVENTURE ================= -->
+<section id="aventure" class="space visible">
+
+  <div class="hero">
+    <div class="ball" style="width:340px;height:340px;top:-120px;left:-90px;"></div>
+    <div class="ball" style="width:220px;height:220px;bottom:60px;right:-60px;"></div>
+    <div class="ball" style="width:120px;height:120px;top:140px;right:18%;"></div>
+    <img class="logo" src="images/logo.png" alt="Logo Polimon 2027">
+    <h1>POLIMON 2027</h1>
+    <div class="tagline">ÉDUQUEZ-VOUS TOUS ! <span class="cursor">▮</span></div>
+    <p class="intro">Polimon 2027 est un projet éducatif proposé par le collectif <b>DemZet</b>, qui vise à accroître vos connaissances afin de vous engager dans un <b>vote éclairé</b> aux élections présidentielles françaises de 2027, à travers une aventure fantastique librement inspirée de l'univers Pokémon.</p>
+    <div class="cta">
+      <a class="btn" href="#aventure" onclick="scrollToStory(event)">▶ COMMENCER L'AVENTURE</a>
+      <a class="btn ghost" href="#polidex">OUVRIR LE POLIDEX</a>
+    </div>
+    <div class="demzet">UN PROJET DU COLLECTIF DEMZET</div>
+    <div class="scrollhint">▼</div>
+  </div>
+
+  <div class="spaces">
+    <h2>&gt; CHOISIS TON ESPACE_</h2>
+    <div class="grid">
+      <div class="space-card" onclick="go('aventure');scrollToStory()">
+        <div class="ico">🗺️</div><h3>AVENTURE</h3>
+        <p>Suis les aventures de Sachez, chapitre après chapitre, et découvre l'univers des Polimons — des idées politiques qui ont pris vie.</p>
+      </div>
+      <div class="space-card" onclick="go('combat')">
+        <div class="ico">⚔️</div><h3>COMBAT</h3>
+        <p>Fais s'affronter deux Polimons de même niveau et compare leurs visions selon les 5 grandes dimensions.</p>
+      </div>
+      <div class="space-card" onclick="go('polidex')">
+        <div class="ico">📕</div><h3>POLIDEX</h3>
+        <p>Explore la librairie des 36 Polimons, leurs éléments, leurs dimensions et leurs lignées d'évolution.</p>
+      </div>
+      <div class="space-card" onclick="go('dresseurs')">
+        <div class="ico">🧢</div><h3>DRESSEURS</h3>
+        <p>Rencontre les 12 grands dresseurs qui répandent leurs Polimons à travers le pays, et découvre leur lignée.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ---------- Scrollytelling : Chapitre 1 ---------- -->
+  <div class="story" id="story">
+
+    <div class="scene titlecard">
+      <div class="ep">— CHAPITRE 1 —</div>
+      <h3>Retour en classe</h3>
+      <div class="bar"></div>
+    </div>
+
+    <div class="scene persoscene">
+      <img src="images/story/sachez.png" alt="Sachez">
+      <div class="pxbox dialog">
+        <div class="speaker blue">NARRATEUR</div>
+        <p>Vous incarnez le personnage de <b>Sachez</b>, jeune homme de 25 ans, habitant du paisible village de <b>Bois-de-France</b>, qui commence à s'intéresser aux sujets politiques, et curieux d'en apprendre plus.</p>
+        <span class="arrow">▼</span>
+      </div>
+    </div>
+
+    <div class="scene">
+      <div class="art"><img src="images/story/ep1/01-daily-walk.webp" alt="Sachez marche sur un chemin de campagne vers le village de Bois-de-France"></div>
+      <div class="pxbox dialog caption">
+        <div class="speaker blue">NARRATEUR</div>
+        <p>À l'été 2027, dans le paisible village de Bois-de-France, Sachez réalise sa promenade quotidienne…</p>
+        <span class="arrow">▼</span>
+      </div>
+    </div>
+
+    <div class="scene">
+      <div class="art"><img src="images/story/ep1/02-found-flyer.webp" alt="Sachez examine un étrange prospectus près du panneau d'affichage du village"></div>
+      <div class="pxbox dialog caption right">
+        <div class="speaker blue">NARRATEUR</div>
+        <p>…lorsqu'il tombe par hasard sur un étrange document d'un ancien professeur :</p>
+        <p style="margin-top:12px;border-left:5px solid var(--jaune2);padding-left:12px;">
+          <b>« Polimon 2027 — Éduquez-vous tous !</b><br>
+          Les élections présidentielles de 2027 approchent à grands pas, et avec elles les idées politiques se répandent à travers le pays.
+          Adoptez les Polimons qui vous ressemblent et amenez-les au plus haut de l'Élysée ! »<br>
+          <i>— Professeur Chen</i></p>
+        <span class="arrow">▼</span>
+      </div>
+    </div>
+
+    <div class="scene">
+      <div class="art"><img src="images/story/ep1/03-classroom-reunion.webp" alt="Sachez retrouve le Professeur Chen dans son ancienne salle de classe"></div>
+      <div class="cap-stack">
+        <div class="pxbox dialog">
+          <div class="speaker green">SACHEZ</div>
+          <p>Professeur Chen, comment allez-vous ? Je suis tombé sur votre prospectus concernant les Polimons… Pouvez-vous m'en dire plus ?</p>
+          <span class="arrow">▼</span>
+        </div>
+        <div class="pxbox dialog">
+          <div class="speaker">PROF. CHEN</div>
+          <p>Sachez ! J'imagine que tu reconnais ton ancienne salle de classe. C'est une excellente question. Laisse-moi t'expliquer…</p>
+          <span class="arrow">▼</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="scene">
+      <div class="art"><img src="images/story/ep1/04-ideas-take-form.webp" alt="Une idée prend forme et se matérialise en petit compagnon devant le Professeur Chen"></div>
+      <div class="pxbox dialog caption right">
+        <div class="speaker">PROF. CHEN</div>
+        <p>Quand une personne croit fermement en une idée politique, alors celle-ci prend forme et se matérialise comme <b>Polimon</b>. Les Polimons sont des idées qui ont pris vie, ils en possèdent donc les caractéristiques : ils s'adoptent, ils s'affrontent, et bien sûr… ils évoluent.</p>
+        <span class="arrow">▼</span>
+      </div>
+    </div>
+
+    <div class="scene">
+      <div class="art"><img src="images/story/ep1/05-three-levels.webp" alt="Au tableau, un compagnon grandit en trois étapes"></div>
+      <div class="pxbox dialog caption">
+        <div class="speaker">PROF. CHEN</div>
+        <p>Lorsque son dresseur maîtrise parfaitement les idées politiques qu'il représente, le Polimon évolue pour devenir plus grand et fort. Chaque Polimon connaît <b>3 niveaux d'évolution « 3P »</b>, selon la tangibilité de ses idées : <b>Philosophie</b>, <b>Perspective</b> et <b>Programme</b>.</p>
+        <span class="arrow">▼</span>
+      </div>
+    </div>
+
+    <div class="scene">
+      <div class="art"><img src="images/story/ep1/06-five-dimensions.webp" alt="Le Professeur Chen explique les cinq dimensions au tableau"></div>
+      <div class="pxbox dialog caption right">
+        <div class="speaker">PROF. CHEN</div>
+        <p>Par ailleurs, les idées portées par les Polimons s'expriment toujours dans les mêmes <b>5 dimensions</b> : l'<b>individu</b>, la <b>société</b>, l'<b>économie</b>, l'<b>écologie</b> et la <b>géopolitique</b>.</p>
+        <span class="arrow">▼</span>
+      </div>
+    </div>
+
+    <div class="scene">
+      <div class="art"><img src="images/story/ep1/07-ideas-across-country.webp" alt="Trois dresseurs lointains répandent leurs idées sur des chemins qui se ramifient à travers le pays"></div>
+      <div class="pxbox dialog caption">
+        <div class="speaker">PROF. CHEN</div>
+        <p>En cette période d'élection, <b>3 grands dresseurs</b> répandent leurs idées, ou Polimons, par milliers à travers le pays. Cependant, peu de gens cherchent vraiment à les domestiquer, et ne peuvent donc pas voter de manière éclairée…</p>
+        <span class="arrow">▼</span>
+      </div>
+    </div>
+
+    <div class="scene">
+      <div class="art"><img src="images/story/ep1/08-sachez-resolve.webp" alt="Sachez, déterminé, annonce au Professeur Chen qu'il veut dresser ses propres idées"></div>
+      <div class="cap-stack right">
+        <div class="pxbox dialog">
+          <div class="speaker green">SACHEZ</div>
+          <p>Je veux aussi devenir un grand dresseur Polimon, et faire grandir mes propres idées politiques !</p>
+          <span class="arrow">▼</span>
+        </div>
+        <div class="pxbox dialog">
+          <div class="speaker">PROF. CHEN</div>
+          <p>Haha ! Excellent Sachez, je reconnais là bien ton enthousiasme. Alors adopte les idées qui te ressemblent, maîtrise ces idées pour les faire évoluer, et amène-les au sommet de l'Élysée !</p>
+          <span class="arrow">▼</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="scene">
+      <div class="art"><img src="images/story/ep1/09-choose-companion.webp" alt="Trois compagnons — feuille, pierre et braise — attendent sur la table"></div>
+      <div class="pxbox dialog caption">
+        <div class="speaker">PROF. CHEN</div>
+        <p>Mais avant tout, commençons par le commencement : <b>choisis un Polimon de niveau 1 — Philosophie — qui te correspond</b>. Un Polimon Philosophie se choisit avec le cœur, avant de se choisir avec la tête !</p>
+        <span class="arrow">▼</span>
+      </div>
+    </div>
+
+    <div class="scene">
+      <div class="art"><img src="images/story/ep1/10-explore-ideas.webp" alt="Sachez compare les dimensions représentées par les trois compagnons"></div>
+      <div class="pxbox dialog caption right">
+        <div class="speaker blue">NARRATEUR</div>
+        <p>Sachez observe longuement les trois compagnons, et les idées que chacun incarne…</p>
+        <span class="arrow">▼</span>
+      </div>
+    </div>
+
+    <div class="scene">
+      <div class="starters">
+        <div class="starter" data-branch="a" data-name="FEUILLE" onclick="chooseStarter(this)">
+          <div class="pokeball"></div>
+          <img class="sprite" src="images/story/starter-1.png" alt="Compagnon feuille">
+          <div class="ballrow">?</div>
+        </div>
+        <div class="starter" data-branch="b" data-name="PIERRE" onclick="chooseStarter(this)">
+          <div class="pokeball"></div>
+          <img class="sprite" src="images/story/starter-2.png" alt="Compagnon pierre">
+          <div class="ballrow">?</div>
+        </div>
+        <div class="starter" data-branch="c" data-name="BRAISE" onclick="chooseStarter(this)">
+          <div class="pokeball"></div>
+          <img class="sprite" src="images/story/starter-3.png" alt="Compagnon braise">
+          <div class="ballrow">?</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Fin alternative selon le compagnon choisi -->
+    <div class="scene" id="branch-scene" hidden>
+      <div class="art"><img id="branch-img" src="images/story/ep1/11a-chosen-leaf.webp" alt="Sachez accueille son nouveau compagnon sous le regard du Professeur Chen"></div>
+      <div id="starter-reponse" class="pxbox dialog caption">
+        <div class="speaker">PROF. CHEN</div>
+        <p>Excellent choix, Sachez ! Désormais, parcours le monde pour confronter ton Polimon à d'autres idées afin de le faire grandir. Rappelle-toi : <b>le combat des hommes est vil, seul le combat des idées compte !</b></p>
+        <span class="arrow">▼</span>
+      </div>
+    </div>
+
+    <div class="scene titlecard">
+      <div class="ep">FIN DU CHAPITRE 1</div>
+      <h3 style="font-size:15px;margin-top:22px;">La suite au prochain épisode…</h3>
+    </div>
+  </div>
+
+  <div class="chapters">
+    <h2>&gt; LES CHAPITRES_</h2>
+    <div id="chapter-list"><!-- rempli automatiquement depuis data/polimons.js --></div>
+  </div>
+</section>
+
+<!-- ================= ESPACE COMBAT ================= -->
+<section id="combat" class="space">
+  <div class="combat-wrap">
+    <div class="space-header">
+      <h2>⚔️ ESPACE COMBAT</h2>
+      <p>Le combat des hommes est vil, seul le <b>combat des idées</b> compte ! Choisis deux Polimons et compare leurs visions dimension par dimension.</p>
+      <div class="rule-note">⚠ RÈGLE DU COMBAT : seuls des Polimons de <b>même niveau</b> peuvent s'affronter.</div>
+    </div>
+
+    <div class="lvl-picker" id="lvl-picker"></div>
+
+    <div class="battle-pickers">
+      <select id="selA" onchange="renderCombat()"></select>
+      <div class="vs">VS</div>
+      <select id="selB" onchange="renderCombat()"></select>
+    </div>
+
+    <!-- Scène de combat façon Game Boy -->
+    <div class="battle" id="battle">
+      <div class="plate plate-foe" id="plateB"></div>
+      <div class="spr-slot foe" id="sprB"></div>
+      <div class="spr-slot ally" id="sprA"></div>
+      <div class="plate plate-ally" id="plateA"></div>
+      <div class="battle-msg" id="battle-msg"></div>
+    </div>
+
+    <div class="compare" id="compare"></div>
+  </div>
+</section>
+
+<!-- ================= ESPACE POLIDEX ================= -->
+<section id="polidex" class="space">
+  <div class="dex-wrap">
+    <div class="space-header">
+      <h2>📕 POLIDEX <span class="wip">EN CONSTRUCTION</span></h2>
+      <p>La librairie des 36 Polimons recensés par le Professeur Chen : 12 lignées, 3 niveaux d'évolution. Sélectionne un Polimon pour consulter sa fiche.</p>
+    </div>
+    <div class="dex-controls">
+      <input type="text" id="dex-search" placeholder="RECHERCHER…" oninput="renderDex()">
+      <select id="dex-level" onchange="renderDex()">
+        <option value="0">TOUS NIVEAUX</option>
+        <option value="1">NIV.1 PHILOSOPHIE</option>
+        <option value="2">NIV.2 PERSPECTIVE</option>
+        <option value="3">NIV.3 PROGRAMME</option>
+      </select>
+      <select id="dex-element" onchange="renderDex()"><option value="">TOUS ÉLÉMENTS</option></select>
+    </div>
+    <div class="dex-grid" id="dex-grid"></div>
+    <div class="dex-count" id="dex-count"></div>
+  </div>
+</section>
+
+<!-- ================= ESPACE DRESSEURS ================= -->
+<section id="dresseurs" class="space">
+  <div class="dex-wrap">
+    <div class="space-header">
+      <h2>🧢 LES DRESSEURS</h2>
+      <p>En cette période d'élection, <b>12 grands dresseurs</b> répandent leurs Polimons à travers le pays. Chacun porte une lignée de 3 Polimons, du niveau Philosophie au niveau Programme. Clique sur un Polimon pour ouvrir sa fiche.</p>
+    </div>
+    <div class="trainer-grid" id="trainer-grid"><!-- rempli automatiquement depuis data/polimons.js --></div>
+  </div>
+</section>
+</main>
+
+<!-- fiche modal -->
+<div id="fiche-overlay" onclick="if(event.target===this)closeFiche()">
+  <div class="fiche">
+    <div class="close" onclick="closeFiche()">X</div>
+    <div id="fiche-content"></div>
+  </div>
+</div>
+
+<footer>
+  <div class="px">POLIMON 2027 — UN PROJET ÉDUCATIF DU COLLECTIF DEMZET</div>
+  <p>Aventure fantastique librement inspirée de l'univers Pokémon, sans affiliation. Version 2 — Polidex et statistiques en construction.</p>
+</footer>
+
+<!-- 1) Les données (le contenu que tu modifies) -->
+<script src="data/polimons.js"></script>
+<!-- 2) La logique du site (à ne pas modifier en temps normal) -->
+<script src="js/app.js"></script>
+</body>
+</html>

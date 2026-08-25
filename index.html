@@ -184,9 +184,21 @@
         <span class="arrow">▼</span>
       </div>
       <div class="starters">
-        <div class="starter" onclick="chooseStarter(this)"><img class="sprite" src="images/story/starter-1.png" alt="Polimon mystère 1"><div class="ballrow">◓</div></div>
-        <div class="starter" onclick="chooseStarter(this)"><img class="sprite" src="images/story/starter-2.png" alt="Polimon mystère 2"><div class="ballrow">◓</div></div>
-        <div class="starter" onclick="chooseStarter(this)"><img class="sprite" src="images/story/starter-3.png" alt="Polimon mystère 3"><div class="ballrow">◓</div></div>
+        <div class="starter" onclick="chooseStarter(this)">
+          <div class="pokeball"></div>
+          <img class="sprite" src="images/story/starter-1.png" alt="Polimon mystère 1">
+          <div class="ballrow">?</div>
+        </div>
+        <div class="starter" onclick="chooseStarter(this)">
+          <div class="pokeball"></div>
+          <img class="sprite" src="images/story/starter-2.png" alt="Polimon mystère 2">
+          <div class="ballrow">?</div>
+        </div>
+        <div class="starter" onclick="chooseStarter(this)">
+          <div class="pokeball"></div>
+          <img class="sprite" src="images/story/starter-3.png" alt="Polimon mystère 3">
+          <div class="ballrow">?</div>
+        </div>
       </div>
       <div id="starter-reponse" class="pxbox dialog">
         <div class="speaker">PROF. CHEN</div>
@@ -218,16 +230,19 @@
 
     <div class="lvl-picker" id="lvl-picker"></div>
 
-    <div class="vs-grid">
-      <div class="fighter" id="fighterA">
-        <select id="selA" onchange="renderCombat()"></select>
-        <div class="card-face" id="faceA"></div>
-      </div>
-      <div class="vs-mid">VS</div>
-      <div class="fighter" id="fighterB">
-        <select id="selB" onchange="renderCombat()"></select>
-        <div class="card-face" id="faceB"></div>
-      </div>
+    <div class="battle-pickers">
+      <select id="selA" onchange="renderCombat()"></select>
+      <div class="vs">VS</div>
+      <select id="selB" onchange="renderCombat()"></select>
+    </div>
+
+    <!-- Scène de combat façon Game Boy -->
+    <div class="battle" id="battle">
+      <div class="plate plate-foe" id="plateB"></div>
+      <div class="spr-slot foe" id="sprB"></div>
+      <div class="spr-slot ally" id="sprA"></div>
+      <div class="plate plate-ally" id="plateA"></div>
+      <div class="battle-msg" id="battle-msg"></div>
     </div>
 
     <div class="compare" id="compare"></div>

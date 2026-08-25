@@ -59,7 +59,20 @@ function observeScenes(){
   }, {threshold:0.18});
   document.querySelectorAll('.scene').forEach(sc => sceneObserver.observe(sc));
 }
+/* Choix du starter : la Pokéball s'agite, s'ouvre dans un flash,
+   puis révèle le Polimon. */
 function chooseStarter(el){
+  if(el.classList.contains('opened')){ selectStarter(el); return; }
+  if(el.classList.contains('opening')) return;
+  el.classList.add('opening');
+  el.querySelector('.pokeball').classList.add('shaking');
+  setTimeout(() => {
+    el.classList.remove('opening');
+    el.classList.add('opened');
+    selectStarter(el);
+  }, 950);
+}
+function selectStarter(el){
   document.querySelectorAll('.starter').forEach(s => s.classList.remove('chosen'));
   el.classList.add('chosen');
   const r = document.getElementById('starter-reponse');
@@ -119,6 +132,32 @@ function makeSprite(p, size){
   ctx.fillRect(ex, ey, 1, 1); ctx.fillRect(grid - 1 - ex, ey, 1, 1);
   return cv;
 }
+/* Version pixelisée façon Game Boy : l'image officielle est réduite
+   sur une petite grille puis agrandie sans lissage. Repli sur le
+   sprite généré si l'image n'existe pas. */
+function pixelateNode(p, size, grid){
+  grid = grid || 48;
+  const cv = document.createElement('canvas');
+  cv.className = 'gen';
+  cv.width = grid; cv.height = grid;
+  cv.style.width = size + 'px'; cv.style.height = size + 'px';
+  const ctx = cv.getContext('2d');
+  const img = new Image();
+  img.onload = () => {
+    ctx.drawImage(img, 0, 0, grid, grid);
+    try { // fond blanc → transparent (peut échouer en local file://)
+      const d = ctx.getImageData(0, 0, grid, grid);
+      for(let i = 0; i < d.data.length; i += 4){
+        if(d.data[i] > 232 && d.data[i+1] > 232 && d.data[i+2] > 232) d.data[i+3] = 0;
+      }
+      ctx.putImageData(d, 0, 0);
+    } catch(e){ /* on garde le fond blanc, pas grave */ }
+  };
+  img.onerror = () => cv.replaceWith(makeSprite(p, size));
+  img.src = p.image;
+  return cv;
+}
+
 /* Image officielle avec repli automatique sur le sprite généré */
 function spriteNode(p, size){
   const img = document.createElement('img');
@@ -208,21 +247,33 @@ function fillSelects(){
   document.getElementById('selA').innerHTML = opts(0);
   document.getElementById('selB').innerHTML = opts(1);
 }
-function face(p, elId){
-  const box = document.getElementById(elId);
-  box.innerHTML = `
-    <div class="spr"></div>
-    <div class="pname">${p.name.toUpperCase()}</div>
-    <div class="meta">${elTags(p)}</div>
-    <div class="meta">Dresseur : <b>${p.dresseur}</b> · ${p.parti}<br>
-    Niveau ${p.level} — ${lvlInfo(p.level).label}</div>`;
-  box.querySelector('.spr').appendChild(spriteNode(p, 116));
+/* Plaque d'info façon Game Boy (nom, niveau, éléments, barre PV) */
+function plate(p, elId){
+  document.getElementById(elId).innerHTML = `
+    <div class="pl-name"><span>${p.name.toUpperCase()}</span><span class="pl-lvl">${'★'.repeat(p.level)}</span></div>
+    <div class="pl-el">${p.elements.map(e => ELEMENTS[e].emoji + ' ' + e.toUpperCase()).join(' · ')}
+      — ${p.dresseur} (${p.parti})</div>
+    <div class="pl-hp"><span>PV</span><div class="pl-bar"><div></div></div></div>`;
+}
+/* Place un Polimon pixelisé sur la scène, avec animation d'entrée */
+function battleSprite(p, slotId){
+  const slot = document.getElementById(slotId);
+  slot.innerHTML = '';
+  slot.appendChild(pixelateNode(p, 160));
+  slot.classList.remove('enter');
+  void slot.offsetWidth; // relance l'animation
+  slot.classList.add('enter');
 }
 function renderCombat(){
   const a = byCode(+document.getElementById('selA').value);
   const b = byCode(+document.getElementById('selB').value);
   if(!a || !b) return;
-  face(a, 'faceA'); face(b, 'faceB');
+  plate(a, 'plateA'); plate(b, 'plateB');
+  battleSprite(a, 'sprA'); battleSprite(b, 'sprB');
+  document.getElementById('battle-msg').textContent =
+    a.code === b.code
+      ? 'Un Polimon ne peut pas affronter son propre reflet…'
+      : `${b.name.toUpperCase()} sauvage apparaît ! ${a.name.toUpperCase()}, le combat des idées commence !`;
   const cmp = document.getElementById('compare');
   let html = '';
   if(a.code === b.code){
@@ -346,6 +397,33 @@ function initDresseurs(){
   });
 }
 
+/* Dimensions affichées selon le niveau du Polimon :
+   niv.1 → les 5 dimensions ; niv.2 → les 25 sous-dimensions (X.Y) ;
+   niv.3 → les 59 thèmes (X.Y.Z). Les contenus des niveaux 2 et 3 se
+   remplissent dans data/polimons.js via le bloc "dimsDetail". */
+function dimsSection(p){
+  if(p.level === 1){
+    return `<h4>LES 5 DIMENSIONS — PHILOSOPHIE</h4>` +
+      DIMENSIONS.map(d => `
+        <div class="dim-row"><b>${d.icon} ${d.num}. ${d.label}</b><p>${p.dims[d.key]}</p></div>`).join('');
+  }
+  const subs   = POLIMON_DATA.sousDimensions || [];
+  const detail = (LINEAGES.find(l => l.id === p.lineage).dimsDetail) || {};
+  const depth  = p.level === 2 ? 2 : 3;
+  const title  = depth === 2 ? 'LES 25 SOUS-DIMENSIONS — PERSPECTIVE' : 'LES 59 THÈMES — PROGRAMME';
+  return `<h4>${title}</h4>` + DIMENSIONS.map(d => {
+    const rows = subs.filter(s => s.code.split('.').length === depth && s.code.startsWith(d.num + '.'));
+    return `
+      <details class="dim-group">
+        <summary>${d.icon} ${d.num}. ${d.label.toUpperCase()} (${rows.length})</summary>
+        <p class="dim-intro">${p.dims[d.key]}</p>
+        ${rows.map(s => `
+          <div class="dim-row"><b>${s.code} — ${s.label}</b>
+          <p>${detail[s.code] || '<i class="wip-txt">Contenu en préparation…</i>'}</p></div>`).join('')}
+      </details>`;
+  }).join('');
+}
+
 /* fiche */
 function openFiche(code){
   const p = byCode(code);
@@ -373,9 +451,7 @@ function openFiche(code){
           <span class="lv">Niv.${i+1} ${lvlInfo(i+1).label}</span>
         </div>${i<2?'<span class="evo-arr">▶</span>':''}`).join('')}
     </div>
-    <h4>LES 5 DIMENSIONS</h4>
-    ${DIMENSIONS.map(d => `
-      <div class="dim-row"><b>${d.icon} ${d.num}. ${d.label}</b><p>${p.dims[d.key]}</p></div>`).join('')}
+    ${dimsSection(p)}
     <h4>STATISTIQUES${st.hasAny ? '' : ' <span class="wip">EN CONSTRUCTION</span>'}</h4>
     <div class="statbars" style="max-width:none;">${st.bars}</div>
     ${st.note}`;

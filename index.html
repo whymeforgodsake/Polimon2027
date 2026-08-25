@@ -244,17 +244,16 @@
   <div class="combat-wrap">
     <div class="space-header">
       <h2>⚔️ ESPACE COMBAT</h2>
-      <p>Le combat des hommes est vil, seul le <b>combat des idées</b> compte ! Choisis deux Polimons et compare leurs visions dimension par dimension.</p>
-      <div class="rule-note">⚠ RÈGLE DU COMBAT : seuls des Polimons de <b>même niveau</b> peuvent s'affronter.</div>
+      <p>Le combat des hommes est vil, seul le <b>combat des idées</b> compte ! Choisis deux Polimons, puis départage leurs idées round après round : à chaque manche, vote pour l'idée qui te parle le plus.</p>
+      <div class="rule-note">⚠ Pour l'instant, seuls les Polimons de <b>niveau 1 — Philosophie</b> peuvent combattre. Niveaux 2 et 3 à venir !</div>
     </div>
-
-    <div class="lvl-picker" id="lvl-picker"></div>
 
     <div class="battle-pickers">
-      <select id="selA" onchange="renderCombat()"></select>
+      <select id="selA" onchange="onCombatSelect()"></select>
       <div class="vs">VS</div>
-      <select id="selB" onchange="renderCombat()"></select>
+      <select id="selB" onchange="onCombatSelect()"></select>
     </div>
+    <div class="fight-cta"><button class="btn" id="btn-fight" onclick="startCombat()">⚔ LANCER LE COMBAT</button></div>
 
     <!-- Scène de combat façon Game Boy -->
     <div class="battle" id="battle">
@@ -296,7 +295,7 @@
   <div class="dex-wrap">
     <div class="space-header">
       <h2>🧢 LES DRESSEURS</h2>
-      <p>En cette période d'élection, <b>12 grands dresseurs</b> répandent leurs Polimons à travers le pays. Chacun porte une lignée de 3 Polimons, du niveau Philosophie au niveau Programme. Clique sur un Polimon pour ouvrir sa fiche.</p>
+      <p>En cette période d'élection, <b>12 grands dresseurs</b> répandent leurs Polimons à travers le pays. Clique sur un dresseur pour découvrir sa carte : sa philosophie et sa lignée de 3 Polimons.</p>
     </div>
     <div class="trainer-grid" id="trainer-grid"><!-- rempli automatiquement depuis data/polimons.js --></div>
   </div>

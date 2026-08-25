@@ -258,83 +258,183 @@ function statBars(p){
   return { bars, note, hasAny };
 }
 
-/* ============ COMBAT ============ */
-let combatLevel = 1;
-function initCombat(){
-  const lp = document.getElementById('lvl-picker');
-  lp.innerHTML = LEVELS.map(l =>
-    `<button class="lvl-btn ${l.n===combatLevel?'active':''}" onclick="setLevel(${l.n})">NIV.${l.n} ${l.label.toUpperCase()}</button>`
-  ).join('');
-  fillSelects();
-  renderCombat();
-}
-function setLevel(n){
-  combatLevel = n;
-  document.querySelectorAll('.lvl-btn').forEach((b,i) => b.classList.toggle('active', i === n-1));
-  fillSelects();
-  renderCombat();
-}
+/* ============ COMBAT — mini-jeu en 5 rounds ============
+   Pour l'instant limité au niveau 1 (Philosophie) : les contenus
+   des niveaux 2 et 3 arrivent plus tard.
+   Déroulé : sélection des 2 Polimons → LANCER LE COMBAT →
+   intro animée → 5 rounds (une dimension chacun). À chaque round,
+   les deux idées sont présentées À L'AVEUGLE (ordre mélangé) ;
+   le joueur vote, l'appartenance se révèle, le perdant du round
+   perd 20 PV. À la fin, le vainqueur est célébré. */
+
+const COMBAT_LEVEL = 1;
+const PV_MAX = 100, PV_HIT = 20;
+let fight = null;   /* état du combat en cours (null = pas de combat) */
+
+function say(text){ document.getElementById('battle-msg').textContent = text; }
+
 function fillSelects(){
-  const pool = POLIMONS.filter(p => p.level === combatLevel);
+  const pool = POLIMONS.filter(p => p.level === COMBAT_LEVEL);
   const opts = sel => pool.map((p,i) =>
-    `<option value="${p.code}" ${i===sel?'selected':''}>#${pad3(p.code)} ${p.name.toUpperCase()}</option>`).join('');
+    `<option value="${p.code}" ${i===sel?'selected':''}>#${pad3(p.code)} ${p.name.toUpperCase()} — ${p.dresseur.toUpperCase()}</option>`).join('');
   document.getElementById('selA').innerHTML = opts(0);
   document.getElementById('selB').innerHTML = opts(1);
 }
-/* Plaque d'info façon Game Boy (nom, niveau, éléments, barre PV) */
-function plate(p, elId){
+
+/* Plaque d'info : nom, éléments, barre de PV animée */
+function plate(p, elId, pv){
   document.getElementById(elId).innerHTML = `
     <div class="pl-name"><span>${p.name.toUpperCase()}</span><span class="pl-lvl">${'★'.repeat(p.level)}</span></div>
     <div class="pl-el">${p.elements.map(e => ELEMENTS[e].emoji + ' ' + e.toUpperCase()).join(' · ')}
       — ${p.dresseur} (${p.parti})</div>
-    <div class="pl-hp"><span>PV</span><div class="pl-bar"><div></div></div></div>`;
+    <div class="pl-hp"><span>PV</span><div class="pl-bar"><div style="width:${pv}%;${pv<=40?'background:#c03028;':''}"></div></div><span class="pl-pv">${pv}</span></div>`;
 }
-/* Place un Polimon pixelisé sur la scène, avec animation d'entrée */
-function battleSprite(p, slotId){
+function updatePv(elId, pv){
+  const box = document.getElementById(elId);
+  const bar = box.querySelector('.pl-bar div');
+  bar.style.width = pv + '%';
+  if(pv <= 40) bar.style.background = '#c03028';
+  box.querySelector('.pl-pv').textContent = pv;
+}
+
+/* Le Polimon sur la scène : image carrée entière, encadrée */
+function battleSprite(p, slotId, enter){
   const slot = document.getElementById(slotId);
+  slot.className = slot.className.replace(/\b(hit|faint|victory|enter)\b/g, '').trim();
   slot.innerHTML = '';
-  slot.appendChild(pixelateNode(p, 160));
-  slot.classList.remove('enter');
-  void slot.offsetWidth; // relance l'animation
-  slot.classList.add('enter');
+  const frame = document.createElement('div');
+  frame.className = 'spr-frame';
+  frame.appendChild(spriteNode(p, 150));
+  slot.appendChild(frame);
+  if(enter){ void slot.offsetWidth; slot.classList.add('enter'); }
 }
-function renderCombat(){
-  const a = byCode(+document.getElementById('selA').value);
-  const b = byCode(+document.getElementById('selB').value);
+
+function combatants(){
+  return {
+    a: byCode(+document.getElementById('selA').value),
+    b: byCode(+document.getElementById('selB').value)
+  };
+}
+
+/* État d'attente : aperçu des deux Polimons, prêt à combattre */
+function renderIdle(){
+  const {a, b} = combatants();
   if(!a || !b) return;
-  plate(a, 'plateA'); plate(b, 'plateB');
+  plate(a, 'plateA', PV_MAX); plate(b, 'plateB', PV_MAX);
   battleSprite(a, 'sprA'); battleSprite(b, 'sprB');
-  document.getElementById('battle-msg').textContent =
-    a.code === b.code
-      ? 'Un Polimon ne peut pas affronter son propre reflet…'
-      : `${b.name.toUpperCase()} sauvage apparaît ! ${a.name.toUpperCase()}, le combat des idées commence !`;
-  const cmp = document.getElementById('compare');
-  let html = '';
-  if(a.code === b.code){
-    html = `<div class="placeholder-panel">Un Polimon ne peut pas affronter son propre reflet…<br>choisis deux idées différentes !</div>`;
-  } else {
-    /* Règle : le combat se joue sur la dimension correspondant au niveau
-       des Polimons (niveau 1 → dimension 1, niveau 2 → dimension 2,
-       niveau 3 → dimension 3). Les 5 dimensions restent visibles dans
-       les fiches du Polidex. */
-    const dimsShown = DIMENSIONS.filter(d => d.num === combatLevel);
-    html = dimsShown.map(d => `
-      <h3>${d.icon} DIMENSION ${d.num} — ${d.label.toUpperCase()}</h3>
-      <div class="cmp-row">
-        <div class="cmp-cell a"><div class="who">${a.name.toUpperCase()} (${a.parti})</div>${a.dims[d.key]}</div>
-        <div class="cmp-cell b"><div class="who">${b.name.toUpperCase()} (${b.parti})</div>${b.dims[d.key]}</div>
-      </div>`).join('');
-    const sa = statBars(a), sb = statBars(b);
-    const wip = (sa.hasAny || sb.hasAny) ? '' : ' <span class="wip">EN CONSTRUCTION</span>';
-    html += `
-      <h3>📊 STATISTIQUES DE COMBAT${wip}</h3>
-      <div class="cmp-row">
-        <div class="cmp-cell a"><div class="who">${a.name.toUpperCase()}</div><div class="statbars" style="max-width:none;grid-template-columns:1fr;">${sa.bars}</div></div>
-        <div class="cmp-cell b"><div class="who">${b.name.toUpperCase()}</div><div class="statbars" style="max-width:none;grid-template-columns:1fr;">${sb.bars}</div></div>
-      </div>
-      ${sa.note}`;
-  }
-  cmp.innerHTML = html;
+  document.getElementById('compare').innerHTML = '';
+  say(a.code === b.code
+    ? 'Un Polimon ne peut pas affronter son propre reflet… choisis deux idées différentes !'
+    : 'Prêt ? Lance le combat des idées !');
+}
+function onCombatSelect(){ if(!fight) renderIdle(); }
+
+function setCombatControls(on){
+  document.getElementById('selA').disabled = !on;
+  document.getElementById('selB').disabled = !on;
+  document.getElementById('btn-fight').style.display = on ? '' : 'none';
+}
+
+function initCombat(){ fillSelects(); renderIdle(); }
+
+/* ---------- déroulé du combat ---------- */
+function startCombat(){
+  const {a, b} = combatants();
+  if(!a || !b || a.code === b.code){ renderIdle(); return; }
+  fight = { a, b, pvA: PV_MAX, pvB: PV_MAX, round: 0, picks: [], busy: true };
+  setCombatControls(false);
+  document.getElementById('compare').innerHTML = '';
+  battleSprite(b, 'sprB', true);
+  say(`Un ${b.name.toUpperCase()} sauvage apparaît !`);
+  setTimeout(() => {
+    battleSprite(a, 'sprA', true);
+    say(`${a.name.toUpperCase()} ! Le combat des idées commence !`);
+  }, 1300);
+  setTimeout(() => { fight.busy = false; nextRound(); }, 2600);
+}
+
+function nextRound(){
+  if(!fight) return;
+  if(fight.round >= DIMENSIONS.length) return endCombat();
+  const d = DIMENSIONS[fight.round];   /* niveau 1 : les 5 dimensions, dans l'ordre */
+  say(`ROUND ${fight.round + 1} / ${DIMENSIONS.length} — ${d.label.toUpperCase()} : quelle idée te parle le plus ?`);
+  const first = Math.random() < .5 ? 'a' : 'b';     /* ordre mélangé : vote à l'aveugle */
+  const order = first === 'a' ? ['a','b'] : ['b','a'];
+  const card = side => {
+    const p = fight[side];
+    return `<div class="idea-card" data-side="${side}" onclick="pickIdea('${side}')" tabindex="0" role="button">
+      <div class="own">💡 Idée de <b>${p.name.toUpperCase()}</b> (${p.dresseur})</div>
+      <p>${p.dims[d.key]}</p>
+    </div>`;
+  };
+  document.getElementById('compare').innerHTML = `
+    <div class="round-head">${d.icon} ROUND ${fight.round + 1} — DIMENSION ${d.num} · ${d.label.toUpperCase()}</div>
+    <p class="round-sub">Vote pour l'idée qui te ressemble le plus — tu découvriras ensuite quel Polimon la porte.</p>
+    <div class="idea-row">${order.map(card).join('')}</div>`;
+  document.querySelectorAll('.idea-card').forEach(c => {
+    c.addEventListener('keydown', e => {
+      if(e.key === 'Enter'){ e.preventDefault(); c.click(); }
+    });
+  });
+}
+
+function pickIdea(winSide){
+  if(!fight || fight.busy) return;
+  fight.busy = true;
+  const d = DIMENSIONS[fight.round];
+  const loseSide = winSide === 'a' ? 'b' : 'a';
+  const winP = fight[winSide], loseP = fight[loseSide];
+  /* révélation des deux idées */
+  document.querySelectorAll('.idea-card').forEach(c => {
+    c.classList.add('revealed', c.dataset.side === winSide ? 'picked' : 'lost');
+    c.onclick = null;
+  });
+  /* dégâts */
+  if(loseSide === 'a') fight.pvA -= PV_HIT; else fight.pvB -= PV_HIT;
+  const slot = document.getElementById(loseSide === 'a' ? 'sprA' : 'sprB');
+  slot.classList.add('hit');
+  setTimeout(() => slot.classList.remove('hit'), 650);
+  updatePv(loseSide === 'a' ? 'plateA' : 'plateB', loseSide === 'a' ? fight.pvA : fight.pvB);
+  say(`L'idée de ${winP.name.toUpperCase()} l'emporte ! ${loseP.name.toUpperCase()} perd ${PV_HIT} PV.`);
+  fight.picks.push({ dim: d, winner: winP });
+  /* bouton continuer */
+  const wrap = document.createElement('div');
+  wrap.className = 'continue-wrap';
+  wrap.innerHTML = `<button class="btn small" onclick="continueFight()">${fight.round < DIMENSIONS.length - 1 ? 'ROUND SUIVANT ▸' : 'VOIR LE VERDICT ▸'}</button>`;
+  document.getElementById('compare').appendChild(wrap);
+}
+function continueFight(){
+  if(!fight) return;
+  fight.round++; fight.busy = false;
+  nextRound();
+}
+
+function endCombat(){
+  const winA = fight.pvA > fight.pvB;
+  const winP  = winA ? fight.a : fight.b;
+  const loseP = winA ? fight.b : fight.a;
+  const score = fight.picks.filter(p => p.winner.code === winP.code).length;
+  document.getElementById(winA ? 'sprA' : 'sprB').classList.add('victory');
+  document.getElementById(winA ? 'sprB' : 'sprA').classList.add('faint');
+  say(`🏆 ${winP.name.toUpperCase()} remporte le combat des idées ${score} à ${DIMENSIONS.length - score} ! ${loseP.name.toUpperCase()} est K.O.`);
+  document.getElementById('compare').innerHTML = `
+    <div class="round-head">🏆 ${winP.name.toUpperCase()} GAGNE ${score} – ${DIMENSIONS.length - score}</div>
+    <p class="round-sub">Tes idées se rapprochent ${score >= 4 ? 'nettement' : 'plutôt'} de celles de <b>${winP.dresseur}</b> (${winP.parti}) sur ces 5 dimensions.</p>
+    <div class="recap">
+      ${fight.picks.map(p => `
+        <div class="recap-row"><span class="rd">${p.dim.icon} ${p.dim.label}</span>
+        <span class="rw">${p.winner.name.toUpperCase()} <i>(${p.winner.dresseur})</i></span></div>`).join('')}
+    </div>
+    <div class="continue-wrap">
+      <button class="btn" onclick="resetCombat()">↻ REJOUER</button>
+      <button class="btn ghost" onclick="openFiche(${winP.code})">VOIR LA FICHE DE ${winP.name.toUpperCase()}</button>
+    </div>`;
+  fight = null;
+}
+function resetCombat(){
+  fight = null;
+  setCombatControls(true);
+  renderIdle();
 }
 
 /* ============ POLIDEX ============ */
@@ -380,82 +480,80 @@ function renderDex(){
 }
 
 /* ============ DRESSEURS ============
-   Les fiches des 12 dresseurs sont générées depuis data/polimons.js.
-   Photo optionnelle : dépose images/dresseurs/<id>.png (ex. 1.png pour
-   la lignée n°1) — sinon un médaillon avec les initiales s'affiche. */
+   Liste épurée : portrait (ou initiales), nom, éléments.
+   Un clic ouvre la carte détaillée du dresseur (bio + lignée).
+   Photo optionnelle : images/dresseurs/<id>.png. */
+function trainerAvatar(l, cls){
+  const initials = l.dresseur.split(/[\s-]+/).map(w => w[0]).join('').slice(0,3).toUpperCase();
+  const av = document.createElement('div');
+  av.className = cls;
+  av.innerHTML = `<span class="initials">${initials}</span>`;
+  const photo = new Image();
+  photo.onload = () => { av.innerHTML = ''; av.appendChild(photo); };
+  photo.alt = l.dresseur;
+  photo.src = 'images/dresseurs/' + l.id + '.png';
+  return av;
+}
 function initDresseurs(){
   const grid = document.getElementById('trainer-grid');
   if(!grid) return;
   grid.innerHTML = '';
   LINEAGES.forEach(l => {
-    const c1 = ELEMENTS[l.elements[0]], c2 = ELEMENTS[l.elements[1]];
-    const initials = l.dresseur.split(/[\s-]+/).map(w => w[0]).join('').slice(0,3).toUpperCase();
+    const c1 = ELEMENTS[l.elements[0]];
     const card = document.createElement('div');
-    card.className = 'trainer-card';
+    card.className = 'trainer-mini';
+    card.tabIndex = 0;
+    card.setAttribute('role', 'button');
     card.style.setProperty('--c1', c1.color);
-    card.style.background =
-      `linear-gradient(165deg, ${tint(c1.dark,.45)}, #232329 45%, ${tint(c2.dark,.35)})`;
     card.innerHTML = `
-      <div class="t-head">
-        <div class="t-avatar"><span class="initials">${initials}</span></div>
-        <div>
-          <div class="t-name">${l.dresseur.toUpperCase()}</div>
-          <div class="t-parti">${l.parti.toUpperCase()}</div>
-          <div>${l.elements.map(e => {
-            const d = ELEMENTS[e];
-            return `<span class="tag" style="background:${d.color}">${d.emoji} ${e.toUpperCase()}</span>`;
-          }).join('')}</div>
-        </div>
-      </div>
-      <p class="t-bio">${l.bio || ''}</p>
-      <div class="t-lineup">
-        ${l.forms.map((f,i) => `
-          <div class="t-poli" data-code="${f.code}" onclick="openFiche(${f.code})">
-            <span class="pn">${f.name.toUpperCase()}</span>
-            <span class="pl">${'★'.repeat(i+1)}</span>
-          </div>`).join('')}
-      </div>`;
-    // photo du dresseur (optionnelle), sinon initiales
-    const av = card.querySelector('.t-avatar');
-    const photo = new Image();
-    photo.onload = () => { av.innerHTML = ''; av.appendChild(photo); };
-    photo.alt = l.dresseur;
-    photo.src = 'images/dresseurs/' + l.id + '.png';
-    // vignettes des 3 Polimons de la lignée
-    card.querySelectorAll('.t-poli').forEach(el => {
-      const p = byCode(+el.dataset.code);
-      el.insertBefore(spriteNode(p, 56), el.firstChild);
+      <div class="tm-name">${l.dresseur.toUpperCase()}</div>
+      <div class="tm-el">${l.elements.map(e => {
+        const d = ELEMENTS[e];
+        return `<span class="tag" style="background:${d.color}">${d.emoji} ${e.toUpperCase()}</span>`;
+      }).join('')}</div>`;
+    card.insertBefore(trainerAvatar(l, 't-avatar tm-avatar'), card.firstChild);
+    card.onclick = () => openDresseur(l.id);
+    card.addEventListener('keydown', e => {
+      if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); card.click(); }
     });
-    attachHolo(card);
     grid.appendChild(card);
   });
 }
 
-/* Dimensions affichées selon le niveau du Polimon :
-   niv.1 → les 5 dimensions ; niv.2 → les 25 sous-dimensions (X.Y) ;
-   niv.3 → les 59 thèmes (X.Y.Z). Les contenus des niveaux 2 et 3 se
-   remplissent dans data/polimons.js via le bloc "dimsDetail". */
-function dimsSection(p){
-  if(p.level === 1){
-    return `<h4>LES 5 DIMENSIONS — PHILOSOPHIE</h4>` +
-      DIMENSIONS.map(d => `
-        <div class="dim-row"><b>${d.icon} ${d.num}. ${d.label}</b><p>${p.dims[d.key]}</p></div>`).join('');
-  }
-  const subs   = POLIMON_DATA.sousDimensions || [];
-  const detail = (LINEAGES.find(l => l.id === p.lineage).dimsDetail) || {};
-  const depth  = p.level === 2 ? 2 : 3;
-  const title  = depth === 2 ? 'LES 25 SOUS-DIMENSIONS — PERSPECTIVE' : 'LES 59 THÈMES — PROGRAMME';
-  return `<h4>${title}</h4>` + DIMENSIONS.map(d => {
-    const rows = subs.filter(s => s.code.split('.').length === depth && s.code.startsWith(d.num + '.'));
-    return `
-      <details class="dim-group">
-        <summary>${d.icon} ${d.num}. ${d.label.toUpperCase()} (${rows.length})</summary>
-        <p class="dim-intro">${p.dims[d.key]}</p>
-        ${rows.map(s => `
-          <div class="dim-row"><b>${s.code} — ${s.label}</b>
-          <p>${detail[s.code] || '<i class="wip-txt">Contenu en préparation…</i>'}</p></div>`).join('')}
-      </details>`;
-  }).join('');
+/* Carte détaillée du dresseur, en modale */
+function openDresseur(id){
+  const l = LINEAGES.find(x => x.id === id);
+  if(!l) return;
+  const c = document.getElementById('fiche-content');
+  c.innerHTML = `
+    <div class="t-head">
+      <div class="t-avatar" id="dr-avatar"></div>
+      <div>
+        <div class="t-name">${l.dresseur.toUpperCase()}</div>
+        <div class="t-parti">${l.parti.toUpperCase()}</div>
+        <div>${l.elements.map(e => {
+          const d = ELEMENTS[e];
+          return `<span class="tag" style="background:${d.color}">${d.emoji} ${e.toUpperCase()}</span>`;
+        }).join('')}</div>
+      </div>
+    </div>
+    <p class="t-bio">${l.bio || ''}</p>
+    <h4>SA LIGNÉE « 3P »</h4>
+    <div class="t-lineup">
+      ${l.forms.map((f,i) => `
+        <div class="t-poli" data-code="${f.code}" onclick="openFiche(${f.code})">
+          <span class="pn">${f.name.toUpperCase()}</span>
+          <span class="pl">${'★'.repeat(i+1)} ${lvlInfo(i+1).label}</span>
+        </div>`).join('')}
+    </div>`;
+  const av = c.querySelector('#dr-avatar');
+  av.replaceWith(trainerAvatar(l, 't-avatar'));
+  c.querySelectorAll('.t-poli').forEach(el => {
+    const p = byCode(+el.dataset.code);
+    el.insertBefore(spriteNode(p, 72), el.firstChild);
+  });
+  document.getElementById('fiche-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
 }
 
 /* fiche */

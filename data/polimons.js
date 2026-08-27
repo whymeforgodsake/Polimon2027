@@ -80,93 +80,93 @@ const POLIMON_DATA = {
   sousDimensions: [
     /* 1. Individu */
     { code: "1.1",   label: "Spiritualité" },
-    { code: "1.1.1", label: "Religions et croyances" },
-    { code: "1.1.2", label: "Vie et mort" },
+    { code: "1.1.1", label: "Religions et croyances", sujets: ["Port des signes religieux", "Financement des lieux de culte", "Séparatisme et radicalisation religieuse", "Enseignement du fait religieux", "Blasphème et liberté d'expression", "Dérives sectaires"] },
+    { code: "1.1.2", label: "Vie et mort", sujets: ["Euthanasie et aide active à mourir", "Soins palliatifs", "IVG et droits reproductifs", "Don d'organes", "Bioéthique et statut de l'embryon", "Peine de mort (débat récurrent)"] },
     { code: "1.2",   label: "Famille et sexualité" },
-    { code: "1.2.1", label: "Famille" },
-    { code: "1.2.2", label: "Sexualité" },
+    { code: "1.2.1", label: "Famille", sujets: ["Politique familiale et allocations", "Natalité et démographie", "PMA et GPA", "Modes de garde et petite enfance", "Congé parental", "Protection de l'enfance (ASE)", "Violences intrafamiliales"] },
+    { code: "1.2.2", label: "Sexualité", sujets: ["Éducation à la vie affective et sexuelle", "Droits LGBT+ et lutte contre les discriminations", "Transidentité (parcours des mineurs)", "Prostitution et travail du sexe", "Consentement et majorité sexuelle"] },
     { code: "1.3",   label: "Santé" },
-    { code: "1.3.1", label: "Système de santé" },
-    { code: "1.3.2", label: "Santé publique et prévention" },
+    { code: "1.3.1", label: "Système de santé", sujets: ["Hôpital public vs cliniques privées", "Prix et pénuries de médicaments", "Formation des soignants (numerus apertus)", "Psychiatrie et santé mentale à l'hôpital"] },
+    { code: "1.3.2", label: "Santé publique et prévention", sujets: ["Vaccination", "Santé mentale des jeunes", "Addictions (tabac, alcool, drogues)", "Légalisation du cannabis", "Nutrition et obésité", "Santé environnementale (perturbateurs endocriniens)", "Préparation aux pandémies"] },
     { code: "1.4",   label: "Éducation" },
-    { code: "1.4.1", label: "Enseignement primaire et secondaire" },
-    { code: "1.4.2", label: "Enseignement supérieur et recherche" },
+    { code: "1.4.1", label: "Enseignement primaire et secondaire", sujets: ["Niveau scolaire et savoirs fondamentaux (PISA)", "Carte scolaire et mixité sociale", "École privée sous contrat", "Harcèlement scolaire", "Uniforme et autorité à l'école", "Écrans à l'école", "École inclusive (AESH)"] },
+    { code: "1.4.2", label: "Enseignement supérieur et recherche", sujets: ["Parcoursup et sélection", "Précarité étudiante et frais d'inscription", "Financement des universités", "Recherche publique et attractivité (fuite des cerveaux)", "Apprentissage et formation professionnelle", "Grandes écoles vs universités", "Logement étudiant"] },
     { code: "1.5",   label: "Participation citoyenne" },
-    { code: "1.5.1", label: "Vote" },
-    { code: "1.5.2", label: "Association" },
+    { code: "1.5.1", label: "Vote", sujets: ["Abstention", "Vote obligatoire", "Reconnaissance du vote blanc", "Droit de vote à 16 ans", "Vote des étrangers aux élections locales", "Scrutin proportionnel", "Référendum d'initiative citoyenne (RIC)"] },
+    { code: "1.5.2", label: "Association", sujets: ["Financement de la vie associative", "Bénévolat et engagement des jeunes", "Service civique et SNU", "Contrat d'engagement républicain et dissolutions", "Syndicats et corps intermédiaires", "Conventions citoyennes et budgets participatifs"] },
     /* 2. Société */
     { code: "2.1",   label: "Culture et médias" },
-    { code: "2.1.1", label: "Arts et patrimoine" },
-    { code: "2.1.2", label: "Sports" },
-    { code: "2.1.3", label: "Langue" },
-    { code: "2.1.4", label: "Médias" },
+    { code: "2.1.1", label: "Arts et patrimoine", sujets: ["Budget de la culture", "Pass Culture", "Protection du patrimoine (loto du patrimoine)", "Restitution des œuvres d'art (Afrique)", "Intermittents du spectacle", "Accès à la culture en ruralité"] },
+    { code: "2.1.2", label: "Sports", sujets: ["Sport à l'école et sport-santé", "Financement du sport amateur", "Violences et abus dans le sport", "Sport féminin", "Paris sportifs et addiction", "Équipements sportifs de proximité"] },
+    { code: "2.1.3", label: "Langue", sujets: ["Défense du français (loi Toubon, anglicismes)", "Langues régionales", "Écriture inclusive", "Illettrisme et illectronisme", "Français langue d'intégration"] },
+    { code: "2.1.4", label: "Médias", sujets: ["Concentration des médias", "Audiovisuel public et financement", "Désinformation et fake news", "Régulation des réseaux sociaux (DSA)", "Protection des journalistes et secret des sources", "Temps de parole en campagne (Arcom)"] },
     { code: "2.2",   label: "Ordre public" },
-    { code: "2.2.1", label: "Justice" },
-    { code: "2.2.2", label: "Sécurité" },
+    { code: "2.2.1", label: "Justice", sujets: ["Moyens de la justice et délais", "Surpopulation carcérale et prisons", "Justice des mineurs", "Échelle des peines (laxisme vs fermeté)", "Récidive et réinsertion", "Indépendance de la magistrature", "Aide juridictionnelle"] },
+    { code: "2.2.2", label: "Sécurité", sujets: ["Narcotrafic et points de deal", "Délinquance du quotidien et incivilités", "Violences policières et contrôle (IGPN)", "Vidéosurveillance et reconnaissance faciale", "Émeutes urbaines", "Polices municipales", "Sentiment d'insécurité"] },
     { code: "2.3",   label: "Cadre de vie" },
-    { code: "2.3.1", label: "Logement et urbanisme" },
-    { code: "2.3.2", label: "Mobilité et transport" },
+    { code: "2.3.1", label: "Logement et urbanisme", sujets: ["Crise du logement et construction", "Logement social (loi SRU)", "Encadrement des loyers", "Passoires thermiques et rénovation (DPE)", "Sans-abrisme et hébergement d'urgence", "Airbnb et locations touristiques", "Accession à la propriété", "Artificialisation des sols (ZAN)"] },
+    { code: "2.3.2", label: "Mobilité et transport", sujets: ["Transports en commun et RER métropolitains", "SNCF, petites lignes et trains de nuit", "Voiture électrique et ZFE", "Prix des carburants", "Vélo et mobilités douces", "Gratuité des transports", "Sécurité routière"] },
     { code: "2.4",   label: "État et territoire" },
-    { code: "2.4.1", label: "Institutions" },
-    { code: "2.4.2", label: "Organisation des territoires" },
+    { code: "2.4.1", label: "Institutions", sujets: ["49.3 et pouvoirs du Parlement", "Référendum et RIC", "Transparence et déontologie (HATVP, lobbying)", "Haute fonction publique"] },
+    { code: "2.4.2", label: "Organisation des territoires", sujets: ["Millefeuille territorial (communes, départements, régions)", "Ruralité et accès aux services publics", "Métropolisation et fractures territoriales", "Outre-mer (vie chère, Mayotte, Nouvelle-Calédonie)", "Corse et autonomie", "Finances des collectivités locales", "Politique de la ville (banlieues)"] },
     { code: "2.5",   label: "Vivre ensemble" },
-    { code: "2.5.1", label: "Égalité homme-femme" },
-    { code: "2.5.2", label: "Multiculturalisme" },
-    { code: "2.5.3", label: "Autonomie, handicap, dépendance" },
+    { code: "2.5.1", label: "Égalité homme-femme", sujets: ["Violences faites aux femmes et féminicides", "Parité en politique et en entreprise", "Partage des tâches et congés parentaux", "Sexisme et harcèlement", "Retraites et précarité des femmes", "Place des femmes dans l'espace public"] },
+    { code: "2.5.2", label: "Multiculturalisme", sujets: ["Intégration vs assimilation", "Discriminations et racisme", "Statistiques ethniques (débat)", "Islam de France", "Antisémitisme", "Mémoire coloniale et esclavage", "Universalisme républicain vs multiculturalisme"] },
+    { code: "2.5.3", label: "Autonomie, handicap, dépendance", sujets: ["Grand âge et EHPAD", "Financement de la dépendance (5e branche)", "Aidants et aide à domicile", "Accessibilité universelle", "Emploi des personnes handicapées et AAH", "École inclusive et AESH", "Désinstitutionnalisation"] },
     /* 3. Économie */
     { code: "3.1",   label: "Travail et consommation" },
-    { code: "3.1.1", label: "Emploi et marché du travail" },
-    { code: "3.1.2", label: "Conditions de travail" },
-    { code: "3.1.3", label: "Consommation" },
-    { code: "3.1.4", label: "Retraites" },
+    { code: "3.1.1", label: "Emploi et marché du travail", sujets: ["Chômage et assurance chômage", "Objectif plein emploi", "RSA et conditionnalité (France Travail)", "SMIC et bas salaires", "Emploi des seniors", "Ubérisation et statut des indépendants", "Métiers en tension"] },
+    { code: "3.1.2", label: "Conditions de travail", sujets: ["Temps de travail (35 h, semaine de 4 jours)", "Télétravail", "Santé au travail et accidents", "Burn-out et risques psychosociaux", "Pénibilité", "Dialogue social et syndicats", "Sens au travail et démissions silencieuses"] },
+    { code: "3.1.3", label: "Consommation", sujets: ["Pouvoir d'achat", "Inflation et prix alimentaires", "Protection des consommateurs", "Étiquetage et malbouffe (Nutri-score)", "Publicité et surconsommation", "Crédit et surendettement", "Fast fashion"] },
+    { code: "3.1.4", label: "Retraites", sujets: ["Âge légal de départ (retour sur les 64 ans)", "Répartition vs capitalisation", "Carrières longues et pénibilité", "Petites pensions et minimum contributif", "Équilibre financier du système", "Régimes spéciaux", "Retraite progressive et emploi des seniors"] },
     { code: "3.2",   label: "Agriculture, industries, services" },
-    { code: "3.2.1", label: "Agriculture" },
-    { code: "3.2.2", label: "Industries" },
-    { code: "3.2.3", label: "Services" },
+    { code: "3.2.1", label: "Agriculture", sujets: ["Revenu des agriculteurs (Egalim)", "PAC et normes", "Souveraineté alimentaire", "Bio et agroécologie", "Élevage et bien-être animal", "Renouvellement des générations (installation)", "Eau et mégabassines", "Accords de libre-échange (Mercosur)"] },
+    { code: "3.2.2", label: "Industries", sujets: ["Réindustrialisation et relocalisation", "Industrie verte et décarbonation", "Automobile et transition électrique", "Gigafactories et batteries", "Aides publiques et conditionnalité", "Simplification des normes", "Pénuries de médicaments (relocalisation pharma)"] },
+    { code: "3.2.3", label: "Services", sujets: ["Commerce de proximité et dévitalisation des centres-villes", "Grande distribution vs e-commerce", "Tourisme (premier pays visité, surtourisme)", "Artisanat et transmission", "Économie sociale et solidaire", "Hôtellerie-restauration et emplois en tension"] },
     { code: "3.3",   label: "Monnaie et finance" },
-    { code: "3.3.1", label: "Politique monétaire" },
-    { code: "3.3.2", label: "Régulation bancaire et financière" },
-    { code: "3.3.3", label: "Dette publique" },
+    { code: "3.3.1", label: "Politique monétaire", sujets: ["BCE et indépendance", "Inflation et taux d'intérêt", "Euro (et débat sur sa sortie)", "Euro numérique", "Création monétaire et quantitative easing", "Cryptomonnaies et souveraineté monétaire"] },
+    { code: "3.3.2", label: "Régulation bancaire et financière", sujets: ["Séparation banques de dépôt / d'affaires", "Taxe sur les transactions financières", "Régulation des cryptoactifs", "Finance verte et critères ESG", "Protection de l'épargne (Livret A, assurance-vie)", "Prévention des crises bancaires", "Spéculation et haute fréquence"] },
+    { code: "3.3.3", label: "Dette publique", sujets: ["Niveau de la dette (~110 % du PIB)", "Charge de la dette (intérêts)", "Règles budgétaires européennes", "Notation de la France", "Austérité vs relance", "Baisse des dépenses vs hausse des impôts", "Dette Covid et « quoi qu'il en coûte »"] },
     { code: "3.4",   label: "Redistribution" },
-    { code: "3.4.1", label: "Fiscalité des personnes" },
-    { code: "3.4.2", label: "Fiscalité des entreprises" },
+    { code: "3.4.1", label: "Fiscalité des personnes", sujets: ["Taxation du patrimoine (retour de l'ISF, taxe Zucman)", "Droits de succession", "TVA et fiscalité indirecte", "Impôts locaux et taxe foncière", "Niches fiscales", "Flat tax sur le capital", "Justice fiscale et consentement à l'impôt"] },
+    { code: "3.4.2", label: "Fiscalité des entreprises", sujets: ["Impôt sur les sociétés", "Impôt minimum mondial (15 %)", "Taxe GAFA", "Impôts de production", "Taxation des superprofits", "Crédit d'impôt recherche", "Allègements de cotisations"] },
     { code: "3.5",   label: "Innovation et technologie" },
-    { code: "3.5.1", label: "Souveraineté technologique" },
-    { code: "3.5.2", label: "Nouvelles technologies" },
-    { code: "3.5.3", label: "Protection des données" },
+    { code: "3.5.1", label: "Souveraineté technologique", sujets: ["Cloud souverain et dépendance aux GAFAM", "Semi-conducteurs", "Spatial et quantique", "Financement des startups (BPI, licornes)", "Attractivité des talents"] },
+    { code: "3.5.2", label: "Nouvelles technologies", sujets: ["IA et emploi", "Régulation de l'IA (AI Act)", "Réseaux sociaux et mineurs (majorité numérique)", "Deepfakes et désinformation", "Fracture numérique"] },
+    { code: "3.5.3", label: "Protection des données", sujets: ["Surveillance de masse et fichiers de police", "Données de santé (hébergement souverain)", "Chiffrement (vie privée vs enquêtes)", "Identité numérique", "Transferts de données UE–USA", "Exploitation des données par les plateformes"] },
     /* 4. Écologie */
     { code: "4.1",   label: "Changement climatique" },
-    { code: "4.1.1", label: "Mitigation des GES" },
-    { code: "4.1.2", label: "Adaptation aux effets" },
+    { code: "4.1.1", label: "Mitigation des GES", sujets: ["Neutralité carbone 2050 (SNBC, planification)", "Taxe carbone et quotas européens (ETS)", "Décarbonation des transports et de l'industrie", "Sobriété vs solutions technologiques", "Rénovation thermique des bâtiments"] },
+    { code: "4.1.2", label: "Adaptation aux effets", sujets: ["Canicules et îlots de chaleur urbains", "Sécheresses et partage de l'eau", "Inondations et recul du trait de côte", "Assurabilité face aux catastrophes", "Feux de forêt", "Adaptation de l'agriculture"] },
     { code: "4.2",   label: "Développement durable" },
-    { code: "4.2.1", label: "Croissance verte" },
-    { code: "4.2.2", label: "Économie circulaire" },
+    { code: "4.2.1", label: "Croissance verte", sujets: ["Croissance verte vs décroissance", "Découplage PIB / émissions", "Planification écologique", "Emplois verts et reconversions", "Investissements et fonds verts", "Greenwashing", "Reporting extra-financier (CSRD)"] },
+    { code: "4.2.2", label: "Économie circulaire", sujets: ["Recyclage et tri des déchets", "Réparation et réemploi (indice de réparabilité)", "Lutte contre le gaspillage (loi AGEC)", "Plastique à usage unique et consigne", "Obsolescence programmée", "Fast fashion et textile", "Incinération et décharges"] },
     { code: "4.3",   label: "Énergie" },
-    { code: "4.3.1", label: "Souveraineté énergétique" },
-    { code: "4.3.2", label: "Énergies fossiles" },
-    { code: "4.3.3", label: "Énergies vertes et nucléaire" },
+    { code: "4.3.1", label: "Souveraineté énergétique", sujets: ["Dépendance aux importations (gaz russe, GNL)", "Prix de l'électricité et marché européen", "EDF et service public de l'énergie", "Sobriété énergétique", "Approvisionnement en uranium", "Interconnexions européennes"] },
+    { code: "4.3.2", label: "Énergies fossiles", sujets: ["Sortie du pétrole et du gaz", "Chauffage au fioul et au gaz", "Subventions aux énergies fossiles", "Interdiction des nouveaux forages", "Gaz de schiste", "Avenir des raffineries"] },
+    { code: "4.3.3", label: "Énergies vertes et nucléaire", sujets: ["Relance du nucléaire (EPR2, SMR)", "Déchets nucléaires (Cigéo)", "Éolien terrestre et en mer", "Solaire photovoltaïque", "Hydrogène", "Hydroélectricité et biogaz", "Acceptabilité locale des projets"] },
     { code: "4.4",   label: "Ressources et pollutions" },
-    { code: "4.4.1", label: "Usage des ressources" },
-    { code: "4.4.2", label: "Gestion de la pollution" },
+    { code: "4.4.1", label: "Usage des ressources", sujets: ["Forêts et filière bois", "Métaux critiques et mines (lithium)", "Pêche et ressources marines", "Sobriété matière"] },
+    { code: "4.4.2", label: "Gestion de la pollution", sujets: ["PFAS (polluants éternels)", "Pollution plastique", "Nitrates et algues vertes", "Sites et sols pollués"] },
     { code: "4.5",   label: "Biodiversité" },
-    { code: "4.5.1", label: "Protection de la biodiversité" },
+    { code: "4.5.1", label: "Protection de la biodiversité", sujets: ["Aires protégées et parcs nationaux", "Effondrement des insectes et pollinisateurs", "Loup, ours et grands prédateurs", "Chasse", "Restauration de la nature (règlement européen)", "Haies, bocage et zones humides", "Condition animale"] },
     /* 5. Géopolitique */
     { code: "5.1",   label: "Commerce international" },
-    { code: "5.1.1", label: "Ouverture commerciale" },
-    { code: "5.1.2", label: "Souveraineté économique" },
-    { code: "5.1.3", label: "Commerce équitable" },
+    { code: "5.1.1", label: "Ouverture commerciale", sujets: ["Accords commerciaux (CETA, Mercosur)", "Guerre commerciale et droits de douane américains", "Dépendances à la Chine", "Mécanisme carbone aux frontières (MACF)", "Avenir de l'OMC"] },
+    { code: "5.1.2", label: "Souveraineté économique", sujets: ["Contrôle des investissements étrangers", "Préférence européenne dans la commande publique", "Extraterritorialité du droit américain", "Sécurisation des matières premières critiques"] },
+    { code: "5.1.3", label: "Commerce équitable", sujets: ["Labels et certifications équitables", "Devoir de vigilance des multinationales", "Travail des enfants et travail forcé dans les chaînes d'approvisionnement", "Juste rémunération des producteurs du Sud", "Déforestation importée", "Aide au développement par le commerce"] },
     { code: "5.2",   label: "Migrations internationales" },
-    { code: "5.2.1", label: "Gestion des flux migratoires" },
-    { code: "5.2.2", label: "Accueil et intégration des migrants" },
-    { code: "5.2.3", label: "Sécurité aux frontières" },
+    { code: "5.2.1", label: "Gestion des flux migratoires", sujets: ["Régularisation des travailleurs sans papiers (métiers en tension)", "Regroupement familial", "Aide médicale d'État (AME)", "Pacte européen asile et migration", "Accords visas / laissez-passer avec les pays d'origine"] },
+    { code: "5.2.2", label: "Accueil et intégration des migrants", sujets: ["Apprentissage du français", "Hébergement des demandeurs d'asile", "Mineurs non accompagnés", "Accès au travail des demandeurs d'asile", "Naturalisation et droit du sol (Mayotte)", "Répartition territoriale de l'accueil"] },
+    { code: "5.2.3", label: "Sécurité aux frontières", sujets: ["Frontex et frontières extérieures de l'UE", "Rétablissement des contrôles intérieurs (Schengen)", "Lutte contre les passeurs", "Sauvetage en mer et drames en Méditerranée", "Externalisation des demandes d'asile", "Calais et traversées de la Manche"] },
     { code: "5.3",   label: "Diplomatie internationale" },
-    { code: "5.3.1", label: "Europe et intégration régionale" },
-    { code: "5.3.2", label: "Reste du monde" },
+    { code: "5.3.1", label: "Europe et intégration régionale", sujets: ["Élargissement de l'UE (Ukraine, Balkans)", "Fédéralisme vs Europe des nations", "Défense européenne et autonomie stratégique", "Budget européen et ressources propres", "Primauté du droit européen", "Couple franco-allemand"] },
+    { code: "5.3.2", label: "Reste du monde", sujets: ["Relations avec les États-Unis et l'OTAN", "Chine et Indopacifique", "Afrique (retrait du Sahel, Françafrance en question)", "Multilatéralisme et ONU", "Relations avec la Russie"] },
     { code: "5.4",   label: "Défense nationale" },
-    { code: "5.4.1", label: "Budget et équipement militaire" },
-    { code: "5.4.2", label: "Lutte contre le terrorisme" },
+    { code: "5.4.1", label: "Budget et équipement militaire", sujets: ["Loi de programmation militaire (objectif 2 % du PIB et au-delà)", "Dissuasion nucléaire", "Industrie de défense et exportations d'armes", "Réarmement européen", "Recrutement, réserve et service militaire", "Drones et guerre de haute intensité", "Économie de guerre"] },
+    { code: "5.4.2", label: "Lutte contre le terrorisme", sujets: ["Menace djihadiste", "Radicalisation en ligne et en prison", "Moyens du renseignement", "État d'urgence et libertés publiques", "Retour des djihadistes et de leurs familles", "Terrorismes d'ultradroite et d'ultragauche", "Plan Vigipirate et protection des sites"] },
     { code: "5.5",   label: "Justice climatique" },
-    { code: "5.5.1", label: "Justice climatique" }
+    { code: "5.5.1", label: "Justice climatique", sujets: ["Pertes et dommages", "Contentieux climatiques (Affaire du siècle)"] }
   ],
 
   /* ---------- LES 12 LIGNÉES (36 POLIMONS) ----------
@@ -184,6 +184,9 @@ const POLIMON_DATA = {
   lineages: [
     {
       id: 1, dresseur: "Fabien Roussel", parti: "PCF", elements: ["Acier", "Combat"],
+      statut: "Non déclaré", intentions: "<5%",
+      bioReelle: "Secrétaire national du PCF, candidat 2022 (2,3 %)",
+      faits: "Communisme « du travail et de la fête », gauche populaire",
       bio: "Dresseur de la vieille forge, il élève ses Polimons Acier et Combat à la sueur du travail collectif : chez lui, une idée se trempe comme un métal, dans l'effort partagé et la fête populaire.",
       dimsDetail: {},
       forms: [
@@ -200,7 +203,10 @@ const POLIMON_DATA = {
       }
     },
     {
-      id: 2, dresseur: "François Ruffin", parti: "Indépendant", elements: ["Feu", "Vol"],
+      id: 2, dresseur: "François Ruffin", parti: "Debout !", elements: ["Feu", "Vol"],
+      statut: "Non déclaré", intentions: "<5%",
+      bioReelle: "Député de la Somme, réalisateur de « Merci patron ! », ex-LFI",
+      faits: "Gauche du travail, ancrage populaire, rupture avec Mélenchon",
       bio: "Dresseur de terrain, il entraîne sa lignée Feu et Vol loin des grandes arènes, au plus près des ateliers et des ronds-points. Ses Polimons s'embrasent pour la dignité du travail et prennent de la hauteur sans oublier d'où ils décollent.",
       dimsDetail: {},
       forms: [
@@ -218,6 +224,9 @@ const POLIMON_DATA = {
     },
     {
       id: 3, dresseur: "Jean-Luc Mélenchon", parti: "LFI", elements: ["Feu", "Roche"],
+      statut: "Déclaré", intentions: "10-20%",
+      bioReelle: "Fondateur de LFI, 3e en 2022 avec ~22 %",
+      faits: "Refuse la primaire de gauche ; ligne de rupture",
       bio: "Dresseur volcanique, il fait gronder ses Polimons Feu et Roche jusqu'à l'éruption : pour lui, c'est le peuple assemblé qui fait trembler la terre et redessine le paysage politique.",
       dimsDetail: {},
       forms: [
@@ -235,6 +244,9 @@ const POLIMON_DATA = {
     },
     {
       id: 4, dresseur: "Olivier Faure", parti: "PS", elements: ["Sol", "Combat"],
+      statut: "Non déclaré", intentions: "?",
+      bioReelle: "Premier secrétaire du PS, député",
+      faits: "Arbitre de la primaire socialiste, ligne d'union",
       bio: "Dresseur patient des terres de compromis, il fait pousser ses Polimons Sol et Combat sur un terrain d'entente : solidarité collective d'un côté, émancipation de chacun de l'autre.",
       dimsDetail: {},
       forms: [
@@ -251,7 +263,10 @@ const POLIMON_DATA = {
       }
     },
     {
-      id: 5, dresseur: "Marine Tondelier", parti: "EELV", elements: ["Plante", "Fée"],
+      id: 5, dresseur: "Marine Tondelier", parti: "Les Écologistes", elements: ["Plante", "Fée"],
+      statut: "Non déclaré", intentions: "<5%",
+      bioReelle: "Secrétaire nationale des Écologistes",
+      faits: "A porté la refondation d'EELV ; ligne unitaire à gauche",
       bio: "Dresseuse-jardinière, elle cultive ses Polimons Plante et Fée dans le respect du vivant : chaque idée est une pousse qui ne grandit bien que si tout l'écosystème autour d'elle prospère.",
       dimsDetail: {},
       forms: [
@@ -269,6 +284,9 @@ const POLIMON_DATA = {
     },
     {
       id: 6, dresseur: "Raphaël Glucksmann", parti: "Place Publique", elements: ["Électrik", "Sol"],
+      statut: "Non déclaré", intentions: "5-15%",
+      bioReelle: "Eurodéputé, tête de liste PS-PP aux européennes 2024 (~14 %)",
+      faits: "Social-démocrate pro-européen, ligne anti-autoritaire",
       bio: "Dresseur sentinelle, il charge ses Polimons Électrik et Sol pour défendre les arènes démocratiques : vigilance permanente, règles communes et alliances par-delà les frontières.",
       dimsDetail: {},
       forms: [
@@ -285,7 +303,10 @@ const POLIMON_DATA = {
       }
     },
     {
-      id: 7, dresseur: "Gabriel Attal", parti: "Renaissance", elements: ["Électrik", "Psy"],
+      id: 7, dresseur: "Gabriel Attal", parti: "Renaissance / bloc central", elements: ["Électrik", "Psy"],
+      statut: "Déclaré", intentions: "10-20%",
+      bioReelle: "Plus jeune Premier ministre de la Ve République (2024), patron de Renaissance",
+      faits: "Incarne la relève macroniste ; méritocratie et innovation",
       bio: "Dresseur véloce, il entraîne ses Polimons Électrik et Psy à la vitesse de l'éclair : mérite, innovation et esprit de compétition sont ses techniques favorites.",
       dimsDetail: {},
       forms: [
@@ -303,6 +324,9 @@ const POLIMON_DATA = {
     },
     {
       id: 8, dresseur: "Édouard Philippe", parti: "Horizons", elements: ["Eau", "Vol"],
+      statut: "Déclaré", intentions: "10-20%",
+      bioReelle: "Premier ministre 2017-2020, maire du Havre, fondateur d'Horizons",
+      faits: "Premier grand candidat déclaré ; droite modérée pragmatique",
       bio: "Dresseur du grand large, il navigue avec ses Polimons Eau et Vol dans la brume du Havre : cap pragmatique, autorité tranquille et manœuvres calculées.",
       dimsDetail: {},
       forms: [
@@ -320,6 +344,9 @@ const POLIMON_DATA = {
     },
     {
       id: 9, dresseur: "Laurent Wauquiez", parti: "LR", elements: ["Eau", "Combat"],
+      statut: "Non déclaré", intentions: "?",
+      bioReelle: "Président du groupe Droite Républicaine à l'Assemblée, ex-président d'AuRA",
+      faits: "Battu pour la désignation LR ; garde ses ambitions",
       bio: "Dresseur des hauts plateaux, il endurcit ses Polimons Eau et Combat à la rude école de la montagne : travail, ordre et défense des intérêts vitaux du territoire.",
       dimsDetail: {},
       forms: [
@@ -337,6 +364,9 @@ const POLIMON_DATA = {
     },
     {
       id: 10, dresseur: "Marine Le Pen", parti: "RN", elements: ["Glace", "Acier"],
+      statut: "Déclaré", intentions: "30-40%",
+      bioReelle: "Finaliste 2017 et 2022, cheffe des députés RN",
+      faits: "Condamnation avec inéligibilité en appel ; Bardella en plan B",
       bio: "Dresseuse des terres gelées, elle protège ses Polimons Glace et Acier derrière des frontières cristallines : pour elle, la communauté nationale passe avant tout le reste.",
       dimsDetail: {},
       forms: [
@@ -354,6 +384,9 @@ const POLIMON_DATA = {
     },
     {
       id: 11, dresseur: "Jordan Bardella", parti: "RN", elements: ["Glace", "Acier"],
+      statut: "Non déclaré", intentions: "30-40%",
+      bioReelle: "Président du RN, tête de liste européennes 2024 (31 %)",
+      faits: "Candidat de substitution si l'inéligibilité de Le Pen est confirmée",
       bio: "Jeune dresseur de la lignée polaire, il modernise les techniques de la banquise : ses Polimons Glace et Acier avancent en formation serrée, portés par les réseaux et la relève.",
       dimsDetail: {},
       forms: [
@@ -371,6 +404,9 @@ const POLIMON_DATA = {
     },
     {
       id: 12, dresseur: "Éric Zemmour", parti: "Reconquête", elements: ["Glace", "Psy"],
+      statut: "Non déclaré", intentions: "<5%",
+      bioReelle: "Candidat 2022 (7 %), essayiste",
+      faits: "Thème du « grand remplacement », concurrence du RN",
       bio: "Dresseur hypnotiseur, il fait miroiter à ses Polimons Glace et Psy le souvenir d'une civilisation idéalisée : illusions, mirages et batailles de mémoire sont son terrain de prédilection.",
       dimsDetail: {},
       forms: [
@@ -384,6 +420,23 @@ const POLIMON_DATA = {
         economie:     "L'économie est un instrument de puissance nationale protégeant les intérêts français.",
         ecologie:     "La nature est une préoccupation secondaire face à l'urgence de survie civilisationnelle.",
         geopolitique: "La France est une civilisation en guerre défensive contre déclin et remplacement."
+      }
+    }
+    ,{
+      id: 13, dresseur: "Bruno Retailleau", parti: "LR", elements: ["Eau", "Acier"],
+      statut: "Déclaré", intentions: "5-15%",
+      bioReelle: "Ministre de l'Intérieur, ancien chef des sénateurs LR, vendéen",
+      faits: "Ligne droite dure : sécurité, immigration, autorité",
+      bio: "Dresseur vendéen à la ligne claire, il forge ses Polimons Eau et Acier dans la discipline : chez lui, l'ordre est la première des libertés et l'autorité le premier des remparts.",
+      dimsDetail: {},
+      forms: [
+        { code: 37, name: "Hameçono" },
+        { code: 38, name: "Harpono" },
+        { code: 39, name: "Torpilleau" }
+      ],
+      dims: {
+        individu: "TBD", societe: "TBD", economie: "TBD",
+        ecologie: "TBD", geopolitique: "TBD"
       }
     }
   ],

@@ -55,9 +55,59 @@ let sceneObserver = null;
 function observeScenes(){
   if(sceneObserver) return;
   sceneObserver = new IntersectionObserver(entries => {
-    entries.forEach(en => { if(en.isIntersecting) en.target.classList.add('on'); });
+    entries.forEach(en => { if(en.isIntersecting) activateScene(en.target); });
   }, {threshold:0.18});
   document.querySelectorAll('.scene').forEach(sc => sceneObserver.observe(sc));
+}
+function activateScene(sc){
+  if(sc.classList.contains('on')) return;
+  sc.classList.add('on');
+  startTyping(sc);
+}
+
+/* ============ MACHINE À ÉCRIRE FAÇON GAME BOY ============
+   Le texte des dialogues s'écrit lettre à lettre quand la scène
+   apparaît. Un clic sur la bulle affiche tout instantanément.
+   Désactivée si l'utilisateur préfère réduire les animations. */
+const REDUCED_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+function startTyping(scene){
+  if(REDUCED_MOTION) return;
+  scene.querySelectorAll('.pxbox.dialog').forEach((box, i) => {
+    setTimeout(() => typeDialog(box), 260 + i * 700);
+  });
+}
+function typeDialog(box){
+  if(box.dataset.typed) return;
+  box.dataset.typed = '1';
+  const nodes = [];
+  (function collect(el){
+    el.childNodes.forEach(n => {
+      if(n.nodeType === 3) nodes.push({ n, text: n.textContent });
+      else if(n.nodeType === 1 && !n.classList.contains('speaker') && !n.classList.contains('arrow')) collect(n);
+    });
+  })(box);
+  const total = nodes.reduce((s, x) => s + x.text.length, 0);
+  if(!total) return;
+  nodes.forEach(x => x.n.textContent = '');
+  box.classList.add('typing');
+  const step = total > 260 ? 3 : 2;          // textes longs : un peu plus vite
+  let ni = 0, ci = 0;
+  const finish = () => {
+    nodes.forEach(x => x.n.textContent = x.text);
+    box.classList.remove('typing');
+    clearInterval(timer);
+    box.removeEventListener('click', finish);
+  };
+  box.addEventListener('click', finish);
+  const timer = setInterval(() => {
+    for(let k = 0; k < step; k++){
+      if(ni >= nodes.length) return finish();
+      const cur = nodes[ni];
+      ci++;
+      cur.n.textContent = cur.text.slice(0, ci);
+      if(ci >= cur.text.length){ ni++; ci = 0; }
+    }
+  }, 16);
 }
 /* Choix du starter : la Pokéball s'agite, s'ouvre dans un flash,
    puis révèle le Polimon. */
@@ -84,7 +134,7 @@ function selectStarter(el){
     img.src = 'images/story/ep1/' + files[el.dataset.branch];
     scene.hidden = false;
     scene.classList.remove('on');
-    requestAnimationFrame(() => requestAnimationFrame(() => scene.classList.add('on')));
+    requestAnimationFrame(() => requestAnimationFrame(() => activateScene(scene)));
   }
   const r = document.getElementById('starter-reponse');
   r.classList.add('show');
@@ -268,13 +318,17 @@ function statBars(p){
    perd 20 PV. À la fin, le vainqueur est célébré. */
 
 const COMBAT_LEVEL = 1;
+/* un Polimon ne peut combattre que si ses 5 idées sont écrites */
+function dimsComplete(p){
+  return DIMENSIONS.every(d => p.dims[d.key] && p.dims[d.key] !== 'TBD');
+}
 const PV_MAX = 100, PV_HIT = 20;
 let fight = null;   /* état du combat en cours (null = pas de combat) */
 
 function say(text){ document.getElementById('battle-msg').textContent = text; }
 
 function fillSelects(){
-  const pool = POLIMONS.filter(p => p.level === COMBAT_LEVEL);
+  const pool = POLIMONS.filter(p => p.level === COMBAT_LEVEL && dimsComplete(p));
   const opts = sel => pool.map((p,i) =>
     `<option value="${p.code}" ${i===sel?'selected':''}>#${pad3(p.code)} ${p.name.toUpperCase()} — ${p.dresseur.toUpperCase()}</option>`).join('');
   document.getElementById('selA').innerHTML = opts(0);
@@ -500,23 +554,32 @@ function initDresseurs(){
   grid.innerHTML = '';
   LINEAGES.forEach(l => {
     const c1 = ELEMENTS[l.elements[0]];
-    const card = document.createElement('div');
-    card.className = 'trainer-mini';
-    card.tabIndex = 0;
-    card.setAttribute('role', 'button');
-    card.style.setProperty('--c1', c1.color);
-    card.innerHTML = `
-      <div class="tm-name">${l.dresseur.toUpperCase()}</div>
-      <div class="tm-el">${l.elements.map(e => {
+    const statutCls = l.statut === 'Déclaré' ? 'ok' : 'soon';
+    const bar = document.createElement('div');
+    bar.className = 'trainer-bar';
+    bar.tabIndex = 0;
+    bar.setAttribute('role', 'button');
+    bar.style.setProperty('--c1', c1.color);
+    bar.innerHTML = `
+      <div class="tb-id">
+        <div class="tb-name">${l.dresseur.toUpperCase()}</div>
+        <div class="tb-parti">${l.parti}</div>
+      </div>
+      <div class="tb-el">${l.elements.map(e => {
         const d = ELEMENTS[e];
         return `<span class="tag" style="background:${d.color}">${d.emoji} ${e.toUpperCase()}</span>`;
-      }).join('')}</div>`;
-    card.insertBefore(trainerAvatar(l, 't-avatar tm-avatar'), card.firstChild);
-    card.onclick = () => openDresseur(l.id);
-    card.addEventListener('keydown', e => {
-      if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); card.click(); }
+      }).join('')}</div>
+      <div class="tb-badges">
+        ${l.statut ? `<span class="stat ${statutCls}">${l.statut.toUpperCase()}</span>` : ''}
+        ${l.intentions && l.intentions !== '?' ? `<span class="tb-int">${l.intentions}</span>` : ''}
+      </div>
+      <div class="tb-go">▸</div>`;
+    bar.insertBefore(trainerAvatar(l, 't-avatar tb-avatar'), bar.firstChild);
+    bar.onclick = () => openDresseur(l.id);
+    bar.addEventListener('keydown', e => {
+      if(e.key === 'Enter'){ e.preventDefault(); bar.click(); }
     });
-    grid.appendChild(card);
+    grid.appendChild(bar);
   });
 }
 
@@ -525,6 +588,7 @@ function openDresseur(id){
   const l = LINEAGES.find(x => x.id === id);
   if(!l) return;
   const c = document.getElementById('fiche-content');
+  const statutCls = l.statut === 'Déclaré' ? 'ok' : 'soon';
   c.innerHTML = `
     <div class="t-head">
       <div class="t-avatar" id="dr-avatar"></div>
@@ -535,8 +599,14 @@ function openDresseur(id){
           const d = ELEMENTS[e];
           return `<span class="tag" style="background:${d.color}">${d.emoji} ${e.toUpperCase()}</span>`;
         }).join('')}</div>
+        <div class="t-badges">
+          ${l.statut ? `<span class="stat ${statutCls}">${l.statut.toUpperCase()}</span>` : ''}
+          ${l.intentions && l.intentions !== '?' ? `<span class="stat soon">INTENTIONS DE VOTE : ${l.intentions}</span>` : ''}
+        </div>
       </div>
     </div>
+    ${l.bioReelle ? `<h4>QUI EST-CE ?</h4><p class="t-fact">${l.bioReelle}. ${l.faits ? l.faits + '.' : ''}</p>` : ''}
+    <h4>SON PROFIL DE DRESSEUR</h4>
     <p class="t-bio">${l.bio || ''}</p>
     <h4>SA LIGNÉE « 3P »</h4>
     <div class="t-lineup">
@@ -552,8 +622,38 @@ function openDresseur(id){
     const p = byCode(+el.dataset.code);
     el.insertBefore(spriteNode(p, 72), el.firstChild);
   });
-  document.getElementById('fiche-overlay').classList.add('open');
-  document.body.style.overflow = 'hidden';
+  openScreen('CARTE DRESSEUR');
+}
+
+/* Dimensions affichées selon le niveau du Polimon :
+   niv.1 → les 5 dimensions ; niv.2 → les 25 sous-dimensions (X.Y) ;
+   niv.3 → les 59 thèmes (X.Y.Z) avec leurs sujets clés. Les contenus
+   manquants affichent « À compléter — TBD ». */
+function dimsSection(p){
+  const TBD = '<i class="wip-txt">À compléter — TBD</i>';
+  if(p.level === 1){
+    return `<h4>LES 5 DIMENSIONS — PHILOSOPHIE</h4>` +
+      DIMENSIONS.map(d => `
+        <div class="dim-row"><b>${d.icon} ${d.num}. ${d.label}</b>
+        <p>${(p.dims[d.key] && p.dims[d.key] !== 'TBD') ? p.dims[d.key] : TBD}</p></div>`).join('');
+  }
+  const subs   = POLIMON_DATA.sousDimensions || [];
+  const detail = (LINEAGES.find(l => l.id === p.lineage).dimsDetail) || {};
+  const depth  = p.level === 2 ? 2 : 3;
+  const title  = depth === 2 ? 'LES 25 SOUS-DIMENSIONS — PERSPECTIVE' : 'LES 59 THÈMES — PROGRAMME';
+  return `<h4>${title}</h4>` + DIMENSIONS.map(d => {
+    const rows = subs.filter(s => s.code.split('.').length === depth && s.code.startsWith(d.num + '.'));
+    return `
+      <details class="dim-group">
+        <summary>${d.icon} ${d.num}. ${d.label.toUpperCase()} (${rows.length})</summary>
+        ${(p.dims[d.key] && p.dims[d.key] !== 'TBD') ? `<p class="dim-intro">${p.dims[d.key]}</p>` : ''}
+        ${rows.map(s => `
+          <div class="dim-row"><b>${s.code} — ${s.label}</b>
+          <p>${(detail[s.code] && detail[s.code] !== 'TBD') ? detail[s.code] : TBD}</p>
+          ${s.sujets && s.sujets.length ? `<div class="sujets">${s.sujets.map(t => `<span>${t}</span>`).join('')}</div>` : ''}
+          </div>`).join('')}
+      </details>`;
+  }).join('');
 }
 
 /* fiche */
@@ -591,7 +691,15 @@ function openFiche(code){
   c.querySelectorAll('.mini').forEach(m => {
     m.appendChild(spriteNode(byCode(+m.dataset.code), 64));
   });
-  document.getElementById('fiche-overlay').classList.add('open');
+  openScreen('FICHE POLIMON');
+}
+/* Ouvre l'écran plein page (fiche Polimon ou carte dresseur) */
+function openScreen(label){
+  const ov = document.getElementById('fiche-overlay');
+  const lab = document.getElementById('screen-label');
+  if(lab) lab.textContent = label;
+  ov.classList.add('open');
+  ov.scrollTop = 0;
   document.body.style.overflow = 'hidden';
 }
 function closeFiche(){

@@ -534,11 +534,9 @@ footer .px{font-family:'Press Start 2P',monospace;font-size:8px;color:var(--jaun
    de terre vertical (Sachez marche dessus pendant le scroll). */
 #aventure{
   background:
-    url(../images/map-path.png) repeat-y 42px 0,
-    url(../images/map-grass.png) repeat;
-}
-@media(max-width:1023px){
-  #aventure{background:url(../images/map-grass.png) repeat;}
+    url(../images/map-path.png) repeat-y 34px 0,
+    url(../images/map-village.png) repeat;
+  background-size:104px auto, 1280px;
 }
 /* le hero garde sa lisibilité : voile sombre au-dessus de la carte */
 .hero{
@@ -556,7 +554,7 @@ footer .px{font-family:'Press Start 2P',monospace;font-size:8px;color:var(--jaun
   position:fixed;left:52px;top:44vh;z-index:60;pointer-events:none;
   filter:drop-shadow(0 6px 0 rgba(0,0,0,.35));
 }
-#walker img{width:74px;display:block;}
+#walker img{width:62px;display:block;}
 @keyframes walk-bob{
   0%{transform:translateY(0) rotate(-2deg);}
   50%{transform:translateY(-4px) rotate(2deg);}
@@ -683,3 +681,6 @@ footer .px{font-family:'Press Start 2P',monospace;font-size:8px;color:var(--jaun
 #fiche-content .t-bio{min-height:0;}
 #fiche-content .t-lineup{max-width:460px;}
 #fiche-content .t-poli img,#fiche-content .t-poli canvas{width:72px;height:72px;}
+
+/* lisibilité des cartons de titre sur la carte village */
+.titlecard .ep,.titlecard h3{text-shadow:2px 2px 0 rgba(0,0,0,.55);}

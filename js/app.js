@@ -336,12 +336,15 @@ function fillSelects(){
 }
 
 /* Plaque d'info : nom, éléments, barre de PV animée */
-function plate(p, elId, pv){
+function plate(p, elId, pv, wins){
+  wins = wins || 0;
+  const balls = Array.from({length: DIMENSIONS.length}, (_, k) =>
+    `<span class="ball ${k < wins ? 'full' : ''}"></span>`).join('');
   document.getElementById(elId).innerHTML = `
-    <div class="pl-name"><span>${p.name.toUpperCase()}</span><span class="pl-lvl">${'★'.repeat(p.level)}</span></div>
-    <div class="pl-el">${p.elements.map(e => ELEMENTS[e].emoji + ' ' + e.toUpperCase()).join(' · ')}
-      — ${p.dresseur} (${p.parti})</div>
-    <div class="pl-hp"><span>PV</span><div class="pl-bar"><div style="width:${pv}%;${pv<=40?'background:#c03028;':''}"></div></div><span class="pl-pv">${pv}</span></div>`;
+    <div class="pl-name">${p.name.toUpperCase()} <span class="pl-l">:N${p.level}</span></div>
+    <div class="pl-sub">${p.dresseur}</div>
+    <div class="pl-hp"><span>PV:</span><div class="pl-bar"><div style="width:${pv}%;${pv<=40?'background:#c03028;':''}"></div></div></div>
+    <div class="pl-foot"><span class="pl-balls">${balls}</span><span class="pl-pv">${pv}/ ${PV_MAX}</span></div>`;
 }
 function updatePv(elId, pv){
   const box = document.getElementById(elId);
@@ -363,6 +366,16 @@ function battleSprite(p, slotId, enter){
   if(enter){ void slot.offsetWidth; slot.classList.add('enter'); }
 }
 
+function showEl(id, on){ document.getElementById(id).classList.toggle('gone', !on); }
+/* Sprite du dresseur sur la scène d'intro */
+function trainerSprite(p, slotId){
+  const slot = document.getElementById(slotId);
+  const l = LINEAGES.find(x => x.id === p.lineage);
+  slot.className = slot.className.replace(/\bexit\b/g, '').trim();
+  slot.innerHTML = '';
+  if(l) slot.appendChild(trainerAvatar(l, 'battle-tr'));
+}
+
 function combatants(){
   return {
     a: byCode(+document.getElementById('selA').value),
@@ -375,11 +388,14 @@ function renderIdle(){
   const {a, b} = combatants();
   if(!a || !b) return;
   plate(a, 'plateA', PV_MAX); plate(b, 'plateB', PV_MAX);
-  battleSprite(a, 'sprA'); battleSprite(b, 'sprB');
+  trainerSprite(b, 'trFoe'); trainerSprite(a, 'trAlly');
+  showEl('trFoe', true); showEl('trAlly', true);
+  showEl('sprA', false); showEl('sprB', false);
+  showEl('plateA', false); showEl('plateB', false);
   document.getElementById('compare').innerHTML = '';
   say(a.code === b.code
     ? 'Un Polimon ne peut pas affronter son propre reflet… choisis deux idées différentes !'
-    : 'Prêt ? Lance le combat des idées !');
+    : `${b.dresseur.toUpperCase()} te défie ! Lance le combat des idées.`);
 }
 function onCombatSelect(){ if(!fight) renderIdle(); }
 
@@ -395,16 +411,30 @@ function initCombat(){ fillSelects(); renderIdle(); }
 function startCombat(){
   const {a, b} = combatants();
   if(!a || !b || a.code === b.code){ renderIdle(); return; }
-  fight = { a, b, pvA: PV_MAX, pvB: PV_MAX, round: 0, picks: [], busy: true };
+  fight = { a, b, pvA: PV_MAX, pvB: PV_MAX, winsA: 0, winsB: 0, round: 0, picks: [], busy: true };
   setCombatControls(false);
   document.getElementById('compare').innerHTML = '';
-  battleSprite(b, 'sprB', true);
-  say(`Un ${b.name.toUpperCase()} sauvage apparaît !`);
+  /* 1. face-à-face des dresseurs */
+  say(`${b.dresseur.toUpperCase()} VEUT SE BATTRE !`);
+  /* 2. le dresseur adverse envoie son Polimon */
   setTimeout(() => {
+    document.getElementById('trFoe').classList.add('exit');
+    setTimeout(() => showEl('trFoe', false), 500);
+    showEl('sprB', true); showEl('plateB', true);
+    battleSprite(b, 'sprB', true);
+    plate(b, 'plateB', PV_MAX, 0);
+    say(`${b.dresseur.toUpperCase()} envoie ${b.name.toUpperCase()} !`);
+  }, 1500);
+  /* 3. ton dresseur envoie le sien */
+  setTimeout(() => {
+    document.getElementById('trAlly').classList.add('exit');
+    setTimeout(() => showEl('trAlly', false), 500);
+    showEl('sprA', true); showEl('plateA', true);
     battleSprite(a, 'sprA', true);
-    say(`${a.name.toUpperCase()} ! Le combat des idées commence !`);
-  }, 1300);
-  setTimeout(() => { fight.busy = false; nextRound(); }, 2600);
+    plate(a, 'plateA', PV_MAX, 0);
+    say(`En avant, ${a.name.toUpperCase()} !`);
+  }, 3000);
+  setTimeout(() => { fight.busy = false; nextRound(); }, 4400);
 }
 
 function nextRound(){
@@ -443,12 +473,14 @@ function pickIdea(winSide){
     c.classList.add('revealed', c.dataset.side === winSide ? 'picked' : 'lost');
     c.onclick = null;
   });
-  /* dégâts */
+  /* dégâts + Pokéball gagnée */
   if(loseSide === 'a') fight.pvA -= PV_HIT; else fight.pvB -= PV_HIT;
+  if(winSide === 'a') fight.winsA++; else fight.winsB++;
   const slot = document.getElementById(loseSide === 'a' ? 'sprA' : 'sprB');
   slot.classList.add('hit');
   setTimeout(() => slot.classList.remove('hit'), 650);
-  updatePv(loseSide === 'a' ? 'plateA' : 'plateB', loseSide === 'a' ? fight.pvA : fight.pvB);
+  plate(fight.a, 'plateA', fight.pvA, fight.winsA);
+  plate(fight.b, 'plateB', fight.pvB, fight.winsB);
   say(`L'idée de ${winP.name.toUpperCase()} l'emporte ! ${loseP.name.toUpperCase()} perd ${PV_HIT} PV.`);
   fight.picks.push({ dim: d, winner: winP });
   /* bouton continuer */
@@ -669,7 +701,10 @@ function openFiche(code){
         <h3>#${pad3(p.code)} ${p.name.toUpperCase()}</h3>
         <div class="sub">
           ${elTags(p)}<br><br>
-          Dresseur : <b>${p.dresseur}</b> — ${p.parti}<br>
+          <span class="dr-link" onclick="openDresseur(${p.lineage})" tabindex="0" role="button">
+            <span class="dr-av" id="fh-drav"></span>
+            Dresseur : <b>${p.dresseur}</b> — ${p.parti} <span class="dr-arrow">▸</span>
+          </span><br>
           Niveau ${p.level} · <b>${lvlInfo(p.level).label}</b> — ${lvlInfo(p.level).desc}
         </div>
       </div>
@@ -688,6 +723,9 @@ function openFiche(code){
     <div class="statbars" style="max-width:none;">${st.bars}</div>
     ${st.note}`;
   c.querySelector('.fiche-head .spr').appendChild(spriteNode(p, 132));
+  const lch = LINEAGES.find(x => x.id === p.lineage);
+  const drav = c.querySelector('#fh-drav');
+  if(lch && drav) drav.replaceWith(trainerAvatar(lch, 't-avatar dr-avatar-mini'));
   c.querySelectorAll('.mini').forEach(m => {
     m.appendChild(spriteNode(byCode(+m.dataset.code), 64));
   });

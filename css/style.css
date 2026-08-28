@@ -793,3 +793,115 @@ footer .px{font-family:'Press Start 2P',monospace;font-size:8px;color:var(--jaun
 /* correctif mobile : la fiche ne déborde plus */
 .fiche{width:auto;}
 #fiche-overlay{overflow-x:hidden;}
+
+/* ============ Portraits des dresseurs ============ */
+.t-avatar img{object-fit:cover;object-position:top center;}
+.pl-top{display:flex;gap:10px;align-items:flex-start;}
+.pl-avatar{width:38px;height:38px;flex:none;border-width:2px;}
+.pl-avatar .initials{font-size:9px;}
+.pl-main{flex:1;min-width:0;}
+.dr-link{
+  display:inline-flex;align-items:center;gap:8px;cursor:pointer;
+  border:2px solid #494950;background:var(--noir);padding:5px 10px 5px 5px;margin:6px 0;
+  transition:border-color .15s;
+}
+.dr-link:hover,.dr-link:focus-visible{border-color:var(--jaune);outline:none;}
+.dr-link .dr-arrow{color:var(--jaune);}
+.dr-avatar-mini{width:30px;height:30px;flex:none;border-width:2px;}
+.dr-avatar-mini .initials{font-size:8px;}
+
+/* ============================================================
+   v12 — COMBAT façon écran Game Boy (plaques noires, Pokéballs)
+   ============================================================ */
+.gone{display:none !important;}
+.battle{
+  background:
+    repeating-linear-gradient(0deg, rgba(0,0,0,.03) 0 2px, transparent 2px 4px),
+    #eef0e0;
+  height:430px;
+}
+/* plaques : texte noir, arête soulignée + flèche, barre pilule */
+.plate{
+  background:transparent;border:none;box-shadow:none;padding:0;min-width:250px;color:var(--noir);
+}
+.plate-foe{top:24px;left:5%;}
+.plate-ally{bottom:104px;right:5%;}
+.pl-name{
+  font-family:'Press Start 2P',monospace;font-size:11px;color:var(--noir);
+  display:block;letter-spacing:1px;line-height:1.7;
+}
+.pl-name .pl-l{font-size:9px;color:#3a3a34;}
+.pl-sub{font-size:.78rem;color:#5a5a52;margin:2px 0 7px;}
+.pl-hp{display:flex;align-items:center;gap:7px;margin:0;}
+.pl-hp span{font-family:'Press Start 2P',monospace;font-size:8px;color:var(--noir);}
+.pl-bar{
+  flex:1;height:10px;background:#fffef5;border:2px solid var(--noir);border-radius:7px;overflow:hidden;
+}
+.pl-bar div{height:100%;width:100%;background:#3f6b3a;transition:width .6s ease, background .3s;}
+.pl-foot{
+  display:flex;justify-content:space-between;align-items:center;margin-top:7px;
+  border-bottom:3px solid var(--noir);padding-bottom:7px;position:relative;
+}
+.pl-foot::after{
+  content:"";position:absolute;bottom:-10px;width:0;height:0;
+  border-top:8px solid var(--noir);
+}
+.plate-foe .pl-foot::after{right:-2px;border-left:10px solid transparent;}
+.plate-ally .pl-foot::after{left:-2px;border-right:10px solid transparent;}
+.pl-pv{font-family:'Press Start 2P',monospace;font-size:9px;color:var(--noir);min-width:0;text-align:right;}
+.pl-balls{display:inline-flex;gap:5px;}
+.pl-balls .ball{
+  width:11px;height:11px;border:2px solid var(--noir);border-radius:50%;background:#fffef5;display:inline-block;
+}
+.pl-balls .ball.full{background:var(--noir);}
+/* dresseurs sur la scène d'intro */
+.trainer-slot{position:absolute;z-index:1;transition:transform .5s steps(6), opacity .5s;}
+.trainer-slot.t-foe{top:30px;right:8%;}
+.trainer-slot.t-ally{bottom:100px;left:8%;}
+.trainer-slot.t-foe.exit{transform:translateX(180px);opacity:0;}
+.trainer-slot.t-ally.exit{transform:translateX(-180px);opacity:0;}
+.battle-tr{width:auto;height:190px;border:none;background:transparent;display:block;flex:none;}
+.battle-tr img{width:auto;height:190px;object-fit:contain;image-rendering:pixelated;}
+.battle-tr .initials{
+  font-family:'Press Start 2P',monospace;font-size:16px;color:var(--noir);
+  display:flex;align-items:center;justify-content:center;width:120px;height:150px;
+  border:4px solid var(--noir);background:#fffef5;
+}
+/* sprites : cadre discret sur fond pâle */
+.spr-frame{box-shadow:4px 6px 0 rgba(0,0,0,.18);}
+.spr-slot::after{background:#c9cdb4;opacity:.9;}
+/* boîte de message : double cadre clair façon GB */
+.battle-msg{
+  background:#fffef5;color:var(--noir);border-top:none;
+  border:4px solid var(--noir);outline:3px solid #fffef5;outline-offset:-9px;
+  box-shadow:inset 0 0 0 5px #fffef5, inset 0 0 0 7px var(--noir);
+  font-size:10px;padding:18px 22px;min-height:70px;
+}
+/* ============ COMBAT MOBILE : plus aucun chevauchement ============ */
+@media(max-width:680px){
+  .battle{
+    position:relative;height:auto;min-height:0;
+    display:grid;grid-template-columns:1fr auto;gap:12px 10px;align-items:center;
+    grid-template-areas:
+      "pf sf"
+      "sa pa"
+      "msg msg";
+    padding:16px 12px 14px;
+  }
+  .plate,.spr-slot,.trainer-slot,.battle-msg{position:static;}
+  .plate{min-width:0;width:100%;}
+  .plate-foe{grid-area:pf;}
+  .plate-ally{grid-area:pa;}
+  .spr-slot.foe,.trainer-slot.t-foe{grid-area:sf;justify-self:end;}
+  .spr-slot.ally,.trainer-slot.t-ally{grid-area:sa;justify-self:start;}
+  .battle-msg{grid-area:msg;margin-top:6px;}
+  .spr-slot canvas,.spr-slot img{width:104px !important;height:104px !important;}
+  .spr-slot::after{display:none;}
+  .battle-tr,.battle-tr img{height:120px;}
+  .battle-tr .initials{width:86px;height:104px;font-size:12px;}
+  .trainer-slot.t-foe.exit{transform:translateX(90px);opacity:0;}
+  .trainer-slot.t-ally.exit{transform:translateX(-90px);opacity:0;}
+  .pl-name{font-size:9px;}
+  .pl-pv{font-size:8px;}
+  .fight-cta .btn{width:100%;}
+}

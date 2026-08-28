@@ -127,7 +127,7 @@ function selectStarter(el){
   el.classList.add('chosen');
   if(el.dataset.name) el.querySelector('.ballrow').textContent = el.dataset.name;
   /* révèle la fin alternative correspondant au compagnon choisi */
-  const files = { a: '11a-chosen-leaf.webp', b: '11b-chosen-stone.webp', c: '11c-chosen-ember.webp' };
+  const files = { a: '11a-chosen-voltatal.webp', b: '11b-chosen-melava.webp', c: '11c-chosen-marinej.webp' };
   const scene = document.getElementById('branch-scene');
   const img   = document.getElementById('branch-img');
   if(scene && files[el.dataset.branch]){

@@ -445,7 +445,7 @@ const POLIMON_DATA = {
      status : "ok" = disponible, "soon" = à venir */
   chapters: [
     { num: "01", title: "RETOUR EN CLASSE", desc: "Sachez découvre les Polimons auprès du Professeur Chen.", status: "ok" },
-    { num: "02", title: "CONFRONTATION",    desc: "Ton Polimon affronte ses premières idées contraires… Version variable selon le Polimon choisi.", status: "soon" },
+    { num: "02", title: "CONFRONTATION",    desc: "Ton Polimon affronte ses premières idées contraires… Aperçu disponible, histoire complète à venir.", status: "ok" },
     { num: "03", title: "CONSÉCRATION",     desc: "Le chemin vers l'Élysée se dessine.", status: "soon" }
   ]
 };

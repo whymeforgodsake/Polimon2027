@@ -111,8 +111,9 @@ function typeDialog(box){
 }
 /* Choix du starter : la Pokéball s'agite, s'ouvre dans un flash,
    puis révèle le Polimon. */
+let starterChosen = false;   /* le choix est définitif */
 function chooseStarter(el){
-  if(el.classList.contains('opened')){ selectStarter(el); return; }
+  if(starterChosen) return;                       /* choix verrouillé */
   if(el.classList.contains('opening')) return;
   el.classList.add('opening');
   el.querySelector('.pokeball').classList.add('shaking');
@@ -123,9 +124,21 @@ function chooseStarter(el){
   }, 950);
 }
 function selectStarter(el){
-  document.querySelectorAll('.starter').forEach(s => s.classList.remove('chosen'));
+  starterChosen = true;
+  document.querySelectorAll('.starter').forEach(s => {
+    s.classList.remove('chosen');
+    if(s !== el) s.classList.add('locked');       /* les autres se grisent */
+  });
   el.classList.add('chosen');
   if(el.dataset.name) el.querySelector('.ballrow').textContent = el.dataset.name;
+  /* le compagnon choisi suit Sachez sur la carte */
+  const codes = { a: 7, b: 3, c: 10 };
+  const follower = document.getElementById('follower');
+  if(follower && codes[el.dataset.branch]){
+    document.getElementById('follower-img').src =
+      'images/story/polimon-smallonmap-' + codes[el.dataset.branch] + '.png';
+    follower.hidden = false;
+  }
   /* révèle la fin alternative correspondant au compagnon choisi */
   const files = { a: '11a-chosen-voltatal.webp', b: '11b-chosen-melava.webp', c: '11c-chosen-marinej.webp' };
   const scene = document.getElementById('branch-scene');
@@ -162,6 +175,48 @@ function initParallax(){
     if(!ticking){ ticking = true; requestAnimationFrame(update); }
   }, {passive: true});
   update();
+}
+
+/* ============ EXPLORATEUR D'IDÉES (scène du choix) ============
+   Survole (ou touche) une dimension pour lire l'idée du Polimon. */
+function initExplorer(){
+  const box = document.getElementById('idea-explorer');
+  if(!box) return;
+  const codes = [7, 3, 10];   /* Voltatal, Melava, Marinej */
+  box.innerHTML = `
+    <div class="ie-grid">
+      ${codes.map(c => {
+        const p = byCode(c);
+        return `<div class="ie-col">
+          <div class="ie-head" data-code="${c}"></div>
+          <div class="ie-name">${p.name.toUpperCase()}</div>
+          <div class="ie-chips">
+            ${DIMENSIONS.map(d => `
+              <button class="ie-chip" data-code="${c}" data-dim="${d.key}"
+                aria-label="${p.name} — ${d.label}">${d.icon}<span>${d.label}</span></button>`).join('')}
+          </div>
+        </div>`;
+      }).join('')}
+    </div>
+    <div class="ie-display pxbox" id="ie-display">
+      <p><i>Survole une dimension pour découvrir l'idée que chaque Polimon incarne…</i></p>
+    </div>`;
+  box.querySelectorAll('.ie-head').forEach(h => {
+    h.appendChild(spriteNode(byCode(+h.dataset.code), 74));
+  });
+  const display = document.getElementById('ie-display');
+  const show = chip => {
+    const p = byCode(+chip.dataset.code);
+    const d = DIMENSIONS.find(x => x.key === chip.dataset.dim);
+    box.querySelectorAll('.ie-chip').forEach(c => c.classList.toggle('active', c === chip));
+    display.innerHTML = `<b>${d.icon} ${p.name.toUpperCase()} — ${d.label}</b>
+      <p>${(p.dims[d.key] && p.dims[d.key] !== 'TBD') ? p.dims[d.key] : 'À compléter — TBD'}</p>`;
+  };
+  box.querySelectorAll('.ie-chip').forEach(chip => {
+    chip.addEventListener('mouseenter', () => show(chip));
+    chip.addEventListener('focus', () => show(chip));
+    chip.addEventListener('click', e => { e.preventDefault(); show(chip); });
+  });
 }
 
 /* ============ CHAPITRES (depuis les données) ============ */
@@ -328,7 +383,11 @@ let fight = null;   /* état du combat en cours (null = pas de combat) */
 function say(text){ document.getElementById('battle-msg').textContent = text; }
 
 function fillSelects(){
-  const pool = POLIMONS.filter(p => p.level === COMBAT_LEVEL && dimsComplete(p));
+  /* Pour l'instant, seuls les dresseurs dont les visuels sont prêts
+     participent au combat. Ajoute des id ici pour en débloquer d'autres. */
+  const COMBAT_LINEAGES = [3, 7, 8, 10, 13];
+  const pool = POLIMONS.filter(p => p.level === COMBAT_LEVEL
+    && COMBAT_LINEAGES.includes(p.lineage) && dimsComplete(p));
   const opts = sel => pool.map((p,i) =>
     `<option value="${p.code}" ${i===sel?'selected':''}>#${pad3(p.code)} ${p.name.toUpperCase()} — ${p.dresseur.toUpperCase()}</option>`).join('');
   document.getElementById('selA').innerHTML = opts(0);
@@ -793,8 +852,13 @@ document.querySelectorAll('.space-card').forEach(c => {
   let timer = null, hinted = false;
   window.addEventListener('scroll', () => {
     walker.classList.add('walking');
+    const fol = document.getElementById('follower');
+    if(fol && !fol.hidden) fol.classList.add('walking');
     clearTimeout(timer);
-    timer = setTimeout(() => walker.classList.remove('walking'), 160);
+    timer = setTimeout(() => {
+      walker.classList.remove('walking');
+      if(fol) fol.classList.remove('walking');
+    }, 160);
     if(hint){
       const story = document.getElementById('story');
       const inStory = story && story.getBoundingClientRect().top < window.innerHeight * .6
@@ -808,6 +872,7 @@ document.querySelectorAll('.space-card').forEach(c => {
 
 /* ============ INIT ============ */
 initChapters();
+initExplorer();
 initCombat();
 initDex();
 initDresseurs();

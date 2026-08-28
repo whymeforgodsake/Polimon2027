@@ -26,6 +26,8 @@
 
   <!-- Sachez marche sur le chemin pendant le défilement -->
   <div id="walker" aria-hidden="true"><img src="images/story/sachez-marche.png" alt=""></div>
+  <!-- Le Polimon choisi suit Sachez sur le chemin -->
+  <div id="follower" aria-hidden="true" hidden><img id="follower-img" src="" alt=""></div>
   <!-- Aide clavier du scrollytelling -->
   <div id="kbd-hint" aria-hidden="true"><span class="k">ESPACE</span> scène suivante</div>
 
@@ -192,9 +194,10 @@
       <div class="art"><img src="images/story/ep1/10-explore-ideas.webp" alt="Sachez compare les dimensions incarnées par les trois Polimons"></div>
       <div class="pxbox dialog caption right">
         <div class="speaker blue">NARRATEUR</div>
-        <p>Sachez observe longuement les trois compagnons, et les idées que chacun incarne…</p>
+        <p>Sachez observe longuement les trois compagnons, et les idées que chacun incarne… Toi aussi : <b>survole leurs dimensions</b> pour découvrir leur philosophie !</p>
         <span class="arrow">▼</span>
       </div>
+      <div class="idea-explorer" id="idea-explorer"><!-- rempli automatiquement --></div>
     </div>
 
     <div class="scene">
@@ -229,7 +232,37 @@
 
     <div class="scene titlecard">
       <div class="ep">FIN DU CHAPITRE 1</div>
-      <h3 style="font-size:15px;margin-top:22px;">La suite au prochain épisode…</h3>
+      <h3 style="font-size:15px;margin-top:22px;">L'aventure continue…</h3>
+    </div>
+
+    <!-- ---------- Chapitre 2 : aperçu (contenu à venir) ---------- -->
+    <div id="chapitre2">
+      <div class="scene titlecard tc-nuit">
+        <div class="ep">— CHAPITRE 2 —</div>
+        <h3>Confrontation</h3>
+        <div class="bar"></div>
+        <div class="wip" style="margin-top:18px;">BIENTÔT DISPONIBLE</div>
+      </div>
+
+      <div class="scene">
+        <div class="art art-placeholder">
+          <div class="ph-q">?</div>
+          <div class="ph-t">ILLUSTRATION EN PRÉPARATION</div>
+        </div>
+        <div class="pxbox dialog caption">
+          <div class="speaker blue">NARRATEUR</div>
+          <p>La nuit tombe sur Bois-de-France. Quelque part, des idées contraires se préparent à croiser le fer avec ton Polimon…</p>
+          <span class="arrow">▼</span>
+        </div>
+      </div>
+
+      <div class="scene">
+        <div class="pxbox dialog" style="max-width:640px;margin:0 auto;">
+          <div class="speaker">PROF. CHEN</div>
+          <p>Patience, Sachez ! Le chapitre 2 — <b>Confrontation</b> — est en cours d'écriture. Ton Polimon y affrontera ses premières idées contraires… Reviens bientôt !</p>
+          <span class="arrow">▼</span>
+        </div>
+      </div>
     </div>
   </div>
 

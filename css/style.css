@@ -905,3 +905,58 @@ footer .px{font-family:'Press Start 2P',monospace;font-size:8px;color:var(--jaun
   .pl-pv{font-size:8px;}
   .fight-cta .btn{width:100%;}
 }
+
+/* ============================================================
+   v14 — compagnon suiveur, choix verrouillé, explorateur, chap.2
+   ============================================================ */
+/* le Polimon choisi trottine derrière Sachez */
+#follower{
+  position:fixed;left:58px;top:calc(44vh - 74px);z-index:59;pointer-events:none;
+  filter:drop-shadow(0 4px 0 rgba(0,0,0,.3));
+}
+#follower img{width:44px;display:block;}
+#follower.walking img{animation:walk-bob .34s steps(2) infinite;animation-delay:.12s;}
+@media(max-width:1023px){#follower{display:none;}}
+
+/* choix du starter verrouillé */
+.starter.locked{opacity:.45;filter:grayscale(.7);pointer-events:none;transform:none !important;}
+.starter.locked .ballrow{color:#666;}
+
+/* explorateur d'idées */
+.idea-explorer{max-width:900px;margin:34px auto 0;position:relative;z-index:6;}
+.ie-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+@media(max-width:700px){.ie-grid{grid-template-columns:1fr;}}
+.ie-col{background:rgba(18,18,22,.88);border:3px solid #3c3c44;padding:14px 10px;text-align:center;}
+.ie-head img,.ie-head canvas{width:74px;height:74px;object-fit:contain;background:#fffef5;border:3px solid var(--noir);box-shadow:0 0 0 2px var(--jaune);}
+.ie-name{font-family:'Press Start 2P',monospace;font-size:8.5px;color:var(--jaune);margin:10px 0 12px;}
+.ie-chips{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;}
+.ie-chip{
+  cursor:pointer;background:var(--noir);color:#cfcfc6;border:2px solid #494950;
+  font-family:'Press Start 2P',monospace;font-size:6.5px;padding:7px 8px;
+  display:inline-flex;align-items:center;gap:5px;transition:border-color .12s, color .12s;
+}
+.ie-chip span{letter-spacing:.5px;}
+.ie-chip:hover,.ie-chip:focus-visible,.ie-chip.active{
+  border-color:var(--jaune);color:var(--jaune);outline:none;
+}
+.ie-display{margin-top:14px;min-height:74px;font-size:.96rem;}
+.ie-display b{font-family:'Press Start 2P',monospace;font-size:8.5px;color:var(--bleu);display:block;margin-bottom:8px;line-height:1.8;}
+
+/* chapitre 2 : bande pleine largeur, ambiance nuit */
+#chapitre2{
+  margin:60px calc(50% - 50vw) 0;
+  padding:70px max(20px, calc(50vw - 530px)) 90px;
+  background:url(../images/map-chap2.png) repeat;background-size:1280px;
+}
+#chapitre2 .titlecard{background:rgba(10,12,22,.88);}
+.art-placeholder{
+  aspect-ratio:1672/941;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:18px;background:#141828;border:var(--px) solid var(--noir);box-shadow:0 0 0 3px var(--jaune);
+  opacity:0;transform:translateY(32px);transition:opacity .55s steps(9), transform .85s cubic-bezier(.22,.61,.36,1);
+}
+.scene.on .art-placeholder{opacity:1;transform:none;}
+.art-placeholder .ph-q{
+  font-family:'Press Start 2P',monospace;font-size:64px;color:#2c3452;
+  text-shadow:4px 4px 0 rgba(0,0,0,.5);
+}
+.art-placeholder .ph-t{font-family:'Press Start 2P',monospace;font-size:9px;color:#5a6488;letter-spacing:1px;}

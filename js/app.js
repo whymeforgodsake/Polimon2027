@@ -753,10 +753,42 @@ function openFiche(code){
   const lin = LINEAGES.find(l => l.id === p.lineage);
   const c = document.getElementById('fiche-content');
   const st = statBars(p);
+  const c1 = ELEMENTS[p.elements[0]], c2 = ELEMENTS[p.elements[1]];
+  const flavor = (p.dims.individu && p.dims.individu !== 'TBD') ? p.dims.individu : 'Un Polimon encore mystérieux…';
   c.innerHTML = `
-    <div class="fiche-head">
-      <div class="spr"></div>
-      <div>
+    <div class="fiche-top">
+      <!-- Carte à jouer dynamique -->
+      <div class="tcg" id="tcg-card" style="--c1:${c1.color};--c2:${c2.color};--c1d:${c1.dark};--c2d:${c2.dark}">
+        <div class="tcg-inner">
+          <div class="tcg-head">
+            <span class="tcg-stage">NIV.${p.level}</span>
+            <span class="tcg-name">${p.name}</span>
+            <span class="tcg-pv">PV<b>100</b></span>
+            <span class="tcg-elicon">${c1.emoji}</span>
+          </div>
+          <div class="tcg-art"><div class="tcg-spr"></div></div>
+          <div class="tcg-strip">N° ${pad3(p.code)} · Polimon ${lvlInfo(p.level).label} · Lignée ${lin.dresseur}</div>
+          <div class="tcg-talent">
+            <span class="talent-pill">Talent</span>
+            <span class="talent-name">${lvlInfo(p.level).label}</span>
+            <p>${lvlInfo(p.level).desc}</p>
+          </div>
+          <div class="tcg-attack">
+            <span class="tcg-energy">${p.elements.map(e => `<i>${ELEMENTS[e].emoji}</i>`).join('')}</span>
+            <span class="tcg-atk-name">Combat des idées</span>
+            <span class="tcg-atk-dmg">${p.level * 40}</span>
+          </div>
+          <div class="tcg-foot">
+            <span>Faiblesse<br><b>?</b></span>
+            <span>Résistance<br><b>—</b></span>
+            <span>Retraite<br><b>${'★'.repeat(p.level)}</b></span>
+          </div>
+          <p class="tcg-flavor">${flavor}</p>
+          <div class="tcg-credits"><span>Illus. DemZet</span><span>${pad3(p.code)}/${pad3(POLIMONS.length)} · ${p.parti}</span></div>
+        </div>
+      </div>
+      <!-- Infos et lignée -->
+      <div class="fiche-aside">
         <h3>#${pad3(p.code)} ${p.name.toUpperCase()}</h3>
         <div class="sub">
           ${elTags(p)}<br><br>
@@ -766,28 +798,28 @@ function openFiche(code){
           </span><br>
           Niveau ${p.level} · <b>${lvlInfo(p.level).label}</b> — ${lvlInfo(p.level).desc}
         </div>
+        <h4>LIGNÉE D'ÉVOLUTION « 3P »</h4>
+        <div class="evo-row">
+          ${lin.forms.map((f,i) => `
+            <div class="evo-step ${f.code===p.code?'cur':''}" onclick="openFiche(${f.code})">
+              <div class="mini" data-code="${f.code}"></div>
+              <span class="nm">${f.name.toUpperCase()}</span>
+              <span class="lv">Niv.${i+1} ${lvlInfo(i+1).label}</span>
+            </div>${i<2?'<span class="evo-arr">▶</span>':''}`).join('')}
+        </div>
+        <h4>STATISTIQUES${st.hasAny ? '' : ' <span class="wip">EN CONSTRUCTION</span>'}</h4>
+        <div class="statbars" style="max-width:none;grid-template-columns:1fr;">${st.bars}</div>
       </div>
     </div>
-    <h4>LIGNÉE D'ÉVOLUTION « 3P »</h4>
-    <div class="evo-row">
-      ${lin.forms.map((f,i) => `
-        <div class="evo-step ${f.code===p.code?'cur':''}" onclick="openFiche(${f.code})">
-          <div class="mini" data-code="${f.code}"></div>
-          <span class="nm">${f.name.toUpperCase()}</span>
-          <span class="lv">Niv.${i+1} ${lvlInfo(i+1).label}</span>
-        </div>${i<2?'<span class="evo-arr">▶</span>':''}`).join('')}
-    </div>
-    ${dimsSection(p)}
-    <h4>STATISTIQUES${st.hasAny ? '' : ' <span class="wip">EN CONSTRUCTION</span>'}</h4>
-    <div class="statbars" style="max-width:none;">${st.bars}</div>
-    ${st.note}`;
-  c.querySelector('.fiche-head .spr').appendChild(spriteNode(p, 132));
+    ${dimsSection(p)}`;
+  c.querySelector('.tcg-spr').appendChild(spriteNode(p, 300));
   const lch = LINEAGES.find(x => x.id === p.lineage);
   const drav = c.querySelector('#fh-drav');
   if(lch && drav) drav.replaceWith(trainerAvatar(lch, 't-avatar dr-avatar-mini'));
   c.querySelectorAll('.mini').forEach(m => {
     m.appendChild(spriteNode(byCode(+m.dataset.code), 64));
   });
+  attachHolo(document.getElementById('tcg-card'));
   openScreen('FICHE POLIMON');
 }
 /* Ouvre l'écran plein page (fiche Polimon ou carte dresseur) */

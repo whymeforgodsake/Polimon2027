@@ -522,8 +522,8 @@ const POLIMON_DATA = {
   /* ---------- LES CHAPITRES DE L'AVENTURE ----------
      status : "ok" = disponible, "soon" = à venir */
   chapters: [
-    { num: "01", title: "RETOUR EN CLASSE", desc: "Sachez découvre les Polimons auprès du Professeur Chen.", status: "ok" },
-    { num: "02", title: "CONFRONTATION",    desc: "Ton Polimon affronte ses premières idées contraires… Aperçu disponible, histoire complète à venir.", status: "ok" },
-    { num: "03", title: "CONSÉCRATION",     desc: "Le chemin vers l'Élysée se dessine.", status: "soon" }
+    { num: "01", title: "RETOUR EN CLASSE",     desc: "Sachez découvre les Polimons auprès du Professeur Chen et choisit son compagnon.", status: "ok" },
+    { num: "02", title: "LE DÎNER DE FAMILLE",  desc: "Chez Mamie Rose, ton compagnon croise Brumedo — l'idée que tonton Gérard nourrissait sans le savoir.", status: "ok" },
+    { num: "03", title: "CONSÉCRATION",         desc: "Une évolution se prépare… Le chemin vers l'Élysée se dessine.", status: "soon" }
   ]
 };

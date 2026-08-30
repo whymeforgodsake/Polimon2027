@@ -109,49 +109,143 @@ function typeDialog(box){
     }
   }, 16);
 }
-/* Choix du starter : la Pokéball s'agite, s'ouvre dans un flash,
-   puis révèle le Polimon. */
+/* ============ CHOIX DU COMPAGNON — directement dans l'image ============
+   La scène « 10-explore-ideas » contient déjà, dessinés dans l'image,
+   les 5 hexagones de dimensions au-dessus de chaque Polimon. On pose
+   par-dessus des zones interactives invisibles (en % de l'image) :
+   survoler un hexagone révèle la philosophie correspondante, cliquer
+   sur un Polimon le choisit — définitivement. Le choix est mémorisé
+   (localStorage) pour que l'épisode 2 s'en souvienne. */
+const BRANCHES = {
+  a: { code: 7,  starter: 'voltatal', file: '11a-chosen-voltatal.webp' },
+  b: { code: 3,  starter: 'melava',   file: '11b-chosen-melava.webp' },
+  c: { code: 10, starter: 'marinej',  file: '11c-chosen-marinej.webp' }
+};
 let starterChosen = false;   /* le choix est définitif */
-function chooseStarter(el){
-  if(starterChosen) return;                       /* choix verrouillé */
-  if(el.classList.contains('opening')) return;
-  el.classList.add('opening');
-  el.querySelector('.pokeball').classList.add('shaking');
-  setTimeout(() => {
-    el.classList.remove('opening');
-    el.classList.add('opened');
-    selectStarter(el);
-  }, 950);
-}
-function selectStarter(el){
-  starterChosen = true;
-  document.querySelectorAll('.starter').forEach(s => {
-    s.classList.remove('chosen');
-    if(s !== el) s.classList.add('locked');       /* les autres se grisent */
+let currentBranch = null;
+
+/* positions, en % de l'image : centre de chaque Polimon + centre de
+   son groupe d'hexagones */
+const CHOIX_SPOTS = [
+  { branch: 'a', poli: { x: 34.4, y: 47.5 }, hexCx: 33.7 },
+  { branch: 'b', poli: { x: 54.1, y: 47.0 }, hexCx: 54.1 },
+  { branch: 'c', poli: { x: 74.8, y: 45.5 }, hexCx: 75.0 }
+];
+/* décalage de chaque hexagone autour du centre du groupe
+   (haut = individu ; milieu = société/économie ; bas = écologie/géopolitique) */
+const HEX_OFF = {
+  individu:     { dx:  0.0, y: 15.9 },
+  societe:      { dx: -2.2, y: 23.6 },
+  economie:     { dx:  2.8, y: 23.6 },
+  ecologie:     { dx: -4.4, y: 31.0 },
+  geopolitique: { dx:  5.2, y: 31.0 }
+};
+function initChoixScene(){
+  const art = document.getElementById('choix-art');
+  if(!art) return;
+  CHOIX_SPOTS.forEach(s => {
+    const p = byCode(BRANCHES[s.branch].code);
+    /* pastilles à survoler, une par dimension — chaque pastille porte
+       sa propre bulle (pur CSS : fiable et sans décalage) */
+    DIMENSIONS.forEach(d => {
+      const o = HEX_OFF[d.key];
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'hs-dim';
+      b.style.left = (s.hexCx + o.dx) + '%';
+      b.style.top  = o.y + '%';
+      b.setAttribute('aria-label', p.name + ' — dimension ' + d.label);
+      const txt = (p.dims[d.key] && p.dims[d.key] !== 'TBD') ? p.dims[d.key] : 'À compléter…';
+      b.innerHTML = `<span class="hs-dtip"><b>${d.icon} ${p.name.toUpperCase()} · ${d.label.toUpperCase()}</b><i>${txt}</i></span>`;
+      b.addEventListener('click', e => e.preventDefault());
+      art.appendChild(b);
+    });
+    /* zone cliquable du Polimon lui-même */
+    const z = document.createElement('button');
+    z.type = 'button';
+    z.className = 'hs-poli';
+    z.dataset.branch = s.branch;
+    z.style.left = s.poli.x + '%';
+    z.style.top  = s.poli.y + '%';
+    z.setAttribute('aria-label', 'Choisir ' + p.name + ' comme compagnon');
+    z.innerHTML = `<span class="hs-ring"></span><span class="hs-name">CHOISIR ${p.name.toUpperCase()} ▸</span>`;
+    z.addEventListener('click', () => selectBranch(s.branch));
+    art.appendChild(z);
   });
-  el.classList.add('chosen');
-  if(el.dataset.name) el.querySelector('.ballrow').textContent = el.dataset.name;
+  /* si un choix a déjà été fait lors d'une visite précédente, on le restaure */
+  let saved = null;
+  try { saved = localStorage.getItem('polimon-branch'); } catch(e){}
+  if(saved && BRANCHES[saved]) selectBranch(saved, true);
+}
+function selectBranch(branch, restoring){
+  if(starterChosen && !restoring) return;         /* choix verrouillé */
+  starterChosen = true;
+  currentBranch = branch;
+  try { localStorage.setItem('polimon-branch', branch); } catch(e){}
+  const B = BRANCHES[branch];
+  /* état visuel directement dans l'image */
+  document.querySelectorAll('.hs-poli').forEach(z => {
+    const isChosen = z.dataset.branch === branch;
+    z.classList.toggle('chosen', isChosen);
+    z.classList.toggle('locked', !isChosen);
+    if(!isChosen) z.disabled = true;
+    else {
+      z.querySelector('.hs-name').textContent = '★ TON COMPAGNON';
+      z.setAttribute('aria-pressed', 'true');
+    }
+  });
   /* le compagnon choisi suit Sachez sur la carte */
-  const codes = { a: 7, b: 3, c: 10 };
   const follower = document.getElementById('follower');
-  if(follower && codes[el.dataset.branch]){
+  if(follower){
     document.getElementById('follower-img').src =
-      'images/story/polimon-smallonmap-' + codes[el.dataset.branch] + '.png';
+      'images/story/polimon-smallonmap-' + B.code + '.png';
     follower.hidden = false;
   }
-  /* révèle la fin alternative correspondant au compagnon choisi */
-  const files = { a: '11a-chosen-voltatal.webp', b: '11b-chosen-melava.webp', c: '11c-chosen-marinej.webp' };
+  /* révèle la fin alternative de l'épisode 1 */
   const scene = document.getElementById('branch-scene');
   const img   = document.getElementById('branch-img');
-  if(scene && files[el.dataset.branch]){
-    img.src = 'images/story/ep1/' + files[el.dataset.branch];
+  if(scene){
+    img.src = 'images/story/ep1/' + B.file;
     scene.hidden = false;
-    scene.classList.remove('on');
-    requestAnimationFrame(() => requestAnimationFrame(() => activateScene(scene)));
+    document.getElementById('starter-reponse').classList.add('show');
+    if(!restoring){
+      scene.classList.remove('on');
+      requestAnimationFrame(() => requestAnimationFrame(() => activateScene(scene)));
+      scene.scrollIntoView({behavior:'smooth', block:'center'});
+    } else {
+      scene.classList.add('on');
+    }
   }
-  const r = document.getElementById('starter-reponse');
-  r.classList.add('show');
-  (scene || r).scrollIntoView({behavior:'smooth', block:'center'});
+  /* déverrouille et personnalise l'épisode 2 */
+  applyBranchEp2(branch);
+}
+
+/* ============ ÉPISODE 2 — Le Dîner de famille ============
+   Les 7 scènes existent en 3 variantes (une par compagnon choisi).
+   On personnalise images, nom du compagnon et citations d'idées
+   (les textes viennent de data/polimons.js, jamais dupliqués ici). */
+function applyBranchEp2(branch){
+  const B = BRANCHES[branch];
+  const ally = byCode(B.code);
+  const foe  = byCode(8);   /* Brumedo, l'idée de tonton Gérard */
+  document.querySelectorAll('[data-ep2]').forEach(img => {
+    img.src = 'images/story/ep2/' + img.dataset.ep2 + '-' + B.starter + '.webp';
+  });
+  document.querySelectorAll('[data-ep2-name]').forEach(el => {
+    el.textContent = ally.name.toUpperCase();
+  });
+  document.querySelectorAll('[data-eq]').forEach(el => {
+    const side = el.dataset.eq.split(':')[0], key = el.dataset.eq.split(':')[1];
+    const src = side === 'ally' ? ally : foe;
+    el.textContent = (src.dims[key] && src.dims[key] !== 'TBD') ? src.dims[key] : 'À compléter…';
+  });
+  const gate = document.getElementById('ep2-gate');
+  const sc   = document.getElementById('ep2-scenes');
+  if(gate) gate.hidden = true;
+  if(sc && sc.hidden){
+    sc.hidden = false;
+    if(sceneObserver) sc.querySelectorAll('.scene').forEach(x => sceneObserver.observe(x));
+  }
 }
 
 /* ============ PARALLAXE DOUCE DES SCÈNES ============
@@ -164,6 +258,7 @@ function initParallax(){
     ticking = false;
     const vh = window.innerHeight;
     document.querySelectorAll('#story .art').forEach(a => {
+      if(a.classList.contains('interactive')) return;
       const r = a.getBoundingClientRect();
       if(r.bottom < 0 || r.top > vh) return;
       const c = (r.top + r.height / 2 - vh / 2) / vh; // -0.5 → 0.5
@@ -177,49 +272,7 @@ function initParallax(){
   update();
 }
 
-/* ============ EXPLORATEUR D'IDÉES (scène du choix) ============
-   Survole (ou touche) une dimension pour lire l'idée du Polimon. */
-function initExplorer(){
-  const box = document.getElementById('idea-explorer');
-  if(!box) return;
-  const codes = [7, 3, 10];   /* Voltatal, Melava, Marinej */
-  box.innerHTML = `
-    <div class="ie-grid">
-      ${codes.map(c => {
-        const p = byCode(c);
-        return `<div class="ie-col">
-          <div class="ie-head" data-code="${c}"></div>
-          <div class="ie-name">${p.name.toUpperCase()}</div>
-          <div class="ie-chips">
-            ${DIMENSIONS.map(d => `
-              <button class="ie-chip" data-code="${c}" data-dim="${d.key}"
-                aria-label="${p.name} — ${d.label}">${d.icon}<span>${d.label}</span></button>`).join('')}
-          </div>
-        </div>`;
-      }).join('')}
-    </div>
-    <div class="ie-display pxbox" id="ie-display">
-      <p><i>Survole une dimension pour découvrir l'idée que chaque Polimon incarne…</i></p>
-    </div>`;
-  box.querySelectorAll('.ie-head').forEach(h => {
-    h.appendChild(spriteNode(byCode(+h.dataset.code), 74));
-  });
-  const display = document.getElementById('ie-display');
-  const show = chip => {
-    const p = byCode(+chip.dataset.code);
-    const d = DIMENSIONS.find(x => x.key === chip.dataset.dim);
-    box.querySelectorAll('.ie-chip').forEach(c => c.classList.toggle('active', c === chip));
-    display.innerHTML = `<b>${d.icon} ${p.name.toUpperCase()} — ${d.label}</b>
-      <p>${(p.dims[d.key] && p.dims[d.key] !== 'TBD') ? p.dims[d.key] : 'À compléter — TBD'}</p>`;
-  };
-  box.querySelectorAll('.ie-chip').forEach(chip => {
-    chip.addEventListener('mouseenter', () => show(chip));
-    chip.addEventListener('focus', () => show(chip));
-    chip.addEventListener('click', e => { e.preventDefault(); show(chip); });
-  });
-}
-
-/* ============ CHAPITRES (depuis les données) ============ */
+/* ============ ÉPISODES (depuis les données) ============ */
 function initChapters(){
   const box = document.getElementById('chapter-list');
   box.innerHTML = CHAPTERS.map(c => `
@@ -990,7 +1043,7 @@ document.addEventListener('keydown', e => {
 
 /* ============ INIT ============ */
 initChapters();
-initExplorer();
+initChoixScene();
 initCombat();
 initDex();
 initDresseurs();

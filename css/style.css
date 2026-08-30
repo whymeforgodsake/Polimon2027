@@ -51,8 +51,7 @@ nav{
   flex-wrap:wrap;
 }
 nav .brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--jaune);}
-nav .brand img{height:34px;}
-nav .brand span{font-size:12px;letter-spacing:1px;}
+nav .brand img{height:44px;width:auto;display:block;}
 nav .links{display:flex;gap:8px;margin-left:auto;flex-wrap:wrap;}
 nav a.navlink{
   color:var(--blanc); text-decoration:none; font-size:9px; padding:9px 12px;
@@ -762,7 +761,7 @@ footer .px{font-family:'Press Start 2P',monospace;font-size:8px;color:var(--jaun
 /* ============ RESPONSIVE MOBILE ============ */
 @media(max-width:760px){
   nav{gap:8px;padding:8px 10px;}
-  nav .brand span{display:none;}
+  nav .brand img{height:34px;}
   nav a.navlink{font-size:7.5px;padding:8px 8px;}
   main{padding-top:56px;}
   .hero{min-height:62vh;}

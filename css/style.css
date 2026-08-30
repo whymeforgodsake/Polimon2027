@@ -1306,3 +1306,9 @@ footer .px{font-family:'Press Start 2P',monospace;font-size:8px;color:var(--jaun
   .hs-dtip{width:min(300px,72vw);}
   .hs-dtip i{font-size:.68rem;}
 }
+
+/* v18.2 — invitations de fin d'épisode */
+.tc-invite{
+  margin:26px auto 0;max-width:440px;font-size:.92rem;line-height:1.6;color:#cfcfd8;
+}
+.titlecard .tc-btn{display:inline-block;margin-top:16px;}

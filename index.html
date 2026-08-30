@@ -14,8 +14,8 @@
   <a class="brand" href="#aventure" data-nav="aventure"><img src="images/logo.png" alt="Polimon 2027"><span>POLIMON&nbsp;2027</span></a>
   <div class="links">
     <a class="navlink" href="#aventure" data-nav="aventure">AVENTURE</a>
-    <a class="navlink" href="#combat" data-nav="combat">COMBAT</a>
     <a class="navlink" href="#polidex" data-nav="polidex">POLIDEX</a>
+    <a class="navlink" href="#combat" data-nav="combat">COMBAT</a>
     <a class="navlink" href="#dresseurs" data-nav="dresseurs">DRESSEURS</a>
   </div>
 </nav>
@@ -191,6 +191,8 @@
     <div class="scene titlecard">
       <div class="ep">FIN DE L'ÉPISODE 1</div>
       <h3 style="font-size:15px;margin-top:22px;">L'aventure continue…</h3>
+      <p class="tc-invite">Tu connais désormais les Polimons. Découvre les 39 idées recensées par le Professeur Chen :</p>
+      <a class="btn tc-btn" href="#polidex">📕 OUVRIR LE POLIDEX ▸</a>
     </div>
 
     <!-- ---------- Épisode 2 : Le Dîner de famille ----------
@@ -343,8 +345,20 @@
         <div class="scene titlecard tc-nuit">
           <div class="ep">FIN DE L'ÉPISODE 2</div>
           <h3 style="font-size:15px;margin-top:22px;">Une évolution se prépare…</h3>
+          <p class="tc-invite">Ton compagnon a des idées à défendre. Confronte-les à celles des autres Polimons :</p>
+          <a class="btn tc-btn" href="#combat">⚔️ ESSAYER LE MODE COMBAT ▸</a>
         </div>
 
+      </div>
+
+      <!-- Épisode 3 : teaser -->
+      <div class="scene titlecard tc-nuit">
+        <div class="ep">— ÉPISODE 3 —</div>
+        <h3>Consécration</h3>
+        <div class="bar"></div>
+        <div class="wip" style="margin-top:18px;">BIENTÔT DISPONIBLE</div>
+        <p class="tc-invite">En attendant, rencontre les grands dresseurs qui répandent leurs idées à travers le pays :</p>
+        <a class="btn tc-btn" href="#dresseurs">🧢 RENCONTRER LES DRESSEURS ▸</a>
       </div>
     </div>
   </div>
@@ -352,6 +366,33 @@
   <div class="chapters">
     <h2>&gt; LES ÉPISODES_</h2>
     <div id="chapter-list"><!-- rempli automatiquement depuis data/polimons.js --></div>
+  </div>
+</section>
+
+<!-- ================= ESPACE POLIDEX ================= -->
+<section id="polidex" class="space">
+  <div class="dex-wrap">
+    <div class="space-header">
+      <h2>📕 POLIDEX <span class="wip">EN CONSTRUCTION</span></h2>
+      <p>La librairie des Polimons recensés par le Professeur Chen, lignée par lignée, sur 3 niveaux d'évolution. Sélectionne un Polimon pour ouvrir sa fiche complète.</p>
+    </div>
+    <div class="dex-controls">
+      <input type="text" id="dex-search" placeholder="RECHERCHER…" oninput="renderDex()">
+      <select id="dex-level" onchange="renderDex()">
+        <option value="0">TOUS NIVEAUX</option>
+        <option value="1">NIV.1 PHILOSOPHIE</option>
+        <option value="2">NIV.2 PERSPECTIVE</option>
+        <option value="3">NIV.3 PROGRAMME</option>
+      </select>
+      <select id="dex-element" onchange="renderDex()"><option value="">TOUS ÉLÉMENTS</option></select>
+    </div>
+    <!-- Carrousel : toutes les cartes côte à côte, défilement horizontal fluide -->
+    <div class="dex-rail-wrap">
+      <button class="dex-arrow prev" onclick="railScroll(-1)" aria-label="Cartes précédentes">◀</button>
+      <div class="dex-rail" id="dex-rail" tabindex="0" aria-label="Galerie des cartes Polimon"></div>
+      <button class="dex-arrow next" onclick="railScroll(1)" aria-label="Cartes suivantes">▶</button>
+    </div>
+    <div class="dex-count" id="dex-count"></div>
   </div>
 </section>
 
@@ -383,33 +424,6 @@
     </div>
 
     <div class="compare" id="compare"></div>
-  </div>
-</section>
-
-<!-- ================= ESPACE POLIDEX ================= -->
-<section id="polidex" class="space">
-  <div class="dex-wrap">
-    <div class="space-header">
-      <h2>📕 POLIDEX <span class="wip">EN CONSTRUCTION</span></h2>
-      <p>La librairie des Polimons recensés par le Professeur Chen, lignée par lignée, sur 3 niveaux d'évolution. Sélectionne un Polimon pour ouvrir sa fiche complète.</p>
-    </div>
-    <div class="dex-controls">
-      <input type="text" id="dex-search" placeholder="RECHERCHER…" oninput="renderDex()">
-      <select id="dex-level" onchange="renderDex()">
-        <option value="0">TOUS NIVEAUX</option>
-        <option value="1">NIV.1 PHILOSOPHIE</option>
-        <option value="2">NIV.2 PERSPECTIVE</option>
-        <option value="3">NIV.3 PROGRAMME</option>
-      </select>
-      <select id="dex-element" onchange="renderDex()"><option value="">TOUS ÉLÉMENTS</option></select>
-    </div>
-    <!-- Carrousel : toutes les cartes côte à côte, défilement horizontal fluide -->
-    <div class="dex-rail-wrap">
-      <button class="dex-arrow prev" onclick="railScroll(-1)" aria-label="Cartes précédentes">◀</button>
-      <div class="dex-rail" id="dex-rail" tabindex="0" aria-label="Galerie des cartes Polimon"></div>
-      <button class="dex-arrow next" onclick="railScroll(1)" aria-label="Cartes suivantes">▶</button>
-    </div>
-    <div class="dex-count" id="dex-count"></div>
   </div>
 </section>
 

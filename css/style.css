@@ -1181,3 +1181,30 @@ footer .px{font-family:'Press Start 2P',monospace;font-size:8px;color:var(--jaun
   font-family:'Press Start 2P',monospace;font-size:8px;color:#c9b458;
   border-bottom:2px solid #33333d;padding-bottom:7px;letter-spacing:.5px;
 }
+
+/* ================================================================
+   v17.1 — POLIDEX : cartes toutes au même format (63×88, comme une
+   vraie carte Pokémon). La fenêtre d'art absorbe la variation de
+   hauteur ; le texte d'ambiance n'apparaît que dans la fiche.
+   ================================================================ */
+.dex-slide{width:350px;}
+.dex-slide .tcg{
+  aspect-ratio:63/88;   /* format officiel d'une carte à jouer */
+  height:auto;
+}
+.dex-slide .tcg-inner{display:flex;flex-direction:column;height:100%;}
+.dex-slide .tcg-head{flex:none;}
+.dex-slide .tcg-art{
+  aspect-ratio:auto;    /* remplace le 4/3 : l'art prend la place restante */
+  flex:1 1 auto;min-height:0;
+}
+.dex-slide .tcg-strip{
+  flex:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  max-width:100%;
+}
+.dex-slide .tcg-talent,.dex-slide .tcg-attack,.dex-slide .tcg-foot{flex:none;}
+.dex-slide .tcg-flavor{display:none;}
+.dex-slide .tcg-credits{margin-top:auto;padding-top:6px;}
+@media(max-width:680px){
+  .dex-slide{width:min(82vw,330px);}
+}

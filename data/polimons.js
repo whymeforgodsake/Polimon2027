@@ -216,7 +216,7 @@ const POLIMON_DATA = {
       ],
       dims: {
         individu:     "L'individu est un travailleur dont la dignité exige reconnaissance.",
-        societe:      "La société est une fraternité entre personnes interdépendantes.",
+        societe:      "La société est une fraternité entre personnes interdependantes.",
         economie:     "L'économie est un outil politique soumis à la volonté populaire.",
         ecologie:     "La nature est la limite matérielle imposant sobriété.",
         geopolitique: "La France est une terre de production à protéger."
@@ -228,18 +228,34 @@ const POLIMON_DATA = {
       bioReelle: "Fondateur de LFI, 3e en 2022 avec ~22 %",
       faits: "Refuse la primaire de gauche ; ligne de rupture",
       bio: "Dresseur volcanique, il fait gronder ses Polimons Feu et Roche jusqu'à l'éruption : pour lui, c'est le peuple assemblé qui fait trembler la terre et redessine le paysage politique.",
-      dimsDetail: {},
+      dimsDetail: {
+        "1.3": "La prévention doit devenir le cœur de la politique de santé, car les maux évitables coûtent bien plus cher à la société que les normes qui les empêchent.",
+        "1.4": "L'enseignement professionnel et technique, qui accueille la moitié de la jeunesse, doit offrir une voie d'excellence continue vers le travail qualifié.",
+        "2.3": "Se loger dignement exige de rénover massivement l'habitat existant plutôt que de seulement construire du neuf.",
+        "2.4": "L'État planificateur doit revenir au centre du jeu, la dépense publique étant une richesse redistribuée et non de l'argent gaspillé.",
+        "3.1": "Le partage de la richesse par les salaires et un droit universel à une retraite précoce conditionnent à la fois la dignité des travailleurs et la demande qui fait tourner l'économie.",
+        "3.2": "La réindustrialisation exige que la nation fixe elle-même ses objectifs productifs et protège son appareil industriel des logiques purement financières.",
+        "3.3": "La monnaie et le crédit sont des outils publics à remettre au service de l'économie réelle, plutôt que de laisser la finance surveiller et étrangler l'activité.",
+        "3.4": "La justice fiscale exige que tout le monde paie réellement et que chaque soutien public aux entreprises ait une contrepartie, les cadeaux fiscaux sans condition étant la vraie source du déficit.",
+        "3.5": "La puissance technologique se conquiert par de grands objectifs nationaux assumés, non par le marché seul.",
+        "4.1": "Le changement climatique est le choc majeur des années qui viennent et seule une planification écologique s'imposant à tous permet de s'y préparer.",
+        "4.2": "L'économie circulaire doit devenir l'organisation normale de la production et de l'usage des ressources.",
+        "4.3": "La politique énergétique doit partir du réel technique et climatique plutôt que de paris industriels hasardeux sur le nucléaire.",
+        "4.4": "L'eau est une ressource sous contrainte climatique qui doit être gérée selon le réel, non accaparée.",
+        "5.1": "Le libre-échange généralisé est une impasse : le commerce doit se négocier en échanges équilibrés, y compris avec la Chine, sans en faire un ennemi.",
+        "5.3": "La souveraineté populaire prime sur les traités européens, qu'il faut renégocier et auxquels il faut savoir désobéir quand ils contredisent les intérêts des Français."
+      },
       forms: [
         { code: 3,  name: "Melava" },
         { code: 15, name: "Magmelench" },
         { code: 27, name: "Volcanchon" }
       ],
       dims: {
-        individu:     "L'individu est un citoyen porteur de volonté politique constituante.",
-        societe:      "La société est un peuple souverain qui se donne ses propres règles.",
-        economie:     "L'économie est un champ politique où le peuple impose l'intérêt général.",
-        ecologie:     "La nature est le système qui détermine les possibilités humaines.",
-        geopolitique: "La France est une république indépendante des blocs impériaux."
+        individu:     "L'individu est un etre libre seulement si l'essentiel lui est garanti : santé, école, logement, énergie.",
+        societe:      "La société est un peuple varié, uni face à une minorité qui possède presque tout.",
+        economie:     "L'économie doit être dirigée par l'intérêt général du peuple, pas par l'intérêt privé de la finance.",
+        ecologie:     "La nature fixe les limites : on ne doit jamais lui prendre plus qu'elle ne peut refabriquer.",
+        geopolitique: "La France doit rester indépendante et ne s'aligner sur aucune grande puissance."
       }
     },
     {
@@ -268,18 +284,29 @@ const POLIMON_DATA = {
       bioReelle: "Secrétaire nationale des Écologistes",
       faits: "A porté la refondation d'EELV ; ligne unitaire à gauche",
       bio: "Dresseuse-jardinière, elle cultive ses Polimons Plante et Fée dans le respect du vivant : chaque idée est une pousse qui ne grandit bien que si tout l'écosystème autour d'elle prospère.",
-      dimsDetail: {},
+      dimsDetail: {
+        "1.3": "Un système de santé qui s'effondre ne se redresse pas par des économies aveugles, qui rendent les gens plus malades au lieu de prévenir.",
+        "2.4": "La simplification administrative est légitime tant qu'elle ne sert pas d'alibi à la dérégulation environnementale, et le pays doit se gouverner avec ses corps intermédiaires plutôt que depuis l'Élysée seul.",
+        "3.1": "Le travail doit protéger de la pauvreté comme de la mort au travail, faute de quoi la fracture sociale finira par rompre le pacte républicain.",
+        "3.2": "L'industrie est un enjeu de souveraineté qu'il faut défendre et transformer écologiquement, en orientant l'argent public selon des critères écologiques et vers les petites entreprises.",
+        "3.4": "La justice fiscale exige que les grandes entreprises et les héritiers contribuent au moins autant que les PME et les travailleurs, les baisses d'impôts non financées creusant le déficit.",
+        "4.1": "L'écologie est la condition de la liberté : nier les limites planétaires rend vulnérable, et l'inaction climatique coûte bien plus cher que l'action.",
+        "4.3": "C'est l'énergie chère, et non le coût du travail, qui mine la compétitivité, et les renouvelables sont une arme économique que nos concurrents déploient déjà massivement.",
+        "5.1": "L'Europe doit assumer un protectionnisme écologique, par sa commande publique et ses frontières carbone, pour se battre à armes égales avec la Chine et les États-Unis.",
+        "5.2": "L'économie française a durablement besoin des travailleurs étrangers, et l'immigration ne doit pas servir de bouc émissaire budgétaire.",
+        "5.4": "La défense ne se limite pas aux armes : la guerre est aussi économique, industrielle et énergétique, et chaque dépendance est une vulnérabilité exploitée par les impérialismes."
+      },
       forms: [
         { code: 5,  name: "Ecomar" },
         { code: 17, name: "Tondeliere" },
         { code: 29, name: "Tondeliane" }
       ],
       dims: {
-        individu:     "L'individu est un nœud interdépendant du vivant.",
+        individu:     "L'individu est un noeud interdépendant du monde vivant.",
         societe:      "La société est une organisation horizontale rapprochant décision et impact territorial.",
-        economie:     "L'économie est un métabolisme contraint par les limites biophysiques planétaires.",
-        ecologie:     "La nature est la matrice suprême qui conditionne toute existence et guide toute décision.",
-        geopolitique: "La France est une unité coopérative dans une gouvernance écologique mondiale."
+        economie:     "L'économie doit cesser d'épuiser la planète : vivre mieux ne veut pas dire produire plus.",
+        ecologie:     "La nature est la matrice supreme qui conditionne toute existence et guide toute decision.",
+        geopolitique: "La France une unité coopérative dans une gouvernance écologique mondiale."
       }
     },
     {
@@ -288,7 +315,16 @@ const POLIMON_DATA = {
       bioReelle: "Eurodéputé, tête de liste PS-PP aux européennes 2024 (~14 %)",
       faits: "Social-démocrate pro-européen, ligne anti-autoritaire",
       bio: "Dresseur sentinelle, il charge ses Polimons Électrik et Sol pour défendre les arènes démocratiques : vigilance permanente, règles communes et alliances par-delà les frontières.",
-      dimsDetail: {},
+      dimsDetail: {
+        "3.1": "Le travail doit redevenir le cœur du pacte social (mieux payé, mieux protégé, mieux représenté dans l'entreprise) avec des retraites fondées sur la pénibilité plutôt que sur un âge unique.",
+        "3.2": "La dette est le prix de la désindustrialisation : il faut reproduire en France en choisissant des filières stratégiques, la révolution écologique étant la révolution industrielle du siècle.",
+        "3.3": "Le redressement ne peut se financer ni par la dette ni par la casse du modèle social, car casser le modèle social, c'est casser la démocratie.",
+        "3.4": "Une société qui taxe plus le travail que l'héritage devient une héritocratie : la fiscalité doit remettre le mérite au-dessus de la rente, dans un cadre stable.",
+        "3.5": "L'Europe doit investir dans une filière IA souveraine pour rester technologiquement autonome, notamment des USA et de la Chine.",
+        "4.1": "Investir massivement et immédiatement dans la transition écologique est la seule vraie économie, l'impréparation coûtant toujours plus cher que l'action.",
+        "5.1": "Le temps du libre-échange naïf est terminé : l'Europe doit protéger ses producteurs par la préférence européenne, la réciprocité des normes et le refus des produits du dumping social.",
+        "5.3": "La France doit user de son poids stratégique pour imposer à Bruxelles la réorientation industrielle et commerciale de l'Europe, dont la sortie serait en revanche un suicide économique."
+      },
       forms: [
         { code: 6,  name: "Rafelec" },
         { code: 18, name: "Raforage" },
@@ -296,10 +332,10 @@ const POLIMON_DATA = {
       ],
       dims: {
         individu:     "L'individu est un porteur de droits universels transcendant toute frontière.",
-        societe:      "La société est une démocratie fragile exigeant vigilance permanente contre l'oppression.",
-        economie:     "L'économie est un marché nécessitant régulation supranationale face aux multinationales.",
+        societe:      "La société doit récompenser ceux qui travaillent, pas ceux qui héritent.",
+        economie:     "L'économie est un marché nécessitant la taxation des grandes fortunes pour alléger ceux qui travaillent.",
         ecologie:     "La nature est un bien commun mondial exigeant gouvernance contraignante internationale.",
-        geopolitique: "La France est un acteur moral défendant l'ordre démocratique par l'intervention."
+        geopolitique: "La France est un acteur moral qui doit peser dans une Europe unie, face aux États-Unis, à la Chine et à la Russie."
       }
     },
     {
@@ -308,18 +344,29 @@ const POLIMON_DATA = {
       bioReelle: "Plus jeune Premier ministre de la Ve République (2024), patron de Renaissance",
       faits: "Incarne la relève macroniste ; méritocratie et innovation",
       bio: "Dresseur véloce, il entraîne ses Polimons Électrik et Psy à la vitesse de l'éclair : mérite, innovation et esprit de compétition sont ses techniques favorites.",
-      dimsDetail: {},
+      dimsDetail: {
+        "2.3": "Le logement est un secteur productif et le socle de la promesse d'ascension sociale : il faut libérer la construction et rouvrir l'accès à la propriété aux jeunes générations.",
+        "2.4": "L'administration doit servir le mandat démocratique et la rapidité de décision, avec des règles simples et des délais garantis plutôt qu'une culture de l'empêchement.",
+        "3.1": "Le travail doit payer davantage pour la classe moyenne qui bosse, et les grands équilibres sociaux se réforment en changeant de système plutôt qu'en ajustant sans fin les paramètres.",
+        "3.2": "La simplification ne se décrète pas par des lois successives mais par un changement de méthode qui fait confiance au terrain et lève les blocages concrets.",
+        "3.3": "Le retour à l'équilibre budgétaire exige d'assumer des économies d'abord sur la dépense sociale et de faire mieux avec moins grâce à l'innovation.",
+        "3.4": "Une fiscalité plus basse, stable et prévisible rapporte davantage qu'une fiscalité punitive, car elle libère l'activité.",
+        "3.5": "L'innovation et l'IA sont la bataille décisive du siècle et la seule source durable de productivité et de hausse des salaires.",
+        "4.1": "L'écologie doit rester un moyen pragmatique de transition et non une fin en soi qui bascule dans la décroissance.",
+        "4.4": "L'adaptation au climat relève du bon sens pratique, comme stocker l'eau quand elle abonde pour affronter les sécheresses.",
+        "5.1": "La Chine mène une offensive délibérée pour couler notre industrie et appelle des réponses commerciales fermes plutôt que des débats."
+      },
       forms: [
         { code: 7,  name: "Voltatal" },
         { code: 19, name: "Gabynamo" },
         { code: 31, name: "Gabitek" }
       ],
       dims: {
-        individu:     "L'individu est un agent libre responsable de son destin.",
+        individu:     "L'individu est un agent libre par son travail et responsable de son destin.",
         societe:      "La société est une arène méritocratique où le talent et l'effort déterminent le succès.",
-        economie:     "L'économie est un marché de compétition générant prospérité et innovation.",
-        ecologie:     "La nature est un ensemble de défis techniques solubles par l'innovation humaine.",
-        geopolitique: "La France est une puissance économique et diplomatique rayonnant par excellence."
+        economie:     "L'économie doit grandir : quand le gâteau grossit, personne n'a besoin de la part du voisin.",
+        ecologie:     "La nature est un ensemble de défis techniques, que l'innovation peut regler.",
+        geopolitique: "La France est une grande puissance par sa technologie et par ses frontières."
       }
     },
     {
@@ -328,17 +375,27 @@ const POLIMON_DATA = {
       bioReelle: "Premier ministre 2017-2020, maire du Havre, fondateur d'Horizons",
       faits: "Premier grand candidat déclaré ; droite modérée pragmatique",
       bio: "Dresseur du grand large, il navigue avec ses Polimons Eau et Vol dans la brume du Havre : cap pragmatique, autorité tranquille et manœuvres calculées.",
-      dimsDetail: {},
+      dimsDetail: {
+        "1.4": "La formation, l'éducation et l'apprentissage sont le socle de la compétitivité d'une nation et exigent la constance des politiques publiques.",
+        "2.3": "Un pays prospère investit massivement dans ses infrastructures pour s'adapter à son époque, notamment climatique.",
+        "2.4": "Une règle stable, même imparfaite, vaut mieux qu'une norme mouvante, et simplifier exige le courage de résister aux demandes qui en produisent sans cesse de nouvelles.",
+        "3.1": "Préserver le modèle social et le pouvoir d'achat des classes moyennes, condition de survie de la démocratie, impose de travailler collectivement plus longtemps et d'élargir le financement de la protection sociale au-delà du seul travail.",
+        "3.2": "La prospérité naît d'une politique de l'offre constante qui laisse les entreprises créer la richesse et soigne la compétitivité face à des concurrents d'abord européens.",
+        "3.3": "Une nation tient parole sur sa dette et remet ses comptes en ordre par le travail plutôt que par l'impôt, sous peine de choc financier brutal ou d'étranglement lent.",
+        "3.4": "La fiscalité ne doit frapper les entreprises que sur ce qu'elles ont réellement gagné, et toute baisse d'impôt doit être honnêtement financée.",
+        "5.1": "Le commerce avec les grandes puissances doit reposer sur la réciprocité stricte : ce qui se vend chez nous doit se produire chez nous, comme elles nous l'ont imposé.",
+        "5.3": "L'Europe doit assumer d'être une puissance qui achève son marché intérieur et parle d'égal à égal avec la Chine et les États-Unis."
+      },
       forms: [
         { code: 8,  name: "Brumedo" },
         { code: 20, name: "Edether" },
         { code: 32, name: "Zefilipe" }
       ],
       dims: {
-        individu:     "L'individu est un être façonné par l'effort, le mérite et la liberté.",
+        individu:     "L'individu est un etre faconne par l'effort, le mérite et la liberté, à qui on doit dire la vérité même quand elle dérange.",
         societe:      "La société est un ordre hiérarchisé maintenu par l'autorité légitime de l'État.",
-        economie:     "L'économie est un équilibre pragmatique entre liberté d'entreprendre et régulation stratégique.",
-        ecologie:     "La nature est un système adaptable par transition technologique progressive et réaliste.",
+        economie:     "L'économie est une machine a créer de la richesse, qui ne se partage bien que quand on a produit suffisamment.",
+        ecologie:     "La nature est un système adaptable par l'investissement et la technique, pas par les interdictions.",
         geopolitique: "La France est un acteur stratégique combinant indépendance et partenariats sélectifs."
       }
     },
@@ -368,18 +425,27 @@ const POLIMON_DATA = {
       bioReelle: "Finaliste 2017 et 2022, cheffe des députés RN",
       faits: "Condamnation avec inéligibilité en appel ; Bardella en plan B",
       bio: "Dresseuse des terres gelées, elle protège ses Polimons Glace et Acier derrière des frontières cristallines : pour elle, la communauté nationale passe avant tout le reste.",
-      dimsDetail: {},
+      dimsDetail: {
+        "2.4": "L'État doit cesser d'être un fardeau bureaucratique et normatif pour redevenir le garant d'un cadre stable où la nation et ses entreprises prospèrent.",
+        "3.1": "La retraite et l'emploi doivent se penser à partir du travail réellement fourni, partir tôt quand on a commencé tôt, et de la remontée du taux d'emploi, plutôt qu'à partir de la seule comptabilité.",
+        "3.2": "La réindustrialisation est une priorité nationale absolue qui justifie de lever les freins normatifs et fonciers et d'orienter la commande publique vers ce qui est produit en France.",
+        "3.3": "La dette doit être remboursée par des économies sur le train de vie de l'État, car elle menace directement la souveraineté du pays.",
+        "3.4": "La fiscalité doit cesser de taxer la production, garantir la constance des règles et réserver ses avantages à ceux qui produisent durablement en France.",
+        "4.3": "Une énergie abondante et bon marché, héritage du nucléaire national, est un bien de première nécessité que l'État doit rendre aux ménages comme aux entreprises.",
+        "5.2": "L'immigration pèse lourdement sur les comptes sociaux et sa réduction est un levier du redressement budgétaire.",
+        "5.3": "L'Union européenne doit coûter moins et normer moins, la France n'ayant ni à surpayer sa contribution ni à surtransposer les règles communes."
+      },
       forms: [
         { code: 10, name: "Marinej" },
         { code: 22, name: "Lepolaire" },
         { code: 34, name: "Blizaren" }
       ],
       dims: {
-        individu:     "L'individu est un être appartenant à une communauté nationale.",
-        societe:      "La société est un organisme historique et culturel transmis par les générations.",
-        economie:     "L'économie est organisée pour protéger et privilégier la communauté nationale.",
-        ecologie:     "La nature est défendue par l'enracinement territorial et la souveraineté locale.",
-        geopolitique: "La France est une civilisation délimitée ayant droit à l'autodétermination totale."
+        individu:     "L'individu se construit grâce à ses racines : sa famille, son pays, son histoire.",
+        societe:      "La société est une communauté nationale qui protège d'abord les siens.",
+        economie:     "L'économie doit servir les Français et être protégée de la concurrence mondiale.",
+        ecologie:     "La nature se protège en produisant près de chez soi, pas en punissant les gens.",
+        geopolitique: "La France doit décider seule de son destin, sans Bruxelles ni Washington."
       }
     },
     {
@@ -395,7 +461,7 @@ const POLIMON_DATA = {
         { code: 35, name: "Blizardela" }
       ],
       dims: {
-        individu:     "L'individu est un être appartenant à une communauté nationale.",
+        individu:     "L'individu est un etre appartenant à une communauté nationale.",
         societe:      "La société est un organisme historique et culturel transmis par les générations.",
         economie:     "L'économie est organisée pour protéger et privilégier la communauté nationale.",
         ecologie:     "La nature est défendue par l'enracinement territorial et la souveraineté locale.",
@@ -418,7 +484,7 @@ const POLIMON_DATA = {
         individu:     "L'individu est un héritier d'une civilisation déterminant son essence.",
         societe:      "La société est un corps civilisationnel menacé d'effacement par substitution démographique.",
         economie:     "L'économie est un instrument de puissance nationale protégeant les intérêts français.",
-        ecologie:     "La nature est une préoccupation secondaire face à l'urgence de survie civilisationnelle.",
+        ecologie:     "La nature est un patrimoine culturel et des paysages à préserver.",
         geopolitique: "La France est une civilisation en guerre défensive contre déclin et remplacement."
       }
     }
@@ -428,15 +494,27 @@ const POLIMON_DATA = {
       bioReelle: "Ministre de l'Intérieur, ancien chef des sénateurs LR, vendéen",
       faits: "Ligne droite dure : sécurité, immigration, autorité",
       bio: "Dresseur vendéen à la ligne claire, il forge ses Polimons Eau et Acier dans la discipline : chez lui, l'ordre est la première des libertés et l'autorité le premier des remparts.",
-      dimsDetail: {},
+      dimsDetail: {
+        "1.2": "La dénatalité est un choc silencieux qui engage l'avenir du pays, et la politique familiale doit récompenser concrètement le choix d'avoir des enfants.",
+        "2.3": "Le logement social doit bénéficier d'abord à ceux qui travaillent.",
+        "2.4": "L'État obèse et bureaucratique est le premier problème du pays et doit être remis au service des forces vives par une rupture de système, pas par des réformettes.",
+        "3.1": "Le travail doit toujours rapporter nettement plus que l'assistance, ce qui suppose de détaxer l'effort supplémentaire, de rendre aux acteurs la liberté de leur temps de travail et d'assumer les décisions qui garantissent des retraites décentes.",
+        "3.3": "Un pays au bord de la faillite ne s'en sort ni par l'annulation de la dette ni par l'impôt, mais par plus de travail dans l'économie et moins de dépense publique.",
+        "3.4": "La surfiscalité est une punition qui asphyxie les entreprises : il faut restituer, garantir les règles dans la durée et cesser de taxer la transmission du fruit d'une vie de travail.",
+        "4.3": "La souveraineté et la compétitivité énergétiques reposent d'abord sur un nucléaire décarboné et bon marché, les renouvelables matures devant vivre sans subventions.",
+        "4.4": "Stocker l'eau est une adaptation de bon sens qui évite des catastrophes humaines et agricoles."
+      },
       forms: [
         { code: 37, name: "Hameçono" },
         { code: 38, name: "Harpono" },
         { code: 39, name: "Torpilleau" }
       ],
       dims: {
-        individu: "TBD", societe: "TBD", economie: "TBD",
-        ecologie: "TBD", geopolitique: "TBD"
+        individu:     "L'individu est l'héritier d'une histoire et d'une culture : il a des devoirs avant d'avoir des droits.",
+        societe:      "La société tient par l'autorité, la famille et ce qu'on transmet aux générations suivantes.",
+        economie:     "L'économie doit récompenser ceux qui travaillent plus que ceux qui vivent des aides.",
+        ecologie:     "La nature est un héritage à transmettre, qu'on protège par la technique et le bon sens.",
+        geopolitique: "La France est une civilisation : pour en faire partie, il faut en adopter les règles."
       }
     }
   ],

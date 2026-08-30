@@ -960,13 +960,6 @@ document.addEventListener('keydown', e => {
   const prev = (e.key === ' ' && e.shiftKey)  || e.key === 'ArrowUp'   || e.key === 'PageUp';
   if((next && stepScene(1)) || (prev && stepScene(-1))) e.preventDefault();
 });
-/* activation clavier des cartes d'espaces */
-document.querySelectorAll('.space-card').forEach(c => {
-  c.addEventListener('keydown', e => {
-    if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); c.click(); }
-  });
-});
-
 /* ============ MARCHEUR & AIDE CLAVIER ============
    Sachez (vu de dos) marche sur le chemin pendant le défilement ;
    l'aide clavier s'affiche une fois arrivé dans l'histoire. */

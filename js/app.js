@@ -882,17 +882,24 @@ function renderIdeasPanel(p, d){
       <p>${detail[s.code]}</p>
       ${s.sujets && s.sujets.length ? `<div class="sujets">${s.sujets.map(t => `<span>${t}</span>`).join('')}</div>` : ''}
     </div>`;
-  let html = philo
-    ? `<div class="idea-lead"${delay()}>
-         <span class="idea-tag">${d.icon} ${d.num}.0 · PHILOSOPHIE</span>
-         <p>${philo}</p>
-       </div>`
-    : `<div class="idea-empty"${delay()}>La philosophie de cette lignée sur « ${d.label} » arrive bientôt.</div>`;
+  /* Niveau 1 : la philosophie (X.0.0). Niveaux 2 et 3 : uniquement les
+     sous-dimensions / thèmes du niveau — la philosophie reste sur la
+     fiche du Polimon de niveau 1. */
+  let html = '';
+  if(p.level === 1){
+    html = philo
+      ? `<div class="idea-lead"${delay()}>
+           <span class="idea-tag">${d.icon} ${d.num}.0 · PHILOSOPHIE</span>
+           <p>${philo}</p>
+         </div>`
+      : `<div class="idea-empty"${delay()}>La philosophie de cette lignée sur « ${d.label} » arrive bientôt.</div>`;
+  }
   if(p.level === 2){
     const n2 = subs.filter(s => s.code.split('.').length === 2 && s.code.startsWith(d.num + '.'));
     const done = n2.filter(s => hasIdea(detail, s.code));
     const todo = n2.filter(s => !hasIdea(detail, s.code));
     html += done.map(card).join('');
+    if(!done.length) html += `<div class="idea-empty"${delay()}>Les perspectives de ${p.name.toUpperCase()} sur « ${d.label} » sont encore en préparation…</div>`;
     if(todo.length) html += `
       <div class="idea-todo"${delay()}>
         <span class="lbl">À COMPLÉTER</span>
@@ -936,11 +943,13 @@ function openFiche(code){
         <h3>#${pad3(p.code)} ${p.name.toUpperCase()}</h3>
         <div class="sub">
           ${elTags(p)}<br><br>
-          <span class="dr-link" onclick="openDresseur(${p.lineage})" tabindex="0" role="button">
-            <span class="dr-av" id="fh-drav"></span>
-            Dresseur : <b>${p.dresseur}</b> — ${p.parti} <span class="dr-arrow">▸</span>
-          </span><br>
           Niveau ${p.level} · <b>${lvlInfo(p.level).label}</b> — ${lvlInfo(p.level).desc}
+        </div>
+        <!-- Le dresseur : portrait (si disponible) + lien vers sa fiche -->
+        <div class="fh-trainer" onclick="openDresseur(${p.lineage})" tabindex="0" role="button" aria-label="Voir la fiche de ${p.dresseur}">
+          <span class="fh-tav" id="fh-drav"></span>
+          <span class="fh-tinfo"><b>${p.dresseur.toUpperCase()}</b><span>${p.parti}</span></span>
+          <span class="fh-tgo">VOIR SA FICHE ▸</span>
         </div>
         <h4>LIGNÉE D'ÉVOLUTION « 3P »</h4>
         <div class="evo-row">
@@ -961,7 +970,11 @@ function openFiche(code){
   c.querySelector('#tcg-slot').replaceWith(tc);
   const lch = LINEAGES.find(x => x.id === p.lineage);
   const drav = c.querySelector('#fh-drav');
-  if(lch && drav) drav.replaceWith(trainerAvatar(lch, 't-avatar dr-avatar-mini'));
+  if(lch && drav) drav.replaceWith(trainerAvatar(lch, 'fh-tav'));
+  const ftr = c.querySelector('.fh-trainer');
+  if(ftr) ftr.addEventListener('keydown', e => {
+    if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); ftr.click(); }
+  });
   c.querySelectorAll('.mini').forEach(m => {
     m.appendChild(spriteNode(byCode(+m.dataset.code), 64));
   });

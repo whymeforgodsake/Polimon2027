@@ -734,9 +734,12 @@ function dimsSection(p){
   const title  = depth === 2 ? 'LES 25 SOUS-DIMENSIONS — PERSPECTIVE' : 'LES 59 THÈMES — PROGRAMME';
   return `<h4>${title}</h4>` + DIMENSIONS.map(d => {
     const rows = subs.filter(s => s.code.split('.').length === depth && s.code.startsWith(d.num + '.'));
+    /* Les groupes contenant du contenu rédigé s'ouvrent tout seuls ;
+       le compteur (rédigées/total) rend le remplissage visible d'un coup d'œil. */
+    const filled = rows.filter(s => detail[s.code] && detail[s.code] !== 'TBD').length;
     return `
-      <details class="dim-group">
-        <summary>${d.icon} ${d.num}. ${d.label.toUpperCase()} (${rows.length})</summary>
+      <details class="dim-group"${filled ? ' open' : ''}>
+        <summary>${d.icon} ${d.num}. ${d.label.toUpperCase()} ${filled ? `(${filled}/${rows.length} rédigées)` : `(${rows.length})`}</summary>
         ${(p.dims[d.key] && p.dims[d.key] !== 'TBD') ? `<p class="dim-intro">${p.dims[d.key]}</p>` : ''}
         ${rows.map(s => `
           <div class="dim-row"><b>${s.code} — ${s.label}</b>

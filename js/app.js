@@ -385,7 +385,7 @@ function say(text){ document.getElementById('battle-msg').textContent = text; }
 function fillSelects(){
   /* Pour l'instant, seuls les dresseurs dont les visuels sont prêts
      participent au combat. Ajoute des id ici pour en débloquer d'autres. */
-  const COMBAT_LINEAGES = [3, 7, 8, 10, 13];
+  const COMBAT_LINEAGES = [3, 5, 7, 8, 10, 13];
   const pool = POLIMONS.filter(p => p.level === COMBAT_LEVEL
     && COMBAT_LINEAGES.includes(p.lineage) && dimsComplete(p));
   const opts = sel => pool.map((p,i) =>
@@ -587,41 +587,96 @@ function initDex(){
   const sel = document.getElementById('dex-element');
   sel.innerHTML += Object.keys(ELEMENTS).map(e =>
     `<option value="${e}">${ELEMENTS[e].emoji} ${e.toUpperCase()}</option>`).join('');
+  /* La molette verticale fait défiler le carrousel horizontalement,
+     comme sur les galeries de cartes officielles. */
+  const rail = document.getElementById('dex-rail');
+  rail.addEventListener('wheel', e => {
+    if(Math.abs(e.deltaY) > Math.abs(e.deltaX)){
+      rail.scrollLeft += e.deltaY;
+      e.preventDefault();
+    }
+  }, { passive: false });
   renderDex();
 }
+/* La carte à jouer (partagée entre le carrousel du Polidex et la fiche).
+   Retourne un élément .tcg complet : cadre élémentaire, art, talent,
+   attaque, texte d'ambiance — avec l'effet holographique. */
+function tcgNode(p, sprSize){
+  const lin = LINEAGES.find(l => l.id === p.lineage);
+  const c1 = ELEMENTS[p.elements[0]], c2 = ELEMENTS[p.elements[1]];
+  const flavor = (p.dims.individu && p.dims.individu !== 'TBD') ? p.dims.individu : 'Un Polimon encore mystérieux…';
+  const el = document.createElement('div');
+  el.className = 'tcg';
+  el.style.cssText = `--c1:${c1.color};--c2:${c2.color};--c1d:${c1.dark};--c2d:${c2.dark}`;
+  el.innerHTML = `
+    <div class="tcg-inner">
+      <div class="tcg-head">
+        <span class="tcg-stage">NIV.${p.level}</span>
+        <span class="tcg-name">${p.name}</span>
+        <span class="tcg-pv">PV<b>100</b></span>
+        <span class="tcg-elicon">${c1.emoji}</span>
+      </div>
+      <div class="tcg-art"><div class="tcg-spr"></div></div>
+      <div class="tcg-strip">N° ${pad3(p.code)} · Polimon ${lvlInfo(p.level).label} · Lignée ${lin.dresseur}</div>
+      <div class="tcg-talent">
+        <span class="talent-pill">Talent</span>
+        <span class="talent-name">${lvlInfo(p.level).label}</span>
+        <p>${lvlInfo(p.level).desc}</p>
+      </div>
+      <div class="tcg-attack">
+        <span class="tcg-energy">${p.elements.map(e => `<i>${ELEMENTS[e].emoji}</i>`).join('')}</span>
+        <span class="tcg-atk-name">Combat des idées</span>
+        <span class="tcg-atk-dmg">${p.level * 40}</span>
+      </div>
+      <div class="tcg-foot">
+        <span>Faiblesse<br><b>?</b></span>
+        <span>Résistance<br><b>—</b></span>
+        <span>Retraite<br><b>${'★'.repeat(p.level)}</b></span>
+      </div>
+      <p class="tcg-flavor">${flavor}</p>
+      <div class="tcg-credits"><span>Illus. DemZet</span><span>${pad3(p.code)}/${pad3(POLIMONS.length)} · ${p.parti}</span></div>
+    </div>`;
+  el.querySelector('.tcg-spr').appendChild(spriteNode(p, sprSize || 300));
+  attachHolo(el);
+  return el;
+}
+
+/* Le Polidex en carrousel : toutes les cartes côte à côte, triées par
+   lignée puis par niveau (les 3 évolutions se suivent), défilement
+   horizontal doux (molette, flèches, doigt) avec magnétisme léger. */
 function renderDex(){
   const q  = document.getElementById('dex-search').value.trim().toLowerCase();
   const lv = +document.getElementById('dex-level').value;
   const el = document.getElementById('dex-element').value;
-  const grid = document.getElementById('dex-grid');
+  const rail = document.getElementById('dex-rail');
   const list = POLIMONS.filter(p =>
     (!lv || p.level === lv) &&
     (!el || p.elements.includes(el)) &&
     (!q || p.name.toLowerCase().includes(q) || p.dresseur.toLowerCase().includes(q) || p.parti.toLowerCase().includes(q))
-  );
-  grid.innerHTML = '';
+  ).sort((a, b) => a.lineage - b.lineage || a.level - b.level);
+  rail.innerHTML = '';
   list.forEach(p => {
-    const card = document.createElement('div');
-    card.className = 'dex-card';
+    const slide = document.createElement('div');
+    slide.className = 'dex-slide';
+    const card = tcgNode(p, 220);
+    card.setAttribute('role', 'button');
+    card.tabIndex = 0;
+    card.title = 'Ouvrir la fiche de ' + p.name;
     card.onclick = () => openFiche(p.code);
-    const c1 = ELEMENTS[p.elements[0]], c2 = ELEMENTS[p.elements[1]];
-    card.style.setProperty('--c1', c1.color);
-    card.style.setProperty('--c1-glow', tint(c1.color, .28));
-    card.style.background =
-      `linear-gradient(165deg, ${tint(c1.dark,.5)}, #232329 42%, ${tint(c2.dark,.4)})`;
-    card.innerHTML = `
-      <div class="code-badge">#${pad3(p.code)}</div>
-      <div class="lvl" title="Niveau ${p.level}">${'★'.repeat(p.level)}</div>
-      <div class="spr"></div>
-      <div class="nm">${p.name.toUpperCase()}</div>
-      <div class="el">${p.elements.map(e => ELEMENTS[e].emoji).join(' ')}</div>
-      <div class="who-mini">${p.dresseur}</div>`;
-    card.querySelector('.spr').appendChild(spriteNode(p, 84));
-    attachHolo(card);
-    grid.appendChild(card);
+    card.addEventListener('keydown', e => { if(e.key === 'Enter') openFiche(p.code); });
+    slide.appendChild(card);
+    rail.appendChild(slide);
   });
+  rail.scrollLeft = 0;
   document.getElementById('dex-count').textContent =
     list.length + ' / ' + POLIMONS.length + ' Polimons affichés';
+}
+/* Flèches ◀ ▶ : avance de deux cartes, en douceur */
+function railScroll(dir){
+  const rail = document.getElementById('dex-rail');
+  const slide = rail.querySelector('.dex-slide');
+  const w = slide ? slide.getBoundingClientRect().width + 22 : 360;
+  rail.scrollBy({ left: dir * w * 2, behavior: 'smooth' });
 }
 
 /* ============ DRESSEURS ============
@@ -716,38 +771,99 @@ function openDresseur(id){
   openScreen('CARTE DRESSEUR');
 }
 
-/* Dimensions affichées selon le niveau du Polimon :
-   niv.1 → les 5 dimensions ; niv.2 → les 25 sous-dimensions (X.Y) ;
-   niv.3 → les 59 thèmes (X.Y.Z) avec leurs sujets clés. Les contenus
-   manquants affichent « À compléter — TBD ». */
-function dimsSection(p){
-  const TBD = '<i class="wip-txt">À compléter — TBD</i>';
+/* ============ LES IDÉES (N1 / N2 / N3) ============
+   Présentation par onglets : une dimension à la fois, plus lisible.
+   - Niv.1 : la philosophie (X.0.0) en pleine lumière.
+   - Niv.2 : philosophie en intro + les 5 sous-dimensions (X.Y.0) —
+     celles qui sont rédigées en cartes, les autres en pastilles « à compléter ».
+   - Niv.3 : idem avec les thèmes (X.Y.Z) groupés par sous-dimension,
+     avec leurs sujets clés.
+   Les textes viennent de dims / dimsDetail dans data/polimons.js. */
+function hasIdea(detail, code){ return !!(detail[code] && detail[code] !== 'TBD'); }
+function ideaStats(p, d){
   if(p.level === 1){
-    return `<h4>LES 5 DIMENSIONS — PHILOSOPHIE</h4>` +
-      DIMENSIONS.map(d => `
-        <div class="dim-row"><b>${d.icon} ${d.num}. ${d.label}</b>
-        <p>${(p.dims[d.key] && p.dims[d.key] !== 'TBD') ? p.dims[d.key] : TBD}</p></div>`).join('');
+    const ok = p.dims[d.key] && p.dims[d.key] !== 'TBD';
+    return { filled: ok ? 1 : 0, badge: ok ? '✓' : '…' };
   }
-  const subs   = POLIMON_DATA.sousDimensions || [];
   const detail = (LINEAGES.find(l => l.id === p.lineage).dimsDetail) || {};
-  const depth  = p.level === 2 ? 2 : 3;
-  const title  = depth === 2 ? 'LES 25 SOUS-DIMENSIONS — PERSPECTIVE' : 'LES 59 THÈMES — PROGRAMME';
-  return `<h4>${title}</h4>` + DIMENSIONS.map(d => {
-    const rows = subs.filter(s => s.code.split('.').length === depth && s.code.startsWith(d.num + '.'));
-    /* Les groupes contenant du contenu rédigé s'ouvrent tout seuls ;
-       le compteur (rédigées/total) rend le remplissage visible d'un coup d'œil. */
-    const filled = rows.filter(s => detail[s.code] && detail[s.code] !== 'TBD').length;
-    return `
-      <details class="dim-group"${filled ? ' open' : ''}>
-        <summary>${d.icon} ${d.num}. ${d.label.toUpperCase()} ${filled ? `(${filled}/${rows.length} rédigées)` : `(${rows.length})`}</summary>
-        ${(p.dims[d.key] && p.dims[d.key] !== 'TBD') ? `<p class="dim-intro">${p.dims[d.key]}</p>` : ''}
-        ${rows.map(s => `
-          <div class="dim-row"><b>${s.code} — ${s.label}</b>
-          <p>${(detail[s.code] && detail[s.code] !== 'TBD') ? detail[s.code] : TBD}</p>
-          ${s.sujets && s.sujets.length ? `<div class="sujets">${s.sujets.map(t => `<span>${t}</span>`).join('')}</div>` : ''}
-          </div>`).join('')}
-      </details>`;
-  }).join('');
+  const rows = (POLIMON_DATA.sousDimensions || []).filter(s =>
+    s.code.split('.').length === p.level && s.code.startsWith(d.num + '.'));
+  const filled = rows.filter(s => hasIdea(detail, s.code)).length;
+  return { filled, badge: filled + '/' + rows.length };
+}
+function ideasSection(p){
+  const sub = p.level === 1 ? 'SA PHILOSOPHIE' : p.level === 2 ? 'SES PERSPECTIVES' : 'SON PROGRAMME';
+  return `
+    <div class="ideas" id="ideas-box">
+      <h4>LES IDÉES — ${sub}</h4>
+      <div class="ideas-tabs" role="tablist">
+        ${DIMENSIONS.map((d, i) => {
+          const st = ideaStats(p, d);
+          return `
+          <button class="itab${i === 0 ? ' active' : ''}" id="itab-${d.num}" role="tab"
+                  onclick="switchDim(${p.code}, ${d.num})">
+            <span class="ico">${d.icon}</span><span class="lb">${d.label.toUpperCase()}</span>
+            <span class="cnt${st.filled ? ' on' : ''}">${st.badge}</span>
+          </button>`;
+        }).join('')}
+      </div>
+      <div class="ideas-panel" id="ideas-panel"></div>
+    </div>`;
+}
+function switchDim(code, num){
+  document.querySelectorAll('.ideas-tabs .itab').forEach(b =>
+    b.classList.toggle('active', b.id === 'itab-' + num));
+  renderIdeasPanel(byCode(code), DIMENSIONS.find(d => d.num === num));
+}
+function renderIdeasPanel(p, d){
+  const box = document.getElementById('ideas-panel');
+  if(!box) return;
+  const detail = (LINEAGES.find(l => l.id === p.lineage).dimsDetail) || {};
+  const subs = POLIMON_DATA.sousDimensions || [];
+  const philo = (p.dims[d.key] && p.dims[d.key] !== 'TBD') ? p.dims[d.key] : '';
+  let i = 0;
+  const delay = () => ` style="animation-delay:${(i++) * 60}ms"`;
+  const card = s => `
+    <div class="idea-card"${delay()}>
+      <div class="idea-head"><span class="idea-code">${s.code}</span><b>${s.label}</b></div>
+      <p>${detail[s.code]}</p>
+      ${s.sujets && s.sujets.length ? `<div class="sujets">${s.sujets.map(t => `<span>${t}</span>`).join('')}</div>` : ''}
+    </div>`;
+  let html = philo
+    ? `<div class="idea-lead"${delay()}>
+         <span class="idea-tag">${d.icon} ${d.num}.0 · PHILOSOPHIE</span>
+         <p>${philo}</p>
+       </div>`
+    : `<div class="idea-empty"${delay()}>La philosophie de cette lignée sur « ${d.label} » arrive bientôt.</div>`;
+  if(p.level === 2){
+    const n2 = subs.filter(s => s.code.split('.').length === 2 && s.code.startsWith(d.num + '.'));
+    const done = n2.filter(s => hasIdea(detail, s.code));
+    const todo = n2.filter(s => !hasIdea(detail, s.code));
+    html += done.map(card).join('');
+    if(todo.length) html += `
+      <div class="idea-todo"${delay()}>
+        <span class="lbl">À COMPLÉTER</span>
+        ${todo.map(s => `<span class="ghost">${s.code} ${s.label}</span>`).join('')}
+      </div>`;
+  } else if(p.level === 3){
+    const n2 = subs.filter(s => s.code.split('.').length === 2 && s.code.startsWith(d.num + '.'));
+    html += n2.map(s2 => {
+      const n3 = subs.filter(s => s.code.split('.').length === 3 && s.code.startsWith(s2.code + '.'));
+      const done = n3.filter(s => hasIdea(detail, s.code));
+      const todo = n3.filter(s => !hasIdea(detail, s.code));
+      return `
+        <div class="idea-group"${delay()}>
+          <div class="idea-group-h">${s2.code} — ${s2.label.toUpperCase()}</div>
+          ${done.map(card).join('')}
+          ${todo.length ? `
+          <div class="idea-todo">
+            <span class="lbl">THÈMES À VENIR</span>
+            ${todo.map(s => `<span class="ghost" title="${(s.sujets || []).join(' · ')}">${s.code} ${s.label}</span>`).join('')}
+          </div>` : ''}
+        </div>`;
+    }).join('');
+  }
+  box.innerHTML = html;
 }
 
 /* fiche */
@@ -760,36 +876,8 @@ function openFiche(code){
   const flavor = (p.dims.individu && p.dims.individu !== 'TBD') ? p.dims.individu : 'Un Polimon encore mystérieux…';
   c.innerHTML = `
     <div class="fiche-top">
-      <!-- Carte à jouer dynamique -->
-      <div class="tcg" id="tcg-card" style="--c1:${c1.color};--c2:${c2.color};--c1d:${c1.dark};--c2d:${c2.dark}">
-        <div class="tcg-inner">
-          <div class="tcg-head">
-            <span class="tcg-stage">NIV.${p.level}</span>
-            <span class="tcg-name">${p.name}</span>
-            <span class="tcg-pv">PV<b>100</b></span>
-            <span class="tcg-elicon">${c1.emoji}</span>
-          </div>
-          <div class="tcg-art"><div class="tcg-spr"></div></div>
-          <div class="tcg-strip">N° ${pad3(p.code)} · Polimon ${lvlInfo(p.level).label} · Lignée ${lin.dresseur}</div>
-          <div class="tcg-talent">
-            <span class="talent-pill">Talent</span>
-            <span class="talent-name">${lvlInfo(p.level).label}</span>
-            <p>${lvlInfo(p.level).desc}</p>
-          </div>
-          <div class="tcg-attack">
-            <span class="tcg-energy">${p.elements.map(e => `<i>${ELEMENTS[e].emoji}</i>`).join('')}</span>
-            <span class="tcg-atk-name">Combat des idées</span>
-            <span class="tcg-atk-dmg">${p.level * 40}</span>
-          </div>
-          <div class="tcg-foot">
-            <span>Faiblesse<br><b>?</b></span>
-            <span>Résistance<br><b>—</b></span>
-            <span>Retraite<br><b>${'★'.repeat(p.level)}</b></span>
-          </div>
-          <p class="tcg-flavor">${flavor}</p>
-          <div class="tcg-credits"><span>Illus. DemZet</span><span>${pad3(p.code)}/${pad3(POLIMONS.length)} · ${p.parti}</span></div>
-        </div>
-      </div>
+      <!-- Carte à jouer dynamique (générée par tcgNode) -->
+      <div id="tcg-slot"></div>
       <!-- Infos et lignée -->
       <div class="fiche-aside">
         <h3>#${pad3(p.code)} ${p.name.toUpperCase()}</h3>
@@ -814,15 +902,17 @@ function openFiche(code){
         <div class="statbars" style="max-width:none;grid-template-columns:1fr;">${st.bars}</div>
       </div>
     </div>
-    ${dimsSection(p)}`;
-  c.querySelector('.tcg-spr').appendChild(spriteNode(p, 300));
+    ${ideasSection(p)}`;
+  const tc = tcgNode(p, 300);
+  tc.id = 'tcg-card';
+  c.querySelector('#tcg-slot').replaceWith(tc);
   const lch = LINEAGES.find(x => x.id === p.lineage);
   const drav = c.querySelector('#fh-drav');
   if(lch && drav) drav.replaceWith(trainerAvatar(lch, 't-avatar dr-avatar-mini'));
   c.querySelectorAll('.mini').forEach(m => {
     m.appendChild(spriteNode(byCode(+m.dataset.code), 64));
   });
-  attachHolo(document.getElementById('tcg-card'));
+  renderIdeasPanel(p, DIMENSIONS[0]);
   openScreen('FICHE POLIMON');
 }
 /* Ouvre l'écran plein page (fiche Polimon ou carte dresseur) */

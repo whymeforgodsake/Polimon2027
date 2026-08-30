@@ -320,7 +320,12 @@
       </select>
       <select id="dex-element" onchange="renderDex()"><option value="">TOUS ÉLÉMENTS</option></select>
     </div>
-    <div class="dex-grid" id="dex-grid"></div>
+    <!-- Carrousel : toutes les cartes côte à côte, défilement horizontal fluide -->
+    <div class="dex-rail-wrap">
+      <button class="dex-arrow prev" onclick="railScroll(-1)" aria-label="Cartes précédentes">◀</button>
+      <div class="dex-rail" id="dex-rail" tabindex="0" aria-label="Galerie des cartes Polimon"></div>
+      <button class="dex-arrow next" onclick="railScroll(1)" aria-label="Cartes suivantes">▶</button>
+    </div>
     <div class="dex-count" id="dex-count"></div>
   </div>
 </section>

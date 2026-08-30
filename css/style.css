@@ -1349,3 +1349,56 @@ footer .px{font-family:'Press Start 2P',monospace;font-size:8px;color:var(--jaun
   .evo-step .mini img.poli-img,.evo-step .mini canvas{width:44px !important;height:44px !important;}
   .fh-tgo{display:none;}
 }
+
+/* ================================================================
+   v18.4 — combat : étiquette de nom sous chaque Polimon
+   ================================================================ */
+.spr-name{
+  display:block;margin-top:14px;text-align:center;
+  background:var(--noir);color:var(--blanc);
+  border:2px solid rgba(255,255,255,.25);
+  font-family:'Press Start 2P',monospace;font-size:7.5px;
+  padding:6px 9px;white-space:nowrap;
+  box-shadow:3px 3px 0 rgba(15,56,15,.45);
+}
+
+/* ================================================================
+   v18.4b — combat : chaque plaque colle à SON Polimon
+   (l'adversaire en haut, ton camp en bas — plus d'ambiguïté)
+   ================================================================ */
+.battle{
+  display:grid;height:auto;min-height:380px;
+  grid-template-columns:1fr 1fr;align-items:center;
+  grid-template-areas:
+    "pf sf"
+    "sa pa"
+    "msg msg";
+  gap:16px 20px;padding:26px 4% 18px;
+}
+.plate,.battle-msg{position:static;}
+.spr-slot,.trainer-slot{position:relative;top:auto;left:auto;right:auto;bottom:auto;}
+.plate-foe{grid-area:pf;justify-self:end;}
+.spr-slot.foe,.trainer-slot.t-foe{grid-area:sf;justify-self:start;}
+.spr-slot.ally,.trainer-slot.t-ally{grid-area:sa;justify-self:end;}
+.plate-ally{grid-area:pa;justify-self:start;}
+.battle-msg{grid-area:msg;margin-top:4px;}
+.spr-slot::after{bottom:24px;}
+@media(max-width:680px){
+  .battle{padding:16px 12px 14px;gap:10px 12px;}
+  .spr-name{font-size:6.5px;padding:5px 7px;margin-top:10px;}
+}
+
+/* neutralise les anciens décalages absolus (spécificité supérieure) */
+.spr-slot.foe,.spr-slot.ally,.trainer-slot.t-foe,.trainer-slot.t-ally,
+.plate-foe,.plate-ally,.battle .battle-msg{
+  top:auto !important;left:auto !important;right:auto !important;bottom:auto !important;
+}
+
+/* v18.4c — mobile : la bulle de dimension s'affiche SOUS les hexagones,
+   calée sur le bord de sa colonne pour rester entière dans l'image */
+@media(max-width:680px){
+  .hs-dtip{bottom:auto;top:140%;width:min(280px,68vw);}
+  .hs-dim.col-a .hs-dtip{left:-100%;transform:none;}
+  .hs-dim.col-b .hs-dtip{left:50%;transform:translateX(-50%);}
+  .hs-dim.col-c .hs-dtip{left:auto;right:-100%;transform:none;}
+}

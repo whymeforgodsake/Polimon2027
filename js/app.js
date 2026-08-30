@@ -151,7 +151,7 @@ function initChoixScene(){
       const o = HEX_OFF[d.key];
       const b = document.createElement('button');
       b.type = 'button';
-      b.className = 'hs-dim';
+      b.className = 'hs-dim col-' + s.branch;
       b.style.left = (s.hexCx + o.dx) + '%';
       b.style.top  = o.y + '%';
       b.setAttribute('aria-label', p.name + ' — dimension ' + d.label);
@@ -475,6 +475,11 @@ function battleSprite(p, slotId, enter){
   frame.className = 'spr-frame';
   frame.appendChild(spriteNode(p, 150));
   slot.appendChild(frame);
+  /* étiquette sous le Polimon : plus aucun doute sur qui est qui */
+  const tag = document.createElement('span');
+  tag.className = 'spr-name';
+  tag.textContent = p.name.toUpperCase();
+  slot.appendChild(tag);
   if(enter){ void slot.offsetWidth; slot.classList.add('enter'); }
 }
 

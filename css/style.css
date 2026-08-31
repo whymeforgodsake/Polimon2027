@@ -1590,3 +1590,11 @@ footer .px{font-family:'Press Start 2P',monospace;font-size:8px;color:var(--jaun
 /* et l'image interactive passe au-dessus des scènes voisines
    quand une bulle est ouverte */
 .art.interactive{z-index:5;}
+
+/* ================================================================
+   v19.5 - plus de « double fond blanc » sur les cartes : l'ombre
+   portée (drop-shadow) dessinait un carré autour des images à fond
+   blanc. On la retire pour les images (les sprites générés, eux,
+   sont transparents et la gardent).
+   ================================================================ */
+.tcg-art img{filter:none;padding:0;}

@@ -2099,3 +2099,17 @@ body.intro-open{overflow:hidden;}
 /* v21b - finitions GB : emojis en gris, police GB dans les plaques */
 .gb-screen .compare,.gb-screen .battle-msg{filter:grayscale(1);}
 .gb-screen .pl-sub{font-family:'Press Start 2P',monospace;font-size:6px;line-height:1.9;letter-spacing:.5px;color:var(--gbB);margin-top:6px;}
+
+/* v21c - sprites de combat GB dédiés : posés directement sur l'écran
+   (sans cadre), pixel-art net, l'allié vu de dos un peu plus grand */
+.gb-screen .spr-frame{background:transparent;border:none;padding:0;box-shadow:none;}
+.gb-screen .spr-frame.no-gbsprite{
+  background:var(--gbD);border:3px solid var(--gbA);padding:5px;
+}
+.gb-sprite{width:170px !important;height:170px !important;image-rendering:pixelated;display:block;}
+#sprA .gb-sprite{width:195px !important;height:195px !important;}
+.gb-screen .spr-slot.victory .spr-frame{box-shadow:none;filter:drop-shadow(0 0 10px rgba(16,16,16,.5));}
+@media(max-width:680px){
+  .gb-sprite{width:112px !important;height:112px !important;}
+  #sprA .gb-sprite{width:130px !important;height:130px !important;}
+}

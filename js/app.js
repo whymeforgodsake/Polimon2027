@@ -523,7 +523,16 @@ function battleSprite(p, slotId, enter){
   slot.innerHTML = '';
   const frame = document.createElement('div');
   frame.className = 'spr-frame';
-  frame.appendChild(spriteNode(p, 150));
+  /* sprites de combat dédiés (pixel-art GB 64×64) :
+     ton Polimon est vu de dos, l'adversaire de face.
+     Repli automatique sur l'artwork classique s'il n'existe pas. */
+  const view = slotId === 'sprA' ? 'back' : 'front';
+  const img = document.createElement('img');
+  img.className = 'gb-sprite';
+  img.alt = p.name;
+  img.onerror = () => { frame.classList.add('no-gbsprite'); img.replaceWith(spriteNode(p, 150)); };
+  img.src = 'images/polimons/battle/' + view + '/' + p.code + '.png';
+  frame.appendChild(img);
   slot.appendChild(frame);
   /* étiquette sous le Polimon : plus aucun doute sur qui est qui */
   const tag = document.createElement('span');

@@ -190,9 +190,12 @@ const POLIMON_DATA = {
       bio: "Dresseur de la vieille forge, il élève ses Polimons Acier et Combat à la sueur du travail collectif : chez lui, une idée se trempe comme un métal, dans l'effort partagé et la fête populaire.",
       dimsDetail: {},
       forms: [
-        { code: 1,  name: "Ferousel" },
-        { code: 13, name: "Fabiforge" },
-        { code: 25, name: "Rouseliath" }
+        { code: 1, name: "Ferousel",
+          stats: { "Attaque": 51, "Défense": 52, "Vision": 34, "Résilience": 54, "Cohérence": 32 } },
+        { code: 13, name: "Fabiforge",
+          stats: { "Attaque": 67, "Défense": 65, "Vision": 53, "Résilience": 63, "Cohérence": 52 } },
+        { code: 25, name: "Rouseliath",
+          stats: { "Attaque": 81, "Défense": 78, "Vision": 71, "Résilience": 76, "Cohérence": 72 } }
       ],
       dims: {
         individu:     "L'individu est un être social qui se réalise par le travail collectif.",
@@ -210,9 +213,12 @@ const POLIMON_DATA = {
       bio: "Dresseur de terrain, il entraîne sa lignée Feu et Vol loin des grandes arènes, au plus près des ateliers et des ronds-points. Ses Polimons s'embrasent pour la dignité du travail et prennent de la hauteur sans oublier d'où ils décollent.",
       dimsDetail: {},
       forms: [
-        { code: 2,  name: "Francendre" },
-        { code: 14, name: "Ruflame" },
-        { code: 26, name: "Rufenix" }
+        { code: 2, name: "Francendre",
+          stats: { "Attaque": 59, "Défense": 40, "Vision": 48, "Résilience": 38, "Cohérence": 41 } },
+        { code: 14, name: "Ruflame",
+          stats: { "Attaque": 76, "Défense": 49, "Vision": 67, "Résilience": 52, "Cohérence": 56 } },
+        { code: 26, name: "Rufenix",
+          stats: { "Attaque": 85, "Défense": 63, "Vision": 81, "Résilience": 68, "Cohérence": 76 } }
       ],
       dims: {
         individu:     "L'individu est un travailleur dont la dignité exige reconnaissance.",
@@ -246,9 +252,12 @@ const POLIMON_DATA = {
         "5.3": "La souveraineté populaire prime sur les traités européens, qu'il faut renégocier et auxquels il faut savoir désobéir quand ils contredisent les intérêts des Français."
       },
       forms: [
-        { code: 3,  name: "Melava" },
-        { code: 15, name: "Magmelench" },
-        { code: 27, name: "Volcanchon" }
+        { code: 3, name: "Melava",
+          stats: { "Attaque": 61, "Défense": 44, "Vision": 38, "Résilience": 46, "Cohérence": 33 } },
+        { code: 15, name: "Magmelench",
+          stats: { "Attaque": 76, "Défense": 60, "Vision": 55, "Résilience": 68, "Cohérence": 41 } },
+        { code: 27, name: "Volcanchon",
+          stats: { "Attaque": 95, "Défense": 67, "Vision": 69, "Résilience": 85, "Cohérence": 58 } }
       ],
       dims: {
         individu:     "L'individu est un etre libre seulement si l'essentiel lui est garanti : santé, école, logement, énergie.",
@@ -266,9 +275,12 @@ const POLIMON_DATA = {
       bio: "Dresseur patient des terres de compromis, il fait pousser ses Polimons Sol et Combat sur un terrain d'entente : solidarité collective d'un côté, émancipation de chacun de l'autre.",
       dimsDetail: {},
       forms: [
-        { code: 4,  name: "Sablefor" },
-        { code: 16, name: "Geoli" },
-        { code: 28, name: "Olismic" }
+        { code: 4, name: "Sablefor",
+          stats: { "Attaque": 44, "Défense": 55, "Vision": 36, "Résilience": 45, "Cohérence": 43 } },
+        { code: 16, name: "Geoli",
+          stats: { "Attaque": 59, "Défense": 65, "Vision": 54, "Résilience": 61, "Cohérence": 64 } },
+        { code: 28, name: "Olismic",
+          stats: { "Attaque": 64, "Défense": 85, "Vision": 75, "Résilience": 76, "Cohérence": 74 } }
       ],
       dims: {
         individu:     "L'individu est un être autonome dont l'État garantit l'émancipation.",
@@ -297,9 +309,12 @@ const POLIMON_DATA = {
         "5.4": "La défense ne se limite pas aux armes : la guerre est aussi économique, industrielle et énergétique, et chaque dépendance est une vulnérabilité exploitée par les impérialismes."
       },
       forms: [
-        { code: 5,  name: "Ecomar" },
-        { code: 17, name: "Tondeliere" },
-        { code: 29, name: "Tondeliane" }
+        { code: 5, name: "Ecomar",
+          stats: { "Attaque": 34, "Défense": 43, "Vision": 57, "Résilience": 48, "Cohérence": 46 } },
+        { code: 17, name: "Tondeliere",
+          stats: { "Attaque": 56, "Défense": 54, "Vision": 78, "Résilience": 54, "Cohérence": 60 } },
+        { code: 29, name: "Tondeliane",
+          stats: { "Attaque": 66, "Défense": 66, "Vision": 94, "Résilience": 71, "Cohérence": 81 } }
       ],
       dims: {
         individu:     "L'individu est un noeud interdépendant du monde vivant.",
@@ -326,9 +341,12 @@ const POLIMON_DATA = {
         "5.3": "La France doit user de son poids stratégique pour imposer à Bruxelles la réorientation industrielle et commerciale de l'Europe, dont la sortie serait en revanche un suicide économique."
       },
       forms: [
-        { code: 6,  name: "Rafelec" },
-        { code: 18, name: "Raforage" },
-        { code: 30, name: "Rafoudre" }
+        { code: 6, name: "Rafelec",
+          stats: { "Attaque": 35, "Défense": 45, "Vision": 61, "Résilience": 43, "Cohérence": 42 } },
+        { code: 18, name: "Raforage",
+          stats: { "Attaque": 56, "Défense": 54, "Vision": 72, "Résilience": 58, "Cohérence": 61 } },
+        { code: 30, name: "Rafoudre",
+          stats: { "Attaque": 74, "Défense": 71, "Vision": 85, "Résilience": 70, "Cohérence": 78 } }
       ],
       dims: {
         individu:     "L'individu est un porteur de droits universels transcendant toute frontière.",
@@ -357,9 +375,12 @@ const POLIMON_DATA = {
         "5.1": "La Chine mène une offensive délibérée pour couler notre industrie et appelle des réponses commerciales fermes plutôt que des débats."
       },
       forms: [
-        { code: 7,  name: "Voltatal" },
-        { code: 19, name: "Gabynamo" },
-        { code: 31, name: "Gabitek" }
+        { code: 7, name: "Voltatal",
+          stats: { "Attaque": 52, "Défense": 33, "Vision": 55, "Résilience": 37, "Cohérence": 51 } },
+        { code: 19, name: "Gabynamo",
+          stats: { "Attaque": 66, "Défense": 49, "Vision": 74, "Résilience": 44, "Cohérence": 66 } },
+        { code: 31, name: "Gabitek",
+          stats: { "Attaque": 78, "Défense": 69, "Vision": 85, "Résilience": 65, "Cohérence": 76 } }
       ],
       dims: {
         individu:     "L'individu est un agent libre par son travail et responsable de son destin.",
@@ -387,9 +408,12 @@ const POLIMON_DATA = {
         "5.3": "L'Europe doit assumer d'être une puissance qui achève son marché intérieur et parle d'égal à égal avec la Chine et les États-Unis."
       },
       forms: [
-        { code: 8,  name: "Brumedo" },
-        { code: 20, name: "Edether" },
-        { code: 32, name: "Zefilipe" }
+        { code: 8, name: "Brumedo",
+          stats: { "Attaque": 37, "Défense": 57, "Vision": 38, "Résilience": 52, "Cohérence": 41 } },
+        { code: 20, name: "Edether",
+          stats: { "Attaque": 48, "Défense": 67, "Vision": 57, "Résilience": 65, "Cohérence": 61 } },
+        { code: 32, name: "Zefilipe",
+          stats: { "Attaque": 60, "Défense": 91, "Vision": 72, "Résilience": 86, "Cohérence": 69 } }
       ],
       dims: {
         individu:     "L'individu est un etre faconne par l'effort, le mérite et la liberté, à qui on doit dire la vérité même quand elle dérange.",
@@ -407,9 +431,12 @@ const POLIMON_DATA = {
       bio: "Dresseur des hauts plateaux, il endurcit ses Polimons Eau et Combat à la rude école de la montagne : travail, ordre et défense des intérêts vitaux du territoire.",
       dimsDetail: {},
       forms: [
-        { code: 9,  name: "Hydrokier" },
-        { code: 21, name: "Loragan" },
-        { code: 33, name: "Vokieluge" }
+        { code: 9, name: "Hydrokier",
+          stats: { "Attaque": 54, "Défense": 54, "Vision": 33, "Résilience": 51, "Cohérence": 35 } },
+        { code: 21, name: "Loragan",
+          stats: { "Attaque": 69, "Défense": 65, "Vision": 46, "Résilience": 62, "Cohérence": 55 } },
+        { code: 33, name: "Vokieluge",
+          stats: { "Attaque": 90, "Défense": 84, "Vision": 63, "Résilience": 76, "Cohérence": 65 } }
       ],
       dims: {
         individu:     "L'individu est défini par ses responsabilités morales et son engagement laborieux.",
@@ -436,9 +463,12 @@ const POLIMON_DATA = {
         "5.3": "L'Union européenne doit coûter moins et normer moins, la France n'ayant ni à surpayer sa contribution ni à surtransposer les règles communes."
       },
       forms: [
-        { code: 10, name: "Marinej" },
-        { code: 22, name: "Lepolaire" },
-        { code: 34, name: "Blizaren" }
+        { code: 10, name: "Marinej",
+          stats: { "Attaque": 54, "Défense": 50, "Vision": 29, "Résilience": 62, "Cohérence": 28 } },
+        { code: 22, name: "Lepolaire",
+          stats: { "Attaque": 66, "Défense": 64, "Vision": 51, "Résilience": 71, "Cohérence": 48 } },
+        { code: 34, name: "Blizaren",
+          stats: { "Attaque": 77, "Défense": 79, "Vision": 61, "Résilience": 88, "Cohérence": 68 } }
       ],
       dims: {
         individu:     "L'individu se construit grâce à ses racines : sa famille, son pays, son histoire.",
@@ -456,9 +486,12 @@ const POLIMON_DATA = {
       bio: "Jeune dresseur de la lignée polaire, il modernise les techniques de la banquise : ses Polimons Glace et Acier avancent en formation serrée, portés par les réseaux et la relève.",
       dimsDetail: {},
       forms: [
-        { code: 11, name: "Cryodane" },
-        { code: 23, name: "Vergladela" },
-        { code: 35, name: "Blizardela" }
+        { code: 11, name: "Cryodane",
+          stats: { "Attaque": 48, "Défense": 53, "Vision": 34, "Résilience": 54, "Cohérence": 34 } },
+        { code: 23, name: "Vergladela",
+          stats: { "Attaque": 67, "Défense": 65, "Vision": 55, "Résilience": 60, "Cohérence": 53 } },
+        { code: 35, name: "Blizardela",
+          stats: { "Attaque": 79, "Défense": 81, "Vision": 70, "Résilience": 82, "Cohérence": 62 } }
       ],
       dims: {
         individu:     "L'individu est un etre appartenant à une communauté nationale.",
@@ -476,9 +509,12 @@ const POLIMON_DATA = {
       bio: "Dresseur hypnotiseur, il fait miroiter à ses Polimons Glace et Psy le souvenir d'une civilisation idéalisée : illusions, mirages et batailles de mémoire sont son terrain de prédilection.",
       dimsDetail: {},
       forms: [
-        { code: 12, name: "Hypnerik" },
-        { code: 24, name: "Zemirage" },
-        { code: 36, name: "Zemystere" }
+        { code: 12, name: "Hypnerik",
+          stats: { "Attaque": 58, "Défense": 31, "Vision": 38, "Résilience": 56, "Cohérence": 44 } },
+        { code: 24, name: "Zemirage",
+          stats: { "Attaque": 76, "Défense": 52, "Vision": 58, "Résilience": 67, "Cohérence": 48 } },
+        { code: 36, name: "Zemystere",
+          stats: { "Attaque": 86, "Défense": 65, "Vision": 73, "Résilience": 79, "Cohérence": 71 } }
       ],
       dims: {
         individu:     "L'individu est un héritier d'une civilisation déterminant son essence.",
@@ -505,9 +541,12 @@ const POLIMON_DATA = {
         "4.4": "Stocker l'eau est une adaptation de bon sens qui évite des catastrophes humaines et agricoles."
       },
       forms: [
-        { code: 37, name: "Hameçono" },
-        { code: 38, name: "Harpono" },
-        { code: 39, name: "Torpilleau" }
+        { code: 37, name: "Hameçono",
+          stats: { "Attaque": 47, "Défense": 56, "Vision": 41, "Résilience": 50, "Cohérence": 32 } },
+        { code: 38, name: "Harpono",
+          stats: { "Attaque": 55, "Défense": 72, "Vision": 60, "Résilience": 60, "Cohérence": 53 } },
+        { code: 39, name: "Torpilleau",
+          stats: { "Attaque": 68, "Défense": 96, "Vision": 65, "Résilience": 84, "Cohérence": 65 } }
       ],
       dims: {
         individu:     "L'individu est l'héritier d'une histoire et d'une culture : il a des devoirs avant d'avoir des droits.",

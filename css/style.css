@@ -1,5 +1,5 @@
 /* ============================================================
-   POLIMON 2027 — STYLES
+   POLIMON 2027 - STYLES
    Apparence du site (couleurs, polices, mise en page).
    Le contenu, lui, se modifie dans data/polimons.js
    ============================================================ */
@@ -297,7 +297,7 @@ footer .px{font-family:'Press Start 2P',monospace;font-size:8px;color:var(--jaun
 .evo-step .mini img.poli-img{width:64px;height:64px;object-fit:contain;display:block;margin:0 auto;}
 
 /* ============================================================
-   CARTES HOLOGRAPHIQUES (Polidex) — tilt 3D + reflet arc-en-ciel
+   CARTES HOLOGRAPHIQUES (Polidex) - tilt 3D + reflet arc-en-ciel
    ============================================================ */
 .dex-grid{perspective:1200px;grid-template-columns:repeat(auto-fill,minmax(172px,1fr));gap:22px;}
 .dex-card{
@@ -471,7 +471,7 @@ footer .px{font-family:'Press Start 2P',monospace;font-size:8px;color:var(--jaun
 .wip-txt{color:#8a8a80;}
 
 /* ============================================================
-   SCROLLYTELLING ÉPISODE 1 — apparitions raffinées + parallaxe
+   SCROLLYTELLING ÉPISODE 1 - apparitions raffinées + parallaxe
    ============================================================ */
 .scene{opacity:1;transform:none;transition:none;}
 .scene .art{
@@ -603,7 +603,7 @@ footer .px{font-family:'Press Start 2P',monospace;font-size:8px;color:var(--jaun
 .chapters{max-width:none;padding:26px max(20px, calc((100% - 900px) / 2)) 80px;}
 
 /* ============================================================
-   COMBAT v3 — mini-jeu en 5 rounds
+   COMBAT v3 - mini-jeu en 5 rounds
    ============================================================ */
 .fight-cta{text-align:center;margin-bottom:22px;}
 .spr-frame{
@@ -660,7 +660,7 @@ footer .px{font-family:'Press Start 2P',monospace;font-size:8px;color:var(--jaun
 .recap-row .rw i{color:#8a8a80;font-style:normal;}
 
 /* ============================================================
-   DRESSEURS v2 — liste épurée + carte en modale
+   DRESSEURS v2 - liste épurée + carte en modale
    ============================================================ */
 .trainer-grid{grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:18px;perspective:none;}
 .trainer-mini{
@@ -685,7 +685,7 @@ footer .px{font-family:'Press Start 2P',monospace;font-size:8px;color:var(--jaun
 .titlecard .ep,.titlecard h3{text-shadow:2px 2px 0 rgba(0,0,0,.55);}
 
 /* ============================================================
-   v9 — lisibilité, écrans de détail, barres dresseurs, mobile
+   v9 - lisibilité, écrans de détail, barres dresseurs, mobile
    ============================================================ */
 
 /* Titres de chapitre : plaque sombre lisible sur la carte */
@@ -810,7 +810,7 @@ footer .px{font-family:'Press Start 2P',monospace;font-size:8px;color:var(--jaun
 .dr-avatar-mini .initials{font-size:8px;}
 
 /* ============================================================
-   v12 — COMBAT façon écran Game Boy (plaques noires, Pokéballs)
+   v12 - COMBAT façon écran Game Boy (plaques noires, Pokéballs)
    ============================================================ */
 .gone{display:none !important;}
 .battle{
@@ -906,7 +906,7 @@ footer .px{font-family:'Press Start 2P',monospace;font-size:8px;color:var(--jaun
 }
 
 /* ============================================================
-   v14 — compagnon suiveur, choix verrouillé, explorateur, chap.2
+   v14 - compagnon suiveur, choix verrouillé, explorateur, chap.2
    ============================================================ */
 /* le Polimon choisi trottine derrière Sachez */
 #follower{
@@ -961,7 +961,7 @@ footer .px{font-family:'Press Start 2P',monospace;font-size:8px;color:var(--jaun
 .art-placeholder .ph-t{font-family:'Press Start 2P',monospace;font-size:9px;color:#5a6488;letter-spacing:1px;}
 
 /* ============================================================
-   v15 — carte à jouer (fiche Polimon) + Polidex peaufiné
+   v15 - carte à jouer (fiche Polimon) + Polidex peaufiné
    ============================================================ */
 /* --- grille du Polidex, un poil plus chiadée --- */
 .dex-card{border-width:2px;padding:14px 10px 15px;}
@@ -1031,7 +1031,13 @@ footer .px{font-family:'Press Start 2P',monospace;font-size:8px;color:var(--jaun
     linear-gradient(160deg, var(--c1), var(--c2));
   display:flex;align-items:center;justify-content:center;overflow:hidden;
 }
-.tcg-art img,.tcg-art canvas{width:auto !important;height:96% !important;max-width:96%;object-fit:contain;filter:drop-shadow(0 6px 6px rgba(0,0,0,.3));}
+/* v19 : cadrage identique partout (Polidex, carte ouverte, mobile) :
+   l'image remplit la fenêtre d'art en entier, sans jamais être rognée */
+.tcg-art img,.tcg-art canvas{
+  width:100% !important;height:100% !important;object-fit:contain;
+  padding:2%;box-sizing:border-box;
+  filter:drop-shadow(0 6px 6px rgba(0,0,0,.3));
+}
 .tcg-strip{
   margin:7px auto 9px;text-align:center;font-size:.68rem;color:#3f3a2c;
   background:linear-gradient(90deg,transparent,#e4dcbb 18%,#e4dcbb 82%,transparent);
@@ -1066,11 +1072,10 @@ footer .px{font-family:'Press Start 2P',monospace;font-size:8px;color:var(--jaun
 .tcg-credits{display:flex;justify-content:space-between;font-size:.6rem;color:#6a6350;}
 @media(max-width:480px){
   .tcg-name{font-size:10px;}
-  .tcg-art img,.tcg-art canvas{height:92% !important;}
 }
 
 /* ================================================================
-   v17 — POLIDEX EN CARROUSEL + IDÉES PAR ONGLETS
+   v17 - POLIDEX EN CARROUSEL + IDÉES PAR ONGLETS
    ================================================================ */
 
 /* --- Le carrousel de cartes --- */
@@ -1182,7 +1187,7 @@ footer .px{font-family:'Press Start 2P',monospace;font-size:8px;color:var(--jaun
 }
 
 /* ================================================================
-   v17.1 — POLIDEX : cartes toutes au même format (63×88, comme une
+   v17.1 - POLIDEX : cartes toutes au même format (63×88, comme une
    vraie carte Pokémon). La fenêtre d'art absorbe la variation de
    hauteur ; le texte d'ambiance n'apparaît que dans la fiche.
    ================================================================ */
@@ -1209,7 +1214,7 @@ footer .px{font-family:'Press Start 2P',monospace;font-size:8px;color:var(--jaun
 }
 
 /* ================================================================
-   v18 — ÉPISODES : choix du compagnon DANS l'image + épisode 2
+   v18 - ÉPISODES : choix du compagnon DANS l'image + épisode 2
    ================================================================ */
 
 /* --- Scène interactive (épisode 1) --- */
@@ -1282,11 +1287,11 @@ footer .px{font-family:'Press Start 2P',monospace;font-size:8px;color:var(--jaun
 .speaker.rose{color:#e8a2b8;}
 
 /* correctif : l'image promue en couche GPU (will-change) recouvrait
-   l'info-bulle — on neutralise la promotion dans la scène interactive */
+   l'info-bulle - on neutralise la promotion dans la scène interactive */
 .art.interactive img{will-change:auto;}
 .hs-tip{z-index:50;}
 
-/* v18.1 — la bulle de dimension vit DANS sa pastille (pur CSS) */
+/* v18.1 - la bulle de dimension vit DANS sa pastille (pur CSS) */
 .hs-tip{display:none;}
 .hs-dtip{
   position:absolute;bottom:135%;left:50%;transform:translateX(-50%);
@@ -1306,14 +1311,14 @@ footer .px{font-family:'Press Start 2P',monospace;font-size:8px;color:var(--jaun
   .hs-dtip i{font-size:.68rem;}
 }
 
-/* v18.2 — invitations de fin d'épisode */
+/* v18.2 - invitations de fin d'épisode */
 .tc-invite{
   margin:26px auto 0;max-width:440px;font-size:.92rem;line-height:1.6;color:#cfcfd8;
 }
 .titlecard .tc-btn{display:inline-block;margin-top:16px;}
 
 /* ================================================================
-   v18.3 — fiche Polimon : bloc dresseur cliquable + lignée sur 1 ligne
+   v18.3 - fiche Polimon : bloc dresseur cliquable + lignée sur 1 ligne
    ================================================================ */
 .fh-trainer{
   display:flex;align-items:center;gap:12px;
@@ -1350,7 +1355,7 @@ footer .px{font-family:'Press Start 2P',monospace;font-size:8px;color:var(--jaun
 }
 
 /* ================================================================
-   v18.4 — combat : étiquette de nom sous chaque Polimon
+   v18.4 - combat : étiquette de nom sous chaque Polimon
    ================================================================ */
 .spr-name{
   display:block;margin-top:14px;text-align:center;
@@ -1362,8 +1367,8 @@ footer .px{font-family:'Press Start 2P',monospace;font-size:8px;color:var(--jaun
 }
 
 /* ================================================================
-   v18.4b — combat : chaque plaque colle à SON Polimon
-   (l'adversaire en haut, ton camp en bas — plus d'ambiguïté)
+   v18.4b - combat : chaque plaque colle à SON Polimon
+   (l'adversaire en haut, ton camp en bas - plus d'ambiguïté)
    ================================================================ */
 .battle{
   display:grid;height:auto;min-height:380px;
@@ -1393,11 +1398,154 @@ footer .px{font-family:'Press Start 2P',monospace;font-size:8px;color:var(--jaun
   top:auto !important;left:auto !important;right:auto !important;bottom:auto !important;
 }
 
-/* v18.4c — mobile : la bulle de dimension s'affiche SOUS les hexagones,
+/* v18.4c - mobile : la bulle de dimension s'affiche SOUS les hexagones,
    calée sur le bord de sa colonne pour rester entière dans l'image */
 @media(max-width:680px){
   .hs-dtip{bottom:auto;top:140%;width:min(280px,68vw);}
   .hs-dim.col-a .hs-dtip{left:-100%;transform:none;}
   .hs-dim.col-b .hs-dtip{left:50%;transform:translateX(-50%);}
   .hs-dim.col-c .hs-dtip{left:auto;right:-100%;transform:none;}
+}
+
+/* ================================================================
+   v19 - RECOMMENCER LA PARTIE (bouton en haut du mode aventure)
+   ================================================================ */
+.btn-restart{
+  margin-top:14px;background:transparent;color:#b9b4a3;cursor:pointer;
+  border:2px dashed #4a4a52;padding:9px 14px;
+  font-family:'Press Start 2P',monospace;font-size:7.5px;letter-spacing:.5px;
+  transition:color .2s,border-color .2s;
+}
+.btn-restart:hover{color:var(--jaune);border-color:var(--jaune);}
+
+/* ================================================================
+   v19.2 - CARTES SECRÈTES, QUIZZ & CODE SECRET
+   ================================================================ */
+
+/* --- carte secrète : mêmes proportions, tout est masqué --- */
+.tcg-secret{
+  --c1:#3a3a44; --c2:#22222a; --c1d:#191920; --c2d:#101014;
+  cursor:pointer;
+}
+.tcg-secret .tcg-art{
+  background:
+    repeating-linear-gradient(45deg, rgba(255,255,255,.05) 0 10px, transparent 10px 20px),
+    linear-gradient(160deg,#34343e,#1b1b22);
+  border-color:#4a4a55;
+}
+.tcg-secret .secret-q{
+  font-family:'Press Start 2P',monospace;font-size:64px;color:#5b5b68;
+  text-shadow:0 4px 0 rgba(0,0,0,.45);
+  animation:secretPulse 2.2s ease-in-out infinite;
+}
+@keyframes secretPulse{0%,100%{opacity:.55;}50%{opacity:1;}}
+.tcg-secret .tcg-name,.tcg-secret .tcg-stage,.tcg-secret .tcg-pv{color:#8b8b98;}
+.tcg-secret .tcg-strip{color:#6d675a;letter-spacing:1px;}
+.tcg-secret.shake{animation:secretShake .4s;}
+@keyframes secretShake{
+  0%,100%{transform:translateX(0);}
+  20%{transform:translateX(-7px);}40%{transform:translateX(6px);}
+  60%{transform:translateX(-4px);}80%{transform:translateX(3px);}
+}
+
+/* --- silhouettes « ? » dans l'évolution et la carte dresseur --- */
+.mini-secret{
+  display:flex;align-items:center;justify-content:center;
+  background:#232329;border:2px dashed #4a4a55;
+}
+.mini-secret .q{
+  font-family:'Press Start 2P',monospace;font-size:22px;color:#5b5b68;
+}
+.tp-secret{width:72px;height:72px;flex:none;}
+.evo-step.locked .nm,.t-poli.locked .pn{color:#6d6d78;}
+
+/* --- dernière carte du rail : quizz + code secret --- */
+.dex-endcard{
+  aspect-ratio:63/88;height:auto;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:12px;text-align:center;
+  background:linear-gradient(165deg,#232329,#16161a);
+  border:3px dashed #4a4a55;padding:22px 18px;color:var(--blanc);
+}
+.dex-endcard .qz-emoji{font-size:40px;}
+.dex-endcard h4{font-family:'Press Start 2P',monospace;font-size:9px;color:var(--jaune);line-height:1.8;}
+.dex-endcard p{font-size:.85rem;color:#c9c4b4;line-height:1.5;}
+.secret-code{margin-top:8px;width:100%;border-top:2px solid #33333c;padding-top:14px;}
+.secret-code label{
+  font-family:'Press Start 2P',monospace;font-size:7px;color:#8b8b98;letter-spacing:1px;
+}
+.code-row{display:flex;gap:6px;margin-top:8px;}
+.code-row input{
+  flex:1;min-width:0;background:#101014;border:2px solid #4a4a55;color:var(--blanc);
+  font-family:'Press Start 2P',monospace;font-size:8px;padding:9px 10px;
+}
+.code-row input:focus{outline:none;border-color:var(--jaune);}
+.code-msg{font-family:'Press Start 2P',monospace;font-size:7px;margin-top:8px;min-height:12px;line-height:1.7;}
+.code-msg.ok{color:#7ac74c;}
+.code-msg.ko{color:#ff6b6b;}
+
+/* --- quizz : accueil --- */
+.quiz-home,.quiz-play,.quiz-end{max-width:760px;margin:0 auto;padding:10px 0 30px;}
+.quiz-home{text-align:center;}
+.quiz-home .qz-emoji,.quiz-end .qz-emoji{font-size:46px;margin-bottom:10px;}
+.quiz-home h3,.quiz-end h3{
+  font-family:'Press Start 2P',monospace;font-size:13px;color:var(--jaune);margin-bottom:14px;line-height:1.8;
+}
+.quiz-intro{color:#c9c4b4;line-height:1.6;max-width:560px;margin:0 auto 22px;}
+.quiz-list{display:flex;flex-direction:column;gap:10px;text-align:left;}
+.quiz-row{
+  display:flex;align-items:center;gap:14px;cursor:pointer;
+  background:#232329;border:3px solid #33333c;padding:10px 14px;
+  transition:border-color .15s,transform .15s;
+}
+.quiz-row:hover,.quiz-row:focus-visible{border-color:var(--jaune);transform:translateX(4px);outline:none;}
+.quiz-row.done{border-color:#3f5e33;}
+.qr-spr{width:56px;height:56px;flex:none;display:flex;align-items:center;justify-content:center;}
+.qr-spr img,.qr-spr canvas{max-width:100%;max-height:100%;}
+.qr-info{flex:1;display:flex;flex-direction:column;gap:3px;}
+.qr-info b{font-family:'Press Start 2P',monospace;font-size:9px;color:var(--blanc);}
+.qr-info span{font-size:.78rem;color:#8b8b98;}
+.qr-state{font-family:'Press Start 2P',monospace;font-size:7.5px;color:var(--jaune);white-space:nowrap;}
+.quiz-row.done .qr-state{color:#7ac74c;}
+
+/* --- quizz : question --- */
+.quiz-head{display:flex;align-items:center;gap:16px;margin-bottom:18px;}
+.qh-spr{width:84px;height:84px;flex:none;}
+.quiz-head h3{font-family:'Press Start 2P',monospace;font-size:12px;color:var(--jaune);margin-bottom:8px;}
+.qh-progress{display:flex;align-items:center;gap:5px;}
+.qh-progress .dot{width:10px;height:10px;border:2px solid #4a4a55;background:transparent;}
+.qh-progress .dot.past{background:var(--jaune);border-color:var(--jaune);}
+.qh-progress .dot.cur{border-color:var(--jaune);}
+.qh-progress b{font-family:'Press Start 2P',monospace;font-size:8px;color:#8b8b98;margin-left:6px;}
+.quiz-q{
+  background:#232329;border-left:5px solid var(--jaune);
+  padding:14px 16px;margin-bottom:16px;line-height:1.6;color:var(--blanc);
+}
+.quiz-opts{display:flex;flex-direction:column;gap:10px;}
+.quiz-opt{
+  text-align:left;background:#1c1c22;border:3px solid #33333c;color:#d9d4c4;
+  padding:13px 15px;cursor:pointer;font-size:.92rem;line-height:1.5;
+  transition:border-color .15s,background .15s;
+}
+.quiz-opt:hover:not(:disabled){border-color:var(--jaune);background:#232329;}
+.quiz-opt.good{border-color:#7ac74c;background:#22301c;color:#d8f5c8;}
+.quiz-opt.bad{border-color:#ff6b6b;background:#341d1d;color:#ffd9d9;}
+.quiz-opt:disabled{cursor:default;opacity:.92;}
+.quiz-next{margin-top:18px;text-align:center;}
+
+/* --- quizz : résultat --- */
+.quiz-end{text-align:center;}
+.quiz-end p{color:#c9c4b4;line-height:1.7;max-width:520px;margin:0 auto 22px;}
+.quiz-end-btns{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;}
+
+@media(max-width:680px){
+  .dex-endcard{padding:16px 12px;}
+  .quiz-head{flex-direction:column;text-align:center;}
+  .quiz-end-btns{flex-direction:column;align-items:stretch;}
+}
+
+/* v19.2b : la fenêtre d'art remplit toujours son cadre (images ET
+   sprites générés en secours), pour un cadrage identique partout */
+.tcg-art .tcg-spr{
+  width:100%;height:100%;min-height:0;
+  display:flex;align-items:center;justify-content:center;
 }

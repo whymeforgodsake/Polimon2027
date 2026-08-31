@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Polimon 2027 — Éduquez-vous tous !</title>
+<title>Polimon 2027 - Éduquez-vous tous !</title>
 <meta name="description" content="Polimon 2027 : un projet éducatif du collectif DemZet pour un vote éclairé aux élections présidentielles françaises de 2027, librement inspiré de l'univers Pokémon.">
 
 <link rel="icon" type="image/png" href="images/favicon.png">
@@ -12,13 +12,13 @@
 
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://polimon2027.fr/">
-<meta property="og:title" content="Polimon 2027 — Éduquez-vous tous !">
+<meta property="og:title" content="Polimon 2027 - Éduquez-vous tous !">
 <meta property="og:description" content="Un projet éducatif du collectif DemZet pour un vote éclairé aux élections présidentielles françaises de 2027, librement inspiré de l'univers Pokémon.">
 <meta property="og:image" content="https://polimon2027.fr/images/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Polimon 2027 — Éduquez-vous tous !">
+<meta name="twitter:title" content="Polimon 2027 - Éduquez-vous tous !">
 <meta name="twitter:description" content="Un projet éducatif du collectif DemZet pour un vote éclairé aux élections présidentielles françaises de 2027, librement inspiré de l'univers Pokémon.">
 <meta name="twitter:image" content="https://polimon2027.fr/images/og-image.png">
 
@@ -58,6 +58,7 @@
       <a class="btn" href="#aventure" onclick="scrollToStory(event)">▶ COMMENCER L'AVENTURE</a>
       <a class="btn ghost" href="#polidex">OUVRIR LE POLIDEX</a>
     </div>
+    <button id="restart-btn" class="btn-restart" type="button" onclick="restartGame(this)" hidden>↺ RECOMMENCER LA PARTIE</button>
     <div class="demzet">UN PROJET DU COLLECTIF DEMZET</div>
     <div class="scrollhint">▼</div>
   </div>
@@ -66,7 +67,7 @@
   <div class="story" id="story">
 
     <div class="scene titlecard">
-      <div class="ep">— ÉPISODE 1 —</div>
+      <div class="ep">- ÉPISODE 1 -</div>
       <h3>Retour en classe</h3>
       <div class="bar"></div>
     </div>
@@ -95,10 +96,10 @@
         <div class="speaker blue">NARRATEUR</div>
         <p>…lorsqu'il tombe par hasard sur un étrange document d'un ancien professeur :</p>
         <p style="margin-top:12px;border-left:5px solid var(--jaune2);padding-left:12px;">
-          <b>« Polimon 2027 — Éduquez-vous tous !</b><br>
+          <b>« Polimon 2027 - Éduquez-vous tous !</b><br>
           Les élections présidentielles de 2027 approchent à grands pas, et avec elles les idées politiques se répandent à travers le pays.
           Adoptez les Polimons qui vous ressemblent et amenez-les au plus haut de l'Élysée ! »<br>
-          <i>— Professeur Chen</i></p>
+          <i>- Professeur Chen</i></p>
         <span class="arrow">▼</span>
       </div>
     </div>
@@ -175,7 +176,7 @@
       <div class="art"><img src="images/story/ep1/09-choose-companion.webp" alt="Trois Polimons de niveau 1 attendent sur la table"></div>
       <div class="pxbox dialog caption">
         <div class="speaker">PROF. CHEN</div>
-        <p>Mais avant tout, commençons par le commencement : <b>choisis un Polimon de niveau 1 — Philosophie — qui te correspond</b>. Un Polimon Philosophie se choisit avec le cœur, avant de se choisir avec la tête !</p>
+        <p>Mais avant tout, commençons par le commencement : <b>choisis un Polimon de niveau 1 (Philosophie) qui te correspond</b>. Un Polimon Philosophie se choisit avec le cœur, avant de se choisir avec la tête !</p>
         <span class="arrow">▼</span>
       </div>
     </div>
@@ -189,7 +190,7 @@
       </div>
       <div class="pxbox dialog caption right">
         <div class="speaker blue">NARRATEUR</div>
-        <p>Sachez observe longuement les trois compagnons… Toi aussi : <b>survole les 5 dimensions</b> au-dessus de chaque Polimon pour découvrir sa philosophie, puis <b>clique sur celui qui te ressemble</b>. Choisis avec le cœur — le choix est définitif !</p>
+        <p>Sachez observe longuement les trois compagnons… Toi aussi : <b>survole les 5 dimensions</b> au-dessus de chaque Polimon pour découvrir sa philosophie, puis <b>clique sur celui qui te ressemble</b>. Choisis avec le cœur : le choix est définitif !</p>
         <span class="arrow">▼</span>
       </div>
     </div>
@@ -217,7 +218,7 @@
          citations d'idées sont injectés par js/app.js (applyBranchEp2). -->
     <div id="chapitre2">
       <div class="scene titlecard tc-nuit">
-        <div class="ep">— ÉPISODE 2 —</div>
+        <div class="ep">- ÉPISODE 2 -</div>
         <h3>Le Dîner de famille</h3>
         <div class="bar"></div>
       </div>
@@ -226,7 +227,7 @@
       <div class="scene" id="ep2-gate">
         <div class="pxbox dialog" style="max-width:640px;margin:0 auto;">
           <div class="speaker blue">NARRATEUR</div>
-          <p>Pour vivre cet épisode, <b>choisis d'abord ton compagnon</b> dans l'épisode 1 — c'est lui qui accompagne Sachez au dîner…</p>
+          <p>Pour vivre cet épisode, <b>choisis d'abord ton compagnon</b> dans l'épisode 1 : c'est lui qui accompagne Sachez au dîner…</p>
           <span class="arrow">▼</span>
         </div>
       </div>
@@ -273,7 +274,7 @@
             </div>
             <div class="pxbox dialog">
               <div class="speaker green">SACHEZ</div>
-              <p>Eh oui, tonton : tout le monde porte des idées en lui. Voyons ce que la tienne a dans le ventre — <b>le combat des idées peut commencer !</b></p>
+              <p>Eh oui, tonton : tout le monde porte des idées en lui. Voyons ce que la tienne a dans le ventre : <b>le combat des idées peut commencer !</b></p>
               <span class="arrow">▼</span>
             </div>
           </div>
@@ -326,7 +327,7 @@
           <div class="cap-stack right">
             <div class="pxbox dialog">
               <div class="speaker blue">NARRATEUR</div>
-              <p>Les idées se sont affrontées — pas les personnes. La brume retombe doucement sur la soupière et, pour la première fois de la soirée… Gérard écoute.</p>
+              <p>Les idées se sont affrontées, pas les personnes. La brume retombe doucement sur la soupière et, pour la première fois de la soirée… Gérard écoute.</p>
               <span class="arrow">▼</span>
             </div>
             <div class="pxbox dialog">
@@ -347,12 +348,12 @@
           <div class="cap-stack">
             <div class="pxbox dialog">
               <div class="speaker blue">NARRATEUR</div>
-              <p>Autour de la tarte de Mamie Rose, on ressert une part — et une idée. Brumedo picore les miettes ; sur la chaise voisine, <b data-ep2-name>VOLTATAL</b> scintille d'une lueur nouvelle… comme s'il avait grandi ce soir.</p>
+              <p>Autour de la tarte de Mamie Rose, on ressert une part, et une idée. Brumedo picore les miettes ; sur la chaise voisine, <b data-ep2-name>VOLTATAL</b> scintille d'une lueur nouvelle… comme s'il avait grandi ce soir.</p>
               <span class="arrow">▼</span>
             </div>
             <div class="pxbox dialog">
               <div class="speaker rose">MAMIE ROSE</div>
-              <p>Reviens vite, mon grand ! Et ramène ton petit ami étincelant — lui au moins, il mange moins que ton oncle.</p>
+              <p>Reviens vite, mon grand ! Et ramène ton petit ami étincelant : lui au moins, il mange moins que ton oncle.</p>
               <span class="arrow">▼</span>
             </div>
           </div>
@@ -369,7 +370,7 @@
 
       <!-- Épisode 3 : teaser -->
       <div class="scene titlecard tc-nuit">
-        <div class="ep">— ÉPISODE 3 —</div>
+        <div class="ep">- ÉPISODE 3 -</div>
         <h3>Consécration</h3>
         <div class="bar"></div>
         <div class="wip" style="margin-top:18px;">BIENTÔT DISPONIBLE</div>
@@ -390,7 +391,7 @@
   <div class="dex-wrap">
     <div class="space-header">
       <h2>📕 POLIDEX <span class="wip">EN CONSTRUCTION</span></h2>
-      <p>La librairie des Polimons recensés par le Professeur Chen, lignée par lignée, sur 3 niveaux d'évolution. Sélectionne un Polimon pour ouvrir sa fiche complète.</p>
+      <p>La librairie des Polimons recensés par le Professeur Chen, lignée par lignée, sur 3 niveaux d'évolution. Sélectionne un Polimon pour ouvrir sa carte complète.</p>
     </div>
     <div class="dex-controls">
       <input type="text" id="dex-search" placeholder="RECHERCHER…" oninput="renderDex()">
@@ -418,7 +419,7 @@
     <div class="space-header">
       <h2>⚔️ ESPACE COMBAT</h2>
       <p>Le combat des hommes est vil, seul le <b>combat des idées</b> compte ! Choisis deux Polimons, puis départage leurs idées round après round : à chaque manche, vote pour l'idée qui te parle le plus.</p>
-      <div class="rule-note">⚠ Pour l'instant, seuls les Polimons de <b>niveau 1 — Philosophie</b> peuvent combattre. Niveaux 2 et 3 à venir !</div>
+      <div class="rule-note">⚠ Pour l'instant, seuls les Polimons de <b>niveau 1 (Philosophie)</b> peuvent combattre. Niveaux 2 et 3 à venir !</div>
     </div>
 
     <div class="battle-pickers">
@@ -459,7 +460,7 @@
 <div id="fiche-overlay">
   <div class="screen-bar">
     <button class="btn small" onclick="closeFiche()">◀ RETOUR</button>
-    <span id="screen-label" class="screen-label">FICHE</span>
+    <span id="screen-label" class="screen-label">CARTE</span>
   </div>
   <div class="fiche">
     <div id="fiche-content"></div>
@@ -467,8 +468,8 @@
 </div>
 
 <footer>
-  <div class="px">POLIMON 2027 — UN PROJET ÉDUCATIF DU COLLECTIF DEMZET</div>
-  <p>Aventure fantastique librement inspirée de l'univers Pokémon, sans affiliation. Version 2 — Polidex et statistiques en construction.</p>
+  <div class="px">POLIMON 2027 - UN PROJET ÉDUCATIF DU COLLECTIF DEMZET</div>
+  <p>Aventure fantastique librement inspirée de l'univers Pokémon, sans affiliation. Version 2 : Polidex et statistiques en construction.</p>
 </footer>
 
 <!-- 1) Les données (le contenu que tu modifies) -->

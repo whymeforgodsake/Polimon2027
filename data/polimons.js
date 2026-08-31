@@ -1,17 +1,17 @@
 /* ============================================================
-   POLIMON 2027 — FICHIER DE DONNÉES
+   POLIMON 2027 - FICHIER DE DONNÉES
    ============================================================
    C'est ICI (et seulement ici) que tu modifies le contenu du
    site : Polimons, dresseurs, éléments, descriptions, stats.
    Tu n'as jamais besoin de toucher à index.html ou js/app.js.
 
-   IMAGES DES POLIMONS — convention automatique :
+   IMAGES DES POLIMONS - convention automatique :
    le site cherche l'image  images/polimons/<numéro>.png
    (ex. le Polimon n°14 → images/polimons/14.png).
    S'il ne trouve pas le fichier, il affiche un sprite pixel-art
    généré automatiquement à la place. Donc pour ajouter une
    image : dépose simplement le fichier au bon nom dans le
-   dossier images/polimons/ — rien à modifier ici.
+   dossier images/polimons/ - rien à modifier ici.
 
    RÈGLES D'ÉCRITURE (important) :
    - chaque texte est entre guillemets "..."
@@ -523,7 +523,7 @@ const POLIMON_DATA = {
      status : "ok" = disponible, "soon" = à venir */
   chapters: [
     { num: "01", title: "RETOUR EN CLASSE",     desc: "Sachez découvre les Polimons auprès du Professeur Chen et choisit son compagnon.", status: "ok" },
-    { num: "02", title: "LE DÎNER DE FAMILLE",  desc: "Chez Mamie Rose, ton compagnon croise Brumedo — l'idée que tonton Gérard nourrissait sans le savoir.", status: "ok" },
+    { num: "02", title: "LE DÎNER DE FAMILLE",  desc: "Chez Mamie Rose, ton compagnon croise Brumedo, l'idée que tonton Gérard nourrissait sans le savoir.", status: "ok" },
     { num: "03", title: "CONSÉCRATION",         desc: "Une évolution se prépare… Le chemin vers l'Élysée se dessine.", status: "soon" }
   ]
 };

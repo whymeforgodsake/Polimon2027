@@ -1375,31 +1375,61 @@ function nextQuizStep(){
 function finishQuiz(){
   const c = document.getElementById('fiche-content');
   const win = quiz.good >= QUIZ_PASS;
-  if(win && !unlockState.codes.includes(quiz.target.code)){
-    unlockState.codes.push(quiz.target.code);
+  const src = quiz.src, tgt = quiz.target;
+  if(!win){
+    c.innerHTML = `
+      <div class="quiz-end">
+        <div class="qz-emoji">📚</div>
+        <h3>PRESQUE…</h3>
+        <p>Score : <b>${quiz.good} / ${DIMENSIONS.length}</b>. Il faut au moins <b>${QUIZ_PASS} bonnes
+           réponses</b> pour faire évoluer <b>${src.name.toUpperCase()}</b>.
+           Relis sa carte et retente ta chance !</p>
+        <div class="quiz-end-btns">
+          <button class="btn" type="button" onclick="startQuiz(${quiz.lin.id})">↺ RÉESSAYER</button>
+          <button class="btn ghost" type="button" onclick="openFiche(${src.code})">RELIRE LA CARTE DE ${src.name.toUpperCase()}</button>
+          <button class="btn ghost" type="button" onclick="renderQuizHome()">CHOISIR UN AUTRE POLIMON</button>
+        </div>
+      </div>`;
+    return;
+  }
+  /* victoire : la carte secrète tournoie sur elle-même puis se
+     retourne pour révéler l'évolution, halo doré + étincelles */
+  if(!unlockState.codes.includes(tgt.code)){
+    unlockState.codes.push(tgt.code);
     saveUnlocks();
     renderDex();
   }
-  const src = quiz.src, tgt = quiz.target;
+  const sparks = Array.from({length: 12}, () => {
+    const left = 8 + Math.random() * 84;
+    const top  = 4 + Math.random() * 88;
+    const delay = 2.1 + Math.random() * 1.4;
+    const size = 12 + Math.random() * 16;
+    return `<span class="spark" style="left:${left.toFixed(1)}%;top:${top.toFixed(1)}%;font-size:${size|0}px;animation-delay:${delay.toFixed(2)}s">✦</span>`;
+  }).join('');
   c.innerHTML = `
-    <div class="quiz-end ${win ? 'win' : ''}">
-      <div class="qz-emoji">${win ? '✨' : '📚'}</div>
-      <h3>${win ? 'FÉLICITATIONS !' : 'PRESQUE…'}</h3>
-      <p>${win
-        ? `<b>${quiz.good} / ${DIMENSIONS.length}</b> bonnes réponses. Mais… que se passe-t-il ?<br>
-           <b>${src.name.toUpperCase()}</b> évolue et devient <b>${tgt.name.toUpperCase()}</b> !<br>
-           Sa carte de niveau ${tgt.level} est maintenant révélée dans le Polidex.`
-        : `Score : <b>${quiz.good} / ${DIMENSIONS.length}</b>. Il faut au moins <b>${QUIZ_PASS} bonnes
-           réponses</b> pour faire évoluer <b>${src.name.toUpperCase()}</b>.
-           Relis sa carte et retente ta chance !`}</p>
-      <div class="quiz-end-btns">
-        ${win
-          ? `<button class="btn" type="button" onclick="openFiche(${tgt.code})">✨ VOIR ${tgt.name.toUpperCase()} ▸</button>`
-          : `<button class="btn" type="button" onclick="startQuiz(${quiz.lin.id})">↺ RÉESSAYER</button>
-             <button class="btn ghost" type="button" onclick="openFiche(${src.code})">RELIRE LA CARTE DE ${src.name.toUpperCase()}</button>`}
-        <button class="btn ghost" type="button" onclick="renderQuizHome()">CHOISIR UN AUTRE POLIMON</button>
+    <div class="quiz-end win">
+      <p class="reveal-pre">Mais… que se passe-t-il ?</p>
+      <div class="reveal-stage">
+        <div class="reveal-glow"></div>
+        <div class="flip-card">
+          <div class="flip-face flip-back dex-slide"></div>
+          <div class="flip-face flip-front dex-slide"></div>
+        </div>
+        ${sparks}
+      </div>
+      <div class="reveal-after">
+        <h3>✨ ${src.name.toUpperCase()} ÉVOLUE EN ${tgt.name.toUpperCase()} !</h3>
+        <p><b>${quiz.good} / ${DIMENSIONS.length}</b> bonnes réponses : tu maîtrises ses idées.
+           Sa carte de niveau ${tgt.level} est maintenant révélée dans le Polidex.</p>
+        <div class="quiz-end-btns">
+          <button class="btn" type="button" onclick="openFiche(${tgt.code})">✨ VOIR ${tgt.name.toUpperCase()} ▸</button>
+          <button class="btn ghost" type="button" onclick="renderQuizHome()">CONTINUER LES ÉVOLUTIONS</button>
+        </div>
       </div>
     </div>`;
+  c.querySelector('.flip-back').appendChild(secretCardNode(tgt));
+  c.querySelector('.flip-front').appendChild(tcgNode(tgt, 220));
+  document.getElementById('fiche-overlay').scrollTop = 0;
 }
 
 /* ============ INIT ============ */

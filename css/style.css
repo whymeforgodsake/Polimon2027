@@ -1867,3 +1867,52 @@ body.intro-open{overflow:hidden;}
 .qr-mini img,.qr-mini canvas{max-width:82%;max-height:82%;object-fit:contain;}
 .quiz-row:hover .qr-mini{transform:rotate(calc((var(--i) - (var(--n) - 1) / 2) * 8deg)) translateY(-2px);}
 .qr-mini{transition:transform .2s ease;}
+
+/* ================================================================
+   v20.2 - CARTE POLIMON : les idées au premier plan.
+   Carte + caractéristiques à gauche, idées / dimensions en grand
+   à droite. Mobile : carte → idées → caractéristiques.
+   ================================================================ */
+.fiche-top.v2{
+  grid-template-columns:minmax(270px,340px) minmax(0,1fr);
+  grid-template-areas:"card ideas" "side ideas";
+  gap:22px 44px;
+}
+.f-card{grid-area:card;}
+.f-ideas{grid-area:ideas;min-width:0;}
+.f-side{grid-area:side;}
+.f-card .tcg{width:100%;}
+.f-ideas .ideas{margin-top:26px;}
+
+/* niveau 1 : les 5 dimensions, toutes visibles, en grandes cartes */
+.ideas-hero h4{margin-top:0;}
+.ideas-all{display:flex;flex-direction:column;gap:14px;margin-top:14px;}
+.idea-full{
+  background:#232329;border:3px solid #33333c;border-left:6px solid var(--jaune);
+  padding:16px 20px;opacity:0;
+  animation:ideaIn .5s cubic-bezier(.2,.8,.3,1) forwards;
+  transition:transform .18s ease, border-color .18s ease;
+}
+.idea-full:hover{transform:translateX(5px);border-color:var(--jaune);}
+.idea-full .if-head{
+  display:flex;align-items:center;gap:10px;margin-bottom:9px;
+}
+.idea-full .if-ico{font-size:19px;}
+.idea-full .if-head b{
+  font-family:'Press Start 2P',monospace;font-size:9px;color:var(--jaune);letter-spacing:1px;
+}
+.idea-full p{font-size:1.02rem;line-height:1.65;color:#e8e4d5;}
+.idea-full.empty{border-left-color:#4a4a55;}
+.idea-full.empty p{color:#8b8b98;font-style:italic;font-size:.9rem;}
+
+/* mobile : une colonne, les idées juste après la carte */
+@media(max-width:860px){
+  .fiche-top.v2{
+    grid-template-columns:1fr;
+    grid-template-areas:"card" "ideas" "side";
+    gap:26px;
+  }
+  .f-card{max-width:340px;margin:0 auto;width:100%;}
+  .idea-full{padding:14px 15px;}
+  .idea-full p{font-size:.95rem;}
+}

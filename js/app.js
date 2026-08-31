@@ -992,7 +992,26 @@ function ideaStats(p, d){
   return { filled, badge: filled + '/' + rows.length };
 }
 function ideasSection(p){
-  const sub = p.level === 1 ? 'SA PHILOSOPHIE' : p.level === 2 ? 'SES PERSPECTIVES' : 'SON PROGRAMME';
+  /* Niveau 1 : les 5 dimensions de la philosophie, toutes visibles
+     d'un coup, en grandes cartes - c'est le cœur éducatif du Polidex. */
+  if(p.level === 1){
+    let i = 0;
+    return `
+    <div class="ideas ideas-hero" id="ideas-box">
+      <h4>SA PHILOSOPHIE · 5 DIMENSIONS</h4>
+      <div class="ideas-all">
+        ${DIMENSIONS.map(d => {
+          const txt = (p.dims[d.key] && p.dims[d.key] !== 'TBD') ? p.dims[d.key] : null;
+          return `
+          <div class="idea-full${txt ? '' : ' empty'}" style="animation-delay:${(i++) * 90}ms">
+            <div class="if-head"><span class="if-ico">${d.icon}</span><b>${d.label.toUpperCase()}</b></div>
+            <p>${txt || 'Cette dimension arrive bientôt…'}</p>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`;
+  }
+  const sub = p.level === 2 ? 'SES PERSPECTIVES' : 'SON PROGRAMME';
   return `
     <div class="ideas" id="ideas-box">
       <h4>LES IDÉES - ${sub}</h4>
@@ -1088,22 +1107,10 @@ function openFiche(code){
   const c1 = ELEMENTS[p.elements[0]], c2 = ELEMENTS[p.elements[1]];
   const flavor = (p.dims.individu && p.dims.individu !== 'TBD') ? p.dims.individu : 'Un Polimon encore mystérieux…';
   c.innerHTML = `
-    <div class="fiche-top">
-      <!-- Carte à jouer dynamique (générée par tcgNode) -->
-      <div id="tcg-slot"></div>
-      <!-- Infos et lignée -->
-      <div class="fiche-aside">
-        <h3>#${pad3(p.code)} ${p.name.toUpperCase()}</h3>
-        <div class="sub">
-          ${elTags(p)}<br><br>
-          Niveau ${p.level} · <b>${lvlInfo(p.level).label}</b> - ${lvlInfo(p.level).desc}
-        </div>
-        <!-- Le dresseur : portrait (si disponible) + lien vers sa fiche -->
-        <div class="fh-trainer" onclick="openDresseur(${p.lineage})" tabindex="0" role="button" aria-label="Voir la fiche de ${p.dresseur}">
-          <span class="fh-tav" id="fh-drav"></span>
-          <span class="fh-tinfo"><b>${p.dresseur.toUpperCase()}</b><span>${p.parti}</span></span>
-          <span class="fh-tgo">VOIR SA FICHE ▸</span>
-        </div>
+    <div class="fiche-top v2">
+      <!-- Colonne gauche : la carte et ses caractéristiques -->
+      <div class="f-card">
+        <div id="tcg-slot"></div>
         ${(() => {
           /* bouton d'évolution : visible si la forme suivante de la
              lignée est encore une carte secrète */
@@ -1114,6 +1121,25 @@ function openFiche(code){
             : '';
         })()}
         <button class="btn ghost share-btn" type="button" onclick="shareCard(${p.code}, this)">📤 PARTAGER CETTE CARTE À UN AMI</button>
+      </div>
+      <!-- Colonne principale : les idées, au premier plan -->
+      <div class="f-ideas fiche-aside">
+        <h3>#${pad3(p.code)} ${p.name.toUpperCase()}</h3>
+        <div class="sub">
+          ${elTags(p)} &nbsp; Niveau ${p.level} · <b>${lvlInfo(p.level).label}</b> - ${lvlInfo(p.level).desc}
+        </div>
+        ${ideasSection(p)}
+      </div>
+      <!-- Sous la carte : caractéristiques, dresseur, lignée -->
+      <div class="f-side fiche-aside">
+        <h4>STATISTIQUES${st.hasAny ? '' : ' <span class="wip">EN CONSTRUCTION</span>'}</h4>
+        <div class="statbars" style="max-width:none;grid-template-columns:1fr;">${st.bars}</div>
+        <!-- Le dresseur : portrait (si disponible) + lien vers sa fiche -->
+        <div class="fh-trainer" onclick="openDresseur(${p.lineage})" tabindex="0" role="button" aria-label="Voir la fiche de ${p.dresseur}">
+          <span class="fh-tav" id="fh-drav"></span>
+          <span class="fh-tinfo"><b>${p.dresseur.toUpperCase()}</b><span>${p.parti}</span></span>
+          <span class="fh-tgo">VOIR SA FICHE ▸</span>
+        </div>
         <h4>LIGNÉE D'ÉVOLUTION « 3P »</h4>
         <div class="evo-row">
           ${lin.forms.map((f,i) => {
@@ -1125,11 +1151,8 @@ function openFiche(code){
               <span class="lv">Niv.${i+1} ${lvlInfo(i+1).label}</span>
             </div>${i<2?'<span class="evo-arr">▶</span>':''}`;}).join('')}
         </div>
-        <h4>STATISTIQUES${st.hasAny ? '' : ' <span class="wip">EN CONSTRUCTION</span>'}</h4>
-        <div class="statbars" style="max-width:none;grid-template-columns:1fr;">${st.bars}</div>
       </div>
-    </div>
-    ${ideasSection(p)}`;
+    </div>`;
   const tc = tcgNode(p, 300);
   tc.id = 'tcg-card';
   c.querySelector('#tcg-slot').replaceWith(tc);
@@ -1143,7 +1166,7 @@ function openFiche(code){
   c.querySelectorAll('.mini:not(.mini-secret)').forEach(m => {
     m.appendChild(spriteNode(byCode(+m.dataset.code), 64));
   });
-  renderIdeasPanel(p, DIMENSIONS[0]);
+  if(p.level > 1) renderIdeasPanel(p, DIMENSIONS[0]);
   openScreen('CARTE POLIMON');
 }
 /* ============ v19.1 - PARTAGER UNE CARTE ============
@@ -1305,7 +1328,7 @@ function renderQuizHome(){
         <div class="qr-stack" style="--n:${owned}">${minis}</div>
         <div class="qr-info">
           <b>${shown.name.toUpperCase()}</b>
-          <span>Sous l'aile de ${l.dresseur}</span>
+          <span>Dresseur : ${l.dresseur}</span>
         </div>
         <div class="qr-track" title="${owned} / ${l.forms.length} Polimons révélés">${track}</div>
         <div class="qr-state">${t ? '⬆ FAIRE ÉVOLUER' : '✔'}</div>
@@ -1352,7 +1375,7 @@ function renderQuizQuestion(){
         <div class="qh-spr" id="qh-spr"></div>
         <div>
           <h3>${quiz.src.name.toUpperCase()}</h3>
-          <div class="qh-sub">Sous l'aile de ${quiz.src.dresseur} · Évolution vers le niveau ${quiz.target.level}</div>
+          <div class="qh-sub">Dresseur : ${quiz.src.dresseur} · Évolution vers le niveau ${quiz.target.level}</div>
           <div class="qh-progress">${DIMENSIONS.map((x,i) =>
             `<span class="dot ${i < quiz.qIdx ? (quiz.results[i] ? 'good' : 'bad') : i === quiz.qIdx ? 'cur' : ''}"></span>`).join('')}
             <b>${quiz.qIdx + 1} / ${DIMENSIONS.length}</b></div>

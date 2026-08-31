@@ -442,18 +442,45 @@
     </div>
     <div class="fight-cta"><button class="btn" id="btn-fight" onclick="startCombat()">⚔ LANCER LE COMBAT</button></div>
 
-    <!-- Scène de combat façon Game Boy -->
-    <div class="battle" id="battle">
-      <div class="plate plate-foe" id="plateB"></div>
-      <div class="spr-slot foe" id="sprB"></div>
-      <div class="trainer-slot t-foe" id="trFoe"></div>
-      <div class="trainer-slot t-ally" id="trAlly"></div>
-      <div class="spr-slot ally" id="sprA"></div>
-      <div class="plate plate-ally" id="plateA"></div>
-      <div class="battle-msg" id="battle-msg"></div>
+    <!-- La console : le combat se joue DANS une grosse Game Boy -->
+    <div class="gameboy">
+      <div class="gb-top">
+        <span class="gb-line"></span>
+        <span class="gb-notch">POLIMON BOY<i>TM</i></span>
+        <span class="gb-line"></span>
+      </div>
+      <div class="gb-bezel">
+        <div class="gb-power"><i></i> BATTERY</div>
+        <div class="gb-screen">
+          <!-- Scène de combat façon Game Boy -->
+          <div class="battle" id="battle">
+            <div class="plate plate-foe" id="plateB"></div>
+            <div class="spr-slot foe" id="sprB"></div>
+            <div class="trainer-slot t-foe" id="trFoe"></div>
+            <div class="trainer-slot t-ally" id="trAlly"></div>
+            <div class="spr-slot ally" id="sprA"></div>
+            <div class="plate plate-ally" id="plateA"></div>
+            <div class="battle-msg" id="battle-msg"></div>
+          </div>
+          <div class="compare" id="compare"></div>
+        </div>
+        <div class="gb-brand">Polimon <span>GAME BOY</span></div>
+      </div>
+      <div class="gb-controls" aria-hidden="true">
+        <div class="gb-dpad"><span class="dp h"></span><span class="dp v"></span><span class="dp-c"></span></div>
+        <div class="gb-ab">
+          <span class="gb-btn">B</span>
+          <span class="gb-btn">A</span>
+        </div>
+      </div>
+      <div class="gb-ss" aria-hidden="true">
+        <span><i></i>SELECT</span>
+        <span><i></i>START</span>
+      </div>
+      <div class="gb-speaker" aria-hidden="true">
+        <i></i><i></i><i></i><i></i><i></i><i></i>
+      </div>
     </div>
-
-    <div class="compare" id="compare"></div>
   </div>
 </section>
 

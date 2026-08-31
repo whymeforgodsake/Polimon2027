@@ -1784,3 +1784,7 @@ footer .px{font-family:'Press Start 2P',monospace;font-size:8px;color:var(--jaun
   .quiz-row{flex-wrap:wrap;}
   .qr-track{order:3;margin:6px 0 0 70px;}
 }
+
+/* v19.10 - suivi coloré des réponses du quizz : vert = bon, rouge = raté */
+.qh-progress .dot.good{background:#7ac74c;border-color:#7ac74c;box-shadow:0 0 5px rgba(122,199,76,.55);}
+.qh-progress .dot.bad{background:#ff6b6b;border-color:#ff6b6b;box-shadow:0 0 5px rgba(255,107,107,.5);}

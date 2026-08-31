@@ -1315,7 +1315,7 @@ function startQuiz(lineageId){
   if(!dimsComplete(p1)){ renderQuizHome(); return; }
   const t = quizTarget(lin);
   if(!t){ renderQuizHome(); return; }   /* lignée déjà complète */
-  quiz = { lin, p1, src: t.src, target: t.target, qIdx: 0, good: 0 };
+  quiz = { lin, p1, src: t.src, target: t.target, qIdx: 0, good: 0, results: [] };
   renderQuizQuestion();
   const ov = document.getElementById('fiche-overlay');
   if(!ov.classList.contains('open')) openScreen('QUIZZ DU PROF. CHEN');
@@ -1339,7 +1339,7 @@ function renderQuizQuestion(){
           <h3>${quiz.src.name.toUpperCase()}</h3>
           <div class="qh-sub">Sous l'aile de ${quiz.src.dresseur} · Évolution vers le niveau ${quiz.target.level}</div>
           <div class="qh-progress">${DIMENSIONS.map((x,i) =>
-            `<span class="dot ${i < quiz.qIdx ? 'past' : i === quiz.qIdx ? 'cur' : ''}"></span>`).join('')}
+            `<span class="dot ${i < quiz.qIdx ? (quiz.results[i] ? 'good' : 'bad') : i === quiz.qIdx ? 'cur' : ''}"></span>`).join('')}
             <b>${quiz.qIdx + 1} / ${DIMENSIONS.length}</b></div>
         </div>
       </div>
@@ -1361,6 +1361,10 @@ function renderQuizQuestion(){
 function answerQuiz(btn){
   const ok = !!btn.dataset.ok;
   if(ok) quiz.good++;
+  quiz.results.push(ok);
+  /* le point de la question en cours prend la couleur du résultat */
+  const cur = document.querySelector('.qh-progress .dot.cur');
+  if(cur){ cur.classList.remove('cur'); cur.classList.add(ok ? 'good' : 'bad'); }
   document.querySelectorAll('.quiz-opt').forEach(b => {
     b.disabled = true;
     if(b.dataset.ok) b.classList.add('good');

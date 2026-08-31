@@ -1279,8 +1279,11 @@ function renderQuizHome(){
   const c = document.getElementById('fiche-content');
   const rows = quizLineages().map(l => {
     const t = quizTarget(l);
-    const p1 = byCode(l.forms[0].code);
     const shown = t ? t.src : byCode(l.forms[l.forms.length-1].code);
+    /* suivi d'évolution : 1 point par Polimon accessible dans la lignée */
+    const owned = l.forms.filter(f => isUnlocked(byCode(f.code))).length;
+    const track = l.forms.map((f, i) =>
+      `<span class="evo-dot ${i < owned ? 'on' : ''}"></span>`).join('');
     return `
       <div class="quiz-row ${t ? '' : 'done'}"
            onclick="${t ? `startQuiz(${l.id})` : `openFiche(${shown.code})`}" tabindex="0" role="button">
@@ -1289,17 +1292,15 @@ function renderQuizHome(){
           <b>${shown.name.toUpperCase()}</b>
           <span>Sous l'aile de ${l.dresseur}</span>
         </div>
-        <div class="qr-state">${t ? `⬆ FAIRE ÉVOLUER (NIV.${t.src.level} → ${t.target.level})` : '✔ LIGNÉE COMPLÈTE'}</div>
+        <div class="qr-track" title="${owned} / ${l.forms.length} Polimons révélés">${track}</div>
+        <div class="qr-state">${t ? '⬆ FAIRE ÉVOLUER' : '✔'}</div>
       </div>`;
   }).join('');
   c.innerHTML = `
     <div class="quiz-home">
       <div class="qz-emoji">🎓</div>
       <h3>LE QUIZZ DU PROFESSEUR CHEN</h3>
-      <p class="quiz-intro">« Un Polimon évolue quand son dresseur maîtrise ses idées !
-      Réponds à mes 5 questions sur sa <b>philosophie</b> : avec au moins
-      <b>${QUIZ_PASS} bonnes réponses</b>, ton Polimon <b>évolue</b> et sa carte
-      secrète est révélée. Niveau 1 → 2, puis 2 → 3 ! »</p>
+      <p class="quiz-intro">Maîtrise les idées de ton Polimon et fais-le évoluer !</p>
       <div class="quiz-list">${rows}</div>
     </div>`;
   c.querySelectorAll('.qr-spr').forEach(m => m.appendChild(spriteNode(byCode(+m.dataset.code), 56)));
@@ -1429,12 +1430,10 @@ function finishQuiz(){
         <div class="reveal-flash"></div>
       </div>
       <div class="reveal-after">
-        <h3>✨ ${src.name.toUpperCase()} ÉVOLUE EN ${tgt.name.toUpperCase()} !</h3>
-        <p><b>${quiz.good} / ${DIMENSIONS.length}</b> bonnes réponses : tu maîtrises ses idées.
-           Sa carte de niveau ${tgt.level} est maintenant révélée dans le Polidex.</p>
+        <h3>${src.name.toUpperCase()} ÉVOLUE EN ${tgt.name.toUpperCase()} !</h3>
+        <p>Tu as débloqué une nouvelle carte Polimon.</p>
         <div class="quiz-end-btns">
-          <button class="btn" type="button" onclick="openFiche(${tgt.code})">✨ VOIR ${tgt.name.toUpperCase()} ▸</button>
-          <button class="btn ghost" type="button" onclick="renderQuizHome()">CONTINUER LES ÉVOLUTIONS</button>
+          <button class="btn" type="button" onclick="closeFiche();go('polidex')">📕 RETOUR AU POLIDEX ▸</button>
         </div>
       </div>
     </div>`;

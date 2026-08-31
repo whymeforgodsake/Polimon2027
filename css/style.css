@@ -1773,3 +1773,14 @@ footer .px{font-family:'Press Start 2P',monospace;font-size:8px;color:var(--jaun
   .reveal-after{animation:none;opacity:1;}
   .reveal-pre{animation:none;}
 }
+
+/* v19.9 - suivi d'évolution dans le quizz : 3 points par lignée */
+.qr-track{display:flex;gap:5px;align-items:center;margin-right:14px;}
+.evo-dot{
+  width:11px;height:11px;border:2px solid #4a4a55;background:transparent;flex:none;
+}
+.evo-dot.on{background:var(--jaune);border-color:var(--jaune);box-shadow:0 0 6px rgba(255,222,0,.5);}
+@media(max-width:680px){
+  .quiz-row{flex-wrap:wrap;}
+  .qr-track{order:3;margin:6px 0 0 70px;}
+}

@@ -1399,23 +1399,34 @@ function finishQuiz(){
     saveUnlocks();
     renderDex();
   }
-  const sparks = Array.from({length: 12}, () => {
-    const left = 8 + Math.random() * 84;
-    const top  = 4 + Math.random() * 88;
-    const delay = 2.1 + Math.random() * 1.4;
-    const size = 12 + Math.random() * 16;
-    return `<span class="spark" style="left:${left.toFixed(1)}%;top:${top.toFixed(1)}%;font-size:${size|0}px;animation-delay:${delay.toFixed(2)}s">✦</span>`;
+  /* étincelles : jaillissement radial depuis le centre de la carte */
+  const sparks = Array.from({length: 18}, (_, i) => {
+    const ang  = (i / 18) * Math.PI * 2 + Math.random() * 0.5;
+    const dist = 130 + Math.random() * 150;
+    const dx = Math.cos(ang) * dist, dy = Math.sin(ang) * dist;
+    const delay = 1.95 + Math.random() * 0.25;
+    const size = 10 + Math.random() * 18;
+    const glyph = Math.random() < 0.5 ? '✦' : '✧';
+    return `<span class="spark" style="--dx:${dx|0}px;--dy:${dy|0}px;font-size:${size|0}px;animation-delay:${delay.toFixed(2)}s">${glyph}</span>`;
   }).join('');
   c.innerHTML = `
     <div class="quiz-end win">
       <p class="reveal-pre">Mais… que se passe-t-il ?</p>
       <div class="reveal-stage">
+        <div class="reveal-rays"></div>
         <div class="reveal-glow"></div>
-        <div class="flip-card">
-          <div class="flip-face flip-back dex-slide"></div>
-          <div class="flip-face flip-front dex-slide"></div>
+        <span class="reveal-ring r1"></span>
+        <span class="reveal-ring r2"></span>
+        <div class="float-wrap">
+          <div class="shake-wrap">
+            <div class="flip-card">
+              <div class="flip-face flip-back dex-slide"></div>
+              <div class="flip-face flip-front dex-slide"></div>
+            </div>
+          </div>
         </div>
         ${sparks}
+        <div class="reveal-flash"></div>
       </div>
       <div class="reveal-after">
         <h3>✨ ${src.name.toUpperCase()} ÉVOLUE EN ${tgt.name.toUpperCase()} !</h3>

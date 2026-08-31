@@ -198,11 +198,11 @@ const POLIMON_DATA = {
           stats: { "Attaque": 81, "Défense": 78, "Vision": 71, "Résilience": 76, "Cohérence": 72 } }
       ],
       dims: {
-        individu:     "L'individu est un être social qui se réalise par le travail collectif.",
-        societe:      "La société est une communauté de producteurs organisant la vie commune.",
-        economie:     "L'économie est un outil de redistribution au service du bien commun.",
-        ecologie:     "La nature est une ressource commune à préserver par l'action collective.",
-        geopolitique: "La France est une communauté souveraine coopérant dans un monde multipolaire."
+        individu:     "L'individu est un être qui se réalise par le travail et a droit aux jours heureux.",
+        societe:      "La société est une communauté de producteurs, tenue par ses services publics.",
+        economie:     "L'économie est l'affaire de ceux qui produisent, pas de ceux qui spéculent.",
+        ecologie:     "La nature est un bien commun que protège le progrès, non la privation.",
+        geopolitique: "La France est une république sociale et souveraine, artisane de paix dans un monde multipolaire."
       }
     },
     {
@@ -221,11 +221,11 @@ const POLIMON_DATA = {
           stats: { "Attaque": 85, "Défense": 63, "Vision": 81, "Résilience": 68, "Cohérence": 76 } }
       ],
       dims: {
-        individu:     "L'individu est un travailleur dont la dignité exige reconnaissance.",
-        societe:      "La société est une fraternité entre personnes interdependantes.",
-        economie:     "L'économie est un outil politique soumis à la volonté populaire.",
-        ecologie:     "La nature est la limite matérielle imposant sobriété.",
-        geopolitique: "La France est une terre de production à protéger."
+        individu:     "L'individu est un travailleur essentiel dont la dignité exige respect et fierté.",
+        societe:      "La société est une fraternité à recoudre entre les deux France.",
+        economie:     "L'économie est faite pour relier les gens, pas pour les mettre en concurrence.",
+        ecologie:     "La nature est un bonheur simple à partager, pas une leçon donnée d'en haut.",
+        geopolitique: "La France est un pays entier, pas à moitié - une terre qui vit de ce qu'elle produit."
       }
     },
     {
@@ -260,11 +260,11 @@ const POLIMON_DATA = {
           stats: { "Attaque": 95, "Défense": 67, "Vision": 69, "Résilience": 85, "Cohérence": 58 } }
       ],
       dims: {
-        individu:     "L'individu est un etre libre seulement si l'essentiel lui est garanti : santé, école, logement, énergie.",
-        societe:      "La société est un peuple varié, uni face à une minorité qui possède presque tout.",
-        economie:     "L'économie doit être dirigée par l'intérêt général du peuple, pas par l'intérêt privé de la finance.",
-        ecologie:     "La nature fixe les limites : on ne doit jamais lui prendre plus qu'elle ne peut refabriquer.",
-        geopolitique: "La France doit rester indépendante et ne s'aligner sur aucune grande puissance."
+        individu:     "L'individu est un être autonome, qui doit s'émanciper de toute domination.",
+        societe:      "La société est un peuple aux multiples racines et un réseau d'entraide.",
+        economie:     "L'économie est un choix politique commun, affranchi de la finance.",
+        ecologie:     "La nature est un tout dont l'humain fait partie, on ne lui prélève que ce qu'elle peut redonner.",
+        geopolitique: "La France est une puissance libre qui ne s'aligne sur aucun empire."
       }
     },
     {
@@ -283,11 +283,11 @@ const POLIMON_DATA = {
           stats: { "Attaque": 64, "Défense": 85, "Vision": 75, "Résilience": 76, "Cohérence": 74 } }
       ],
       dims: {
-        individu:     "L'individu est un être autonome dont l'État garantit l'émancipation.",
-        societe:      "La société est un contrat équilibrant droits individuels et solidarité collective.",
-        economie:     "L'économie est un marché encadré par la puissance publique redistributrice.",
-        ecologie:     "La nature est un patrimoine commun nécessitant transformation graduelle et négociée.",
-        geopolitique: "La France est un État-membre construisant une Europe sociale."
+        individu:     "L'individu est un citoyen dont l'émancipation exige l'égalité réelle, garantie par la République.",
+        societe:      "La société est un contrat de solidarité, qui ne progresse que rassemblée.",
+        economie:     "L'économie est un marché encadré, mis au service de la justice sociale.",
+        ecologie:     "La nature est un enjeu de justice autant que de survie.",
+        geopolitique: "La France est une république sociale qui tient ses promesses en construisant l'Europe."
       }
     },
     {
@@ -317,11 +317,11 @@ const POLIMON_DATA = {
           stats: { "Attaque": 66, "Défense": 66, "Vision": 94, "Résilience": 71, "Cohérence": 81 } }
       ],
       dims: {
-        individu:     "L'individu est un noeud interdépendant du monde vivant.",
-        societe:      "La société est une organisation horizontale rapprochant décision et impact territorial.",
-        economie:     "L'économie doit cesser d'épuiser la planète : vivre mieux ne veut pas dire produire plus.",
-        ecologie:     "La nature est la matrice supreme qui conditionne toute existence et guide toute decision.",
-        geopolitique: "La France une unité coopérative dans une gouvernance écologique mondiale."
+        individu:     "L'individu est un vivant parmi les vivants, dont la liberté naît du soin porté à ce qui le fait vivre.",
+        societe:      "La société est un tissu d'interdépendances, entre humains et avec le vivant, qui ne tient que par la justice.",
+        economie:     "L'économie est une activité humaine tenue par les limites de la planète.",
+        ecologie:     "La nature est la matrice suprême qui conditionne toute existence et guide toute décision.",
+        geopolitique: "La France est une terre dont la liberté commence par l'indépendance écologique."
       }
     },
     {
@@ -349,11 +349,11 @@ const POLIMON_DATA = {
           stats: { "Attaque": 74, "Défense": 71, "Vision": 85, "Résilience": 70, "Cohérence": 78 } }
       ],
       dims: {
-        individu:     "L'individu est un porteur de droits universels transcendant toute frontière.",
-        societe:      "La société doit récompenser ceux qui travaillent, pas ceux qui héritent.",
-        economie:     "L'économie est un marché nécessitant la taxation des grandes fortunes pour alléger ceux qui travaillent.",
-        ecologie:     "La nature est un bien commun mondial exigeant gouvernance contraignante internationale.",
-        geopolitique: "La France est un acteur moral qui doit peser dans une Europe unie, face aux États-Unis, à la Chine et à la Russie."
+        individu:     "L'individu est un être de liens, qui se vide dans l'isolement et s'accomplit dans le commun.",
+        societe:      "La société est une démocratie fragile, à défendre contre les empires au-dehors et l'injustice au-dedans.",
+        economie:     "L'économie est le socle de la promesse démocratique : que chacun puisse changer sa vie par son travail, à armes égales.",
+        ecologie:     "La nature est une condition de notre liberté autant que de notre survie.",
+        geopolitique: "La France est la locomotive d'une Europe souveraine et démocratique."
       }
     },
     {
@@ -383,11 +383,11 @@ const POLIMON_DATA = {
           stats: { "Attaque": 78, "Défense": 69, "Vision": 85, "Résilience": 65, "Cohérence": 76 } }
       ],
       dims: {
-        individu:     "L'individu est un agent libre par son travail et responsable de son destin.",
-        societe:      "La société est une arène méritocratique où le talent et l'effort déterminent le succès.",
-        economie:     "L'économie doit grandir : quand le gâteau grossit, personne n'a besoin de la part du voisin.",
-        ecologie:     "La nature est un ensemble de défis techniques, que l'innovation peut regler.",
-        geopolitique: "La France est une grande puissance par sa technologie et par ses frontières."
+        individu:     "L'individu est la somme de ce qu'il fait, non ce dont il hérite.",
+        societe:      "La société est une promesse d'ascension qui doit valoir pour tous.",
+        economie:     "L'économie est un gâteau qui grandit par l'innovation et profite à tous.",
+        ecologie:     "La nature est une responsabilité entre générations, que le progrès permet d'honorer.",
+        geopolitique: "La France est une puissance d'avenir, qui tient sa place dans le monde par l'audace et l'innovation."
       }
     },
     {
@@ -416,11 +416,11 @@ const POLIMON_DATA = {
           stats: { "Attaque": 60, "Défense": 91, "Vision": 72, "Résilience": 86, "Cohérence": 69 } }
       ],
       dims: {
-        individu:     "L'individu est un etre faconne par l'effort, le mérite et la liberté, à qui on doit dire la vérité même quand elle dérange.",
-        societe:      "La société est un ordre hiérarchisé maintenu par l'autorité légitime de l'État.",
-        economie:     "L'économie est une machine a créer de la richesse, qui ne se partage bien que quand on a produit suffisamment.",
-        ecologie:     "La nature est un système adaptable par l'investissement et la technique, pas par les interdictions.",
-        geopolitique: "La France est un acteur stratégique combinant indépendance et partenariats sélectifs."
+        individu:     "L'individu est un adulte lucide et responsable, qui regarde le réel en face.",
+        societe:      "La société est un contrat exigeant, qui tient par des règles stables et l'effort de chacun.",
+        economie:     "L'économie est une richesse qui se crée, par le travail et la stabilité, avant de se partager.",
+        ecologie:     "La nature est une réalité qui change, à laquelle un pays s'adapte par la technique et l'investissement.",
+        geopolitique: "La France est une puissance d'équilibre dans une Europe qui s'assume, sans vivre à crédit."
       }
     },
     {
@@ -439,11 +439,11 @@ const POLIMON_DATA = {
           stats: { "Attaque": 90, "Défense": 84, "Vision": 63, "Résilience": 76, "Cohérence": 65 } }
       ],
       dims: {
-        individu:     "L'individu est défini par ses responsabilités morales et son engagement laborieux.",
-        societe:      "La société est une structure ordonnée préservée par autorité et transmission culturelle.",
-        economie:     "L'économie est un système récompensant le travail par liberté fiscale et propriété.",
-        ecologie:     "La nature est un milieu gérable sans sacrifier croissance et prospérité nationale.",
-        geopolitique: "La France est une entité souveraine défendant pragmatiquement ses intérêts vitaux."
+        individu:     "L'individu est celui qui se lève tôt et mérite de garder le fruit de ses efforts.",
+        societe:      "La société est un enracinement : famille, commune, terroir, transmission.",
+        economie:     "L'économie est faite pour ceux qui travaillent, pas pour ceux qui en profitent.",
+        ecologie:     "La nature est un pays réel que défendent ceux qui y vivent.",
+        geopolitique: "La France est une nation enracinée qui doit reprendre le contrôle de son destin."
       }
     },
     {
@@ -471,11 +471,11 @@ const POLIMON_DATA = {
           stats: { "Attaque": 77, "Défense": 79, "Vision": 61, "Résilience": 88, "Cohérence": 68 } }
       ],
       dims: {
-        individu:     "L'individu se construit grâce à ses racines : sa famille, son pays, son histoire.",
-        societe:      "La société est une communauté nationale qui protège d'abord les siens.",
-        economie:     "L'économie doit servir les Français et être protégée de la concurrence mondiale.",
-        ecologie:     "La nature se protège en produisant près de chez soi, pas en punissant les gens.",
-        geopolitique: "La France doit décider seule de son destin, sans Bruxelles ni Washington."
+        individu:     "L'individu est un être fier, défini, et protégé par ses racines (familiales, culturelles, historiques).",
+        societe:      "La société est une communauté nationale unie par un destin commun, qui choisit qui elle accueille.",
+        economie:     "L'économie est un moyen au service de la nation et de son peuple, contre la mondialisation.",
+        ecologie:     "La nature est un patrimoine que l'on protège d'abord près de chez soi, sans culpabiliser.",
+        geopolitique: "La France est une nation souveraine, seule maîtresse de son destin."
       }
     },
     {
@@ -494,11 +494,11 @@ const POLIMON_DATA = {
           stats: { "Attaque": 79, "Défense": 81, "Vision": 70, "Résilience": 82, "Cohérence": 62 } }
       ],
       dims: {
-        individu:     "L'individu est un etre appartenant à une communauté nationale.",
-        societe:      "La société est un organisme historique et culturel transmis par les générations.",
-        economie:     "L'économie est organisée pour protéger et privilégier la communauté nationale.",
-        ecologie:     "La nature est défendue par l'enracinement territorial et la souveraineté locale.",
-        geopolitique: "La France est une civilisation délimitée ayant droit à l'autodétermination totale."
+        individu:     "L'individu est un membre de la communauté nationale, qui s'élève par le mérite et la fidélité.",
+        societe:      "La société est un héritage vivant, une appartenance qui se mérite et se défend.",
+        economie:     "L'économie est une force à libérer, au service et sous la protection de la nation.",
+        ecologie:     "La nature est un cadre de vie enraciné, à préserver sans punir personne.",
+        geopolitique: "La France est un héritage de civilisation que la génération qui vient doit défendre."
       }
     },
     {
@@ -517,11 +517,11 @@ const POLIMON_DATA = {
           stats: { "Attaque": 86, "Défense": 65, "Vision": 73, "Résilience": 79, "Cohérence": 71 } }
       ],
       dims: {
-        individu:     "L'individu est un héritier d'une civilisation déterminant son essence.",
-        societe:      "La société est un corps civilisationnel menacé d'effacement par substitution démographique.",
-        economie:     "L'économie est un instrument de puissance nationale protégeant les intérêts français.",
-        ecologie:     "La nature est un patrimoine culturel et des paysages à préserver.",
-        geopolitique: "La France est une civilisation en guerre défensive contre déclin et remplacement."
+        individu:     "L'individu est l'héritier d'une civilisation qui le précède, le dépasse et le définit.",
+        societe:      "La société est un corps civilisationnel millénaire menacé d'effacement.",
+        economie:     "L'économie est un instrument de puissance au service du redressement national.",
+        ecologie:     "La nature est une inquiétude seconde : la vraie menace n'est pas la fin du monde, mais la fin de notre monde.",
+        geopolitique: "La France est une civilisation assiégée qui n'a pas dit son dernier mot."
       }
     }
     ,{
@@ -549,11 +549,11 @@ const POLIMON_DATA = {
           stats: { "Attaque": 68, "Défense": 96, "Vision": 65, "Résilience": 84, "Cohérence": 65 } }
       ],
       dims: {
-        individu:     "L'individu est l'héritier d'une histoire et d'une culture : il a des devoirs avant d'avoir des droits.",
-        societe:      "La société tient par l'autorité, la famille et ce qu'on transmet aux générations suivantes.",
-        economie:     "L'économie doit récompenser ceux qui travaillent plus que ceux qui vivent des aides.",
-        ecologie:     "La nature est un héritage à transmettre, qu'on protège par la technique et le bon sens.",
-        geopolitique: "La France est une civilisation : pour en faire partie, il faut en adopter les règles."
+        individu:     "L'individu est un héritier : ce qu'il a reçu l'oblige envers ceux qui suivent.",
+        societe:      "La société est un ordre qui se reçoit, s'entretient et se transmet.",
+        economie:     "L'économie est la juste récompense de l'effort, que l'État doit garantir plutôt que confisquer.",
+        ecologie:     "La nature est un héritage que l'on protège en agissant, par la science plutôt que par la punition.",
+        geopolitique: "La France est une civilisation fière à défendre et à transmettre."
       }
     }
   ],

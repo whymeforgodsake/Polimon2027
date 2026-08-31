@@ -1295,10 +1295,14 @@ function renderQuizHome(){
     const owned = l.forms.filter(f => isUnlocked(byCode(f.code))).length;
     const track = l.forms.map((f, i) =>
       `<span class="evo-dot ${i < owned ? 'on' : ''}"></span>`).join('');
+    /* les Polimons débloqués s'empilent comme des petites cartes,
+       le plus évolué sur le dessus */
+    const minis = l.forms.filter(f => isUnlocked(byCode(f.code))).map((f, i) =>
+      `<span class="qr-mini" style="--i:${i}" data-code="${f.code}"></span>`).join('');
     return `
       <div class="quiz-row ${t ? '' : 'done'}"
            onclick="${t ? `startQuiz(${l.id})` : `openFiche(${shown.code})`}" tabindex="0" role="button">
-        <div class="qr-spr" data-code="${shown.code}"></div>
+        <div class="qr-stack" style="--n:${owned}">${minis}</div>
         <div class="qr-info">
           <b>${shown.name.toUpperCase()}</b>
           <span>Sous l'aile de ${l.dresseur}</span>
@@ -1314,7 +1318,7 @@ function renderQuizHome(){
       <p class="quiz-intro">Maîtrise les idées de ton Polimon et fais-le évoluer !</p>
       <div class="quiz-list">${rows}</div>
     </div>`;
-  c.querySelectorAll('.qr-spr').forEach(m => m.appendChild(spriteNode(byCode(+m.dataset.code), 56)));
+  c.querySelectorAll('.qr-mini').forEach(m => m.appendChild(spriteNode(byCode(+m.dataset.code), 40)));
   c.querySelectorAll('.quiz-row').forEach(r => r.addEventListener('keydown', e => {
     if(e.key === 'Enter'){ e.preventDefault(); r.click(); }
   }));

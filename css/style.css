@@ -1846,3 +1846,24 @@ body.intro-open{overflow:hidden;}
   .intro-panel{transition:none;}
   #intro.leave{display:none;}
 }
+
+/* ================================================================
+   v20.1 - QUIZZ : les Polimons débloqués d'une lignée s'empilent
+   comme des petites cartes en éventail, le plus évolué au-dessus.
+   ================================================================ */
+.qr-stack{
+  position:relative;flex:none;height:74px;
+  width:calc(58px + (var(--n, 1) - 1) * 22px);
+}
+.qr-mini{
+  position:absolute;top:0;left:calc(var(--i) * 22px);
+  width:56px;height:72px;z-index:calc(var(--i) + 1);
+  background:#fffef5;border:2px solid #232019;border-radius:6px;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:2px 3px 0 rgba(0,0,0,.45);
+  transform:rotate(calc((var(--i) - (var(--n) - 1) / 2) * 5deg));
+  transform-origin:bottom center;
+}
+.qr-mini img,.qr-mini canvas{max-width:82%;max-height:82%;object-fit:contain;}
+.quiz-row:hover .qr-mini{transform:rotate(calc((var(--i) - (var(--n) - 1) / 2) * 8deg)) translateY(-2px);}
+.qr-mini{transition:transform .2s ease;}

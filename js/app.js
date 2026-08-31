@@ -1253,6 +1253,17 @@ document.addEventListener('keydown', e => {
 let quiz = null;
 const QUIZ_PASS = 3;   /* bonnes réponses minimales sur 5 */
 
+/* petits helpers de français : « de François Ruffin » / « d'Olivier Faure »,
+   « sur l'écologie » / « sur la société » */
+function deNom(nom){
+  return (/^[aeiouyàâéèêëîïôöûü]/i.test(nom) ? "d'" : 'de ') + `<b>${nom}</b>`;
+}
+function surDim(d){
+  const l = d.label.toLowerCase();
+  const article = /^[aeiouyàâéèêëîïôöûü]/i.test(l) ? "l'" : 'la ';
+  return `<b>${article}${l}</b>`;
+}
+
 /* Quelle est la prochaine évolution à révéler pour cette lignée ?
    Retourne { src, target } ou null si la lignée est complète. */
 function quizTarget(lin){
@@ -1343,8 +1354,7 @@ function renderQuizQuestion(){
             <b>${quiz.qIdx + 1} / ${DIMENSIONS.length}</b></div>
         </div>
       </div>
-      <div class="quiz-q">${d.icon} Quelle est la philosophie du Polimon <b>${quiz.src.name.toUpperCase()}</b>
-        (sous l'aile de <b>${quiz.src.dresseur}</b>) sur la dimension <b>${d.label.toUpperCase()}</b> ?</div>
+      <div class="quiz-q">${d.icon} Quelle est la philosophie ${deNom(quiz.src.dresseur)} sur ${surDim(d)} ?</div>
       <div class="quiz-opts">
         ${options.map(o => `<button type="button" class="quiz-opt" data-ok="${o === correct ? 1 : ''}">${o}</button>`).join('')}
       </div>

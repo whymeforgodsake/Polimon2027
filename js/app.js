@@ -954,29 +954,38 @@ function openDresseur(id){
     <h4>SON PROFIL DE DRESSEUR</h4>
     <p class="t-bio">${l.bio || ''}</p>
     <h4>SA LIGNÉE « 3P »</h4>
-    <div class="t-lineup">
-      ${l.forms.map((f,i) => {
-        const fp = byCode(f.code), locked = fp && !isUnlocked(fp);
-        return `
-        <div class="t-poli ${locked?'locked':''}" data-code="${f.code}" data-locked="${locked?1:''}" onclick="openFiche(${f.code})">
-          <span class="pn">${locked ? '???' : f.name.toUpperCase()}</span>
-          <span class="pl">${'★'.repeat(i+1)} ${lvlInfo(i+1).label}</span>
-        </div>`;}).join('')}
-    </div>`;
+    <div class="t-cards" id="t-cards"></div>`;
   const av = c.querySelector('#dr-avatar');
   av.replaceWith(trainerAvatar(l, 't-avatar'));
-  c.querySelectorAll('.t-poli').forEach(el => {
-    if(el.dataset.locked){
-      const q = document.createElement('div');
-      q.className = 'mini-secret tp-secret';
-      q.innerHTML = '<span class="q">?</span>';
-      el.insertBefore(q, el.firstChild);
+  /* les 3 cartes Polimon de la lignée, en vraies cartes à jouer
+     (les évolutions non révélées restent des cartes secrètes) */
+  const cardsBox = c.querySelector('#t-cards');
+  l.forms.forEach(f => {
+    const p = byCode(f.code);
+    if(!p) return;
+    const slot = document.createElement('div');
+    slot.className = 'dex-slide';
+    const locked = !isUnlocked(p);
+    const card = locked ? secretCardNode(p) : tcgNode(p, 220);
+    card.setAttribute('role', 'button');
+    card.tabIndex = 0;
+    if(locked){
+      if(p.level === 2){
+        card.title = 'Carte secrète : réussis le quizz pour la révéler';
+        card.onclick = () => openQuiz(p.lineage);
+      } else {
+        card.title = 'Carte secrète : non déblocable pour l\'instant';
+        card.onclick = () => secretShake(card);
+      }
     } else {
-      const p = byCode(+el.dataset.code);
-      el.insertBefore(spriteNode(p, 72), el.firstChild);
+      card.title = 'Ouvrir la carte de ' + p.name;
+      card.onclick = () => openFiche(p.code);
     }
+    card.addEventListener('keydown', e => { if(e.key === 'Enter') card.click(); });
+    slot.appendChild(card);
+    cardsBox.appendChild(slot);
   });
-  openScreen('CARTE DRESSEUR');
+  openScreen('FICHE DRESSEUR');
 }
 
 /* ============ LES IDÉES (N1 / N2 / N3) ============
@@ -1113,6 +1122,7 @@ function openFiche(code){
           <span class="fh-tinfo"><b>${p.dresseur.toUpperCase()}</b><span>${p.parti}</span></span>
           <span class="fh-tgo">VOIR SA FICHE ▸</span>
         </div>
+        <button class="btn ghost share-btn" type="button" onclick="shareCard(${p.code}, this)">📤 PARTAGER CETTE CARTE À UN AMI</button>
         <h4>LIGNÉE D'ÉVOLUTION « 3P »</h4>
         <div class="evo-row">
           ${lin.forms.map((f,i) => {
@@ -1145,7 +1155,31 @@ function openFiche(code){
   renderIdeasPanel(p, DIMENSIONS[0]);
   openScreen('CARTE POLIMON');
 }
-/* Ouvre l'écran plein page (fiche Polimon ou carte dresseur) */
+/* ============ v19.1 - PARTAGER UNE CARTE ============
+   Sur mobile, navigator.share ouvre la feuille de partage native
+   (Messages, WhatsApp, Instagram, e-mail…). Sur ordinateur, le
+   lien est copié dans le presse-papiers. Le lien partagé ouvre
+   directement la carte grâce au paramètre ?carte=<code>. */
+function shareCard(code, btn){
+  const p = byCode(code);
+  if(!p) return;
+  const url  = location.origin + location.pathname + '?carte=' + p.code + '#polidex';
+  const text = 'Découvre ' + p.name + ', un Polimon de la lignée ' + p.dresseur +
+               ' sur Polimon 2027, le jeu éducatif de la présidentielle !';
+  if(navigator.share){
+    navigator.share({ title: 'Polimon 2027 · ' + p.name, text, url }).catch(() => {});
+  } else if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text + ' ' + url).then(() => {
+      if(btn){
+        const t = btn.textContent;
+        btn.textContent = '✔ LIEN COPIÉ, ENVOIE-LE À UN AMI !';
+        setTimeout(() => { btn.textContent = t; }, 2800);
+      }
+    }).catch(() => {});
+  }
+}
+
+/* Ouvre l'écran plein page (carte Polimon, fiche dresseur ou quizz) */
 function openScreen(label){
   const ov = document.getElementById('fiche-overlay');
   const lab = document.getElementById('screen-label');
@@ -1368,3 +1402,13 @@ initParallax();
 const h0 = location.hash.replace('#','');
 go(['aventure','combat','polidex','dresseurs'].includes(h0) ? h0 : 'aventure');
 observeScenes();
+
+/* lien de partage ?carte=<code> : ouvre directement la carte */
+(function(){
+  const shared = +(new URLSearchParams(location.search).get('carte') || 0);
+  const p = shared && byCode(shared);
+  if(p){
+    go('polidex');
+    if(isUnlocked(p)) setTimeout(() => openFiche(p.code), 250);
+  }
+})();

@@ -56,7 +56,6 @@
     <p class="intro">Polimon 2027 est un projet éducatif proposé par le collectif <b>DemZet</b>, qui vise à accroître vos connaissances afin de vous engager dans un <b>vote éclairé</b> aux élections présidentielles françaises de 2027, à travers une aventure fantastique librement inspirée de l'univers Pokémon.</p>
     <div class="cta">
       <a class="btn" href="#aventure" onclick="scrollToStory(event)">▶ COMMENCER L'AVENTURE</a>
-      <a class="btn ghost" href="#polidex">OUVRIR LE POLIDEX</a>
     </div>
     <button id="restart-btn" class="btn-restart" type="button" onclick="restartGame(this)" hidden>↺ RECOMMENCER LA PARTIE</button>
     <div class="demzet">UN PROJET DU COLLECTIF DEMZET</div>
@@ -390,8 +389,9 @@
 <section id="polidex" class="space">
   <div class="dex-wrap">
     <div class="space-header">
-      <h2>📕 POLIDEX <span class="wip">EN CONSTRUCTION</span></h2>
-      <p>La librairie des Polimons recensés par le Professeur Chen, lignée par lignée, sur 3 niveaux d'évolution. Sélectionne un Polimon pour ouvrir sa carte complète.</p>
+      <h2>📕 POLIDEX</h2>
+      <p>La librairie des Polimons recensés par le Professeur Chen, lignée par lignée, sur 3 niveaux d'évolution. Seuls les Polimons de niveau 1 (Philosophie) sont visibles au départ : les évolutions sont des <b>cartes secrètes</b>, à révéler en réussissant le quizz. Sélectionne une carte pour l'ouvrir.</p>
+      <button class="btn quiz-launch" type="button" onclick="openQuiz()">🎓 LANCER LE QUIZZ · RÉVÈLE LES CARTES SECRÈTES</button>
     </div>
     <div class="dex-controls">
       <input type="text" id="dex-search" placeholder="RECHERCHER…" oninput="renderDex()">

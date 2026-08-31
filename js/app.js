@@ -1456,7 +1456,50 @@ function finishQuiz(){
   document.getElementById('fiche-overlay').scrollTop = 0;
 }
 
+/* ============ v20 - INTRO CINÉMATIQUE ============
+   Première visite : écran noir, le logo apparaît, puis les deux
+   rideaux s'ouvrent sur le site au premier défilement (ou clic,
+   ou touche). L'intro n'est jamais rejouée ensuite (localStorage). */
+function initIntro(){
+  const intro = document.getElementById('intro');
+  if(!intro) return;
+  let seen = null;
+  try { seen = localStorage.getItem('polimon-intro-seen'); } catch(e){}
+  /* déjà vue, ou lien direct vers un autre espace / une carte partagée */
+  const directLink = (location.hash && location.hash !== '#aventure') || location.search.includes('carte=');
+  if(seen || directLink){ intro.remove(); return; }
+
+  intro.hidden = false;
+  document.body.classList.add('intro-open');
+
+  let leaving = false;
+  const leave = () => {
+    if(leaving) return;
+    leaving = true;
+    try { localStorage.setItem('polimon-intro-seen', '1'); } catch(e){}
+    intro.classList.add('leave');
+    document.body.classList.remove('intro-open');
+    setTimeout(() => intro.remove(), 1100);
+    cleanup();
+  };
+  const onWheel  = e => { if(e.deltaY > 0) leave(); };
+  const onTouch  = () => leave();
+  const onKey    = e => {
+    if([' ', 'Enter', 'ArrowDown', 'PageDown'].includes(e.key)){ e.preventDefault(); leave(); }
+  };
+  const cleanup = () => {
+    window.removeEventListener('wheel', onWheel);
+    window.removeEventListener('touchmove', onTouch);
+    window.removeEventListener('keydown', onKey);
+  };
+  window.addEventListener('wheel', onWheel, {passive:true});
+  window.addEventListener('touchmove', onTouch, {passive:true});
+  window.addEventListener('keydown', onKey);
+  intro.addEventListener('click', leave);
+}
+
 /* ============ INIT ============ */
+initIntro();
 initChapters();
 initChoixScene();
 initCombat();

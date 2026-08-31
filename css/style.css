@@ -1788,3 +1788,61 @@ footer .px{font-family:'Press Start 2P',monospace;font-size:8px;color:var(--jaun
 /* v19.10 - suivi coloré des réponses du quizz : vert = bon, rouge = raté */
 .qh-progress .dot.good{background:#7ac74c;border-color:#7ac74c;box-shadow:0 0 5px rgba(122,199,76,.55);}
 .qh-progress .dot.bad{background:#ff6b6b;border-color:#ff6b6b;box-shadow:0 0 5px rgba(255,107,107,.5);}
+
+/* ================================================================
+   v20 - INTRO CINÉMATIQUE (première visite)
+   Écran noir, le logo se matérialise au centre, la tagline clignote,
+   puis les deux rideaux s'ouvrent sur le site.
+   ================================================================ */
+body.intro-open{overflow:hidden;}
+#intro{
+  position:fixed;inset:0;z-index:10000;
+  display:flex;align-items:center;justify-content:center;
+}
+.intro-panel{
+  position:absolute;left:0;right:0;height:50.5%;
+  background:
+    repeating-linear-gradient(0deg, rgba(255,255,255,.02) 0 1px, transparent 1px 3px),
+    #0c0c0f;
+  transition:transform 1s cubic-bezier(.7,0,.2,1);
+}
+.intro-panel.top{top:0;}
+.intro-panel.bottom{bottom:0;}
+#intro.leave .intro-panel.top{transform:translateY(-101%);}
+#intro.leave .intro-panel.bottom{transform:translateY(101%);}
+
+.intro-content{
+  position:relative;z-index:2;text-align:center;padding:0 20px;
+  transition:opacity .45s ease, transform .45s ease;
+}
+#intro.leave .intro-content{opacity:0;transform:scale(1.12);}
+
+.intro-logo{
+  width:min(340px,70vw);height:auto;display:block;margin:0 auto 26px;
+  opacity:0;
+  animation:introLogo 1.4s cubic-bezier(.2,.8,.3,1) .5s forwards;
+  filter:drop-shadow(0 0 34px rgba(255,222,0,.25));
+}
+@keyframes introLogo{
+  0%{opacity:0;transform:scale(.72) translateY(16px);}
+  60%{opacity:1;transform:scale(1.04) translateY(-3px);}
+  100%{opacity:1;transform:scale(1) translateY(0);}
+}
+.intro-tag{
+  font-family:'Press Start 2P',monospace;font-size:clamp(9px,2.6vw,13px);
+  color:var(--jaune);letter-spacing:2px;
+  opacity:0;animation:introFade .8s ease 1.7s forwards;
+}
+.intro-hint{
+  margin-top:46px;font-family:'Press Start 2P',monospace;font-size:8px;
+  color:#8b8b98;letter-spacing:1px;
+  opacity:0;animation:introFade .8s ease 2.6s forwards, introPulse 1.6s ease 3.4s infinite;
+}
+@keyframes introFade{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:none;}}
+@keyframes introPulse{0%,100%{opacity:1;}50%{opacity:.35;}}
+
+@media (prefers-reduced-motion: reduce){
+  .intro-logo,.intro-tag,.intro-hint{animation:none;opacity:1;}
+  .intro-panel{transition:none;}
+  #intro.leave{display:none;}
+}

@@ -753,8 +753,8 @@ function tcgNode(p, sprSize){
    Cliquer sur une carte secrète de niveau 2 lance le quizz de sa lignée. */
 function secretCardNode(p){
   const hint = p.level === 2
-    ? 'Réussis le quizz de sa lignée pour révéler cette carte !'
-    : 'Ce Polimon de niveau 3 ne peut pas encore être révélé…';
+    ? 'Fais évoluer le Polimon de niveau 1 de sa lignée (quizz du Prof. Chen) pour révéler cette carte !'
+    : 'Fais évoluer le Polimon de niveau 2 de sa lignée (quizz du Prof. Chen) pour révéler cette carte !';
   const el = document.createElement('div');
   el.className = 'tcg tcg-secret';
   el.innerHTML = `
@@ -781,11 +781,6 @@ function secretCardNode(p){
     </div>`;
   return el;
 }
-function secretShake(card){
-  card.classList.remove('shake');
-  void card.offsetWidth;             /* relance l'animation */
-  card.classList.add('shake');
-}
 
 /* Le Polidex en carrousel : toutes les cartes côte à côte, triées par
    lignée puis par niveau (les 3 évolutions se suivent), défilement
@@ -809,14 +804,9 @@ function renderDex(){
     card.setAttribute('role', 'button');
     card.tabIndex = 0;
     if(locked){
-      if(p.level === 2){
-        card.title = 'Carte secrète : réussis le quizz pour la révéler';
-        card.onclick = () => openQuiz(p.lineage);
-        card.addEventListener('keydown', e => { if(e.key === 'Enter') openQuiz(p.lineage); });
-      } else {
-        card.title = 'Carte secrète : non déblocable pour l\'instant';
-        card.onclick = () => secretShake(card);
-      }
+      card.title = 'Carte secrète : fais évoluer sa lignée via le quizz pour la révéler';
+      card.onclick = () => openQuiz(p.lineage);
+      card.addEventListener('keydown', e => { if(e.key === 'Enter') openQuiz(p.lineage); });
     } else {
       card.title = 'Ouvrir la carte de ' + p.name;
       card.onclick = () => openFiche(p.code);
@@ -825,17 +815,15 @@ function renderDex(){
     slide.appendChild(card);
     rail.appendChild(slide);
   });
-  /* dernière carte du rail : le quizz + le code secret */
+  /* dernière carte du rail : le code secret */
   const endSlide = document.createElement('div');
   endSlide.className = 'dex-slide';
   endSlide.innerHTML = `
     <div class="dex-endcard">
-      <div class="qz-emoji">🎓</div>
-      <h4>QUIZZ DU PROFESSEUR CHEN</h4>
-      <p>Prouve que tu connais la philosophie d'un Polimon et révèle son évolution de niveau 2 !</p>
-      <button class="btn" type="button" onclick="openQuiz()">▶ LANCER LE QUIZZ</button>
+      <div class="qz-emoji">🔐</div>
+      <h4>CODE SECRET</h4>
+      <p>On raconte que le Professeur Chen aurait caché un code magique capable de révéler toutes les cartes d'un coup…</p>
       <div class="secret-code">
-        <label for="dex-code">CODE SECRET</label>
         <div class="code-row">
           <input type="text" id="dex-code" placeholder="TON CODE…" autocomplete="off"
                  onkeydown="if(event.key==='Enter')trySecretCode()">
@@ -970,13 +958,8 @@ function openDresseur(id){
     card.setAttribute('role', 'button');
     card.tabIndex = 0;
     if(locked){
-      if(p.level === 2){
-        card.title = 'Carte secrète : réussis le quizz pour la révéler';
-        card.onclick = () => openQuiz(p.lineage);
-      } else {
-        card.title = 'Carte secrète : non déblocable pour l\'instant';
-        card.onclick = () => secretShake(card);
-      }
+      card.title = 'Carte secrète : fais évoluer sa lignée via le quizz pour la révéler';
+      card.onclick = () => openQuiz(p.lineage);
     } else {
       card.title = 'Ouvrir la carte de ' + p.name;
       card.onclick = () => openFiche(p.code);
@@ -1094,10 +1077,9 @@ function renderIdeasPanel(p, d){
 function openFiche(code){
   const p = byCode(code);
   if(!p) return;
-  /* carte encore secrète : un niveau 2 renvoie vers le quizz,
-     un niveau 3 reste verrouillé */
+  /* carte encore secrète : direction le quizz d'évolution de sa lignée */
   if(!isUnlocked(p)){
-    if(p.level === 2) openQuiz(p.lineage);
+    openQuiz(p.lineage);
     return;
   }
   const lin = LINEAGES.find(l => l.id === p.lineage);
@@ -1122,6 +1104,15 @@ function openFiche(code){
           <span class="fh-tinfo"><b>${p.dresseur.toUpperCase()}</b><span>${p.parti}</span></span>
           <span class="fh-tgo">VOIR SA FICHE ▸</span>
         </div>
+        ${(() => {
+          /* bouton d'évolution : visible si la forme suivante de la
+             lignée est encore une carte secrète */
+          const nf = lin.forms[p.level];
+          const np = nf && byCode(nf.code);
+          return np && !isUnlocked(np)
+            ? `<button class="btn evolve-btn" type="button" onclick="openQuiz(${p.lineage})">⬆ FAIRE ÉVOLUER ${p.name.toUpperCase()} (QUIZZ)</button>`
+            : '';
+        })()}
         <button class="btn ghost share-btn" type="button" onclick="shareCard(${p.code}, this)">📤 PARTAGER CETTE CARTE À UN AMI</button>
         <h4>LIGNÉE D'ÉVOLUTION « 3P »</h4>
         <div class="evo-row">
@@ -1252,15 +1243,28 @@ document.addEventListener('keydown', e => {
   }, {passive:true});
 })();
 
-/* ============ v19 - QUIZZ DU PROFESSEUR CHEN ============
-   Devine les 5 dimensions (philosophie) d'un Polimon de niveau 1
-   parmi plusieurs propositions. 5 bonnes réponses = la carte
-   secrète de niveau 2 de sa lignée est révélée !
-   S'affiche dans le même écran plein-page que les cartes. */
+/* ============ v19 - QUIZZ DU PROFESSEUR CHEN : L'ÉVOLUTION ============
+   Comme dans tout bon jeu de monstres de poche, un Polimon ÉVOLUE
+   quand son dresseur maîtrise ses idées. Le quizz porte sur les
+   5 dimensions de la philosophie de la lignée :
+   - réussi depuis le niveau 1 → le Polimon évolue au niveau 2 ;
+   - réussi à nouveau depuis le niveau 2 → il évolue au niveau 3.
+   3 bonnes réponses sur 5 suffisent pour déclencher l'évolution. */
 let quiz = null;
+const QUIZ_PASS = 3;   /* bonnes réponses minimales sur 5 */
 
+/* Quelle est la prochaine évolution à révéler pour cette lignée ?
+   Retourne { src, target } ou null si la lignée est complète. */
+function quizTarget(lin){
+  const p1 = byCode(lin.forms[0].code);
+  const p2 = lin.forms[1] && byCode(lin.forms[1].code);
+  const p3 = lin.forms[2] && byCode(lin.forms[2].code);
+  if(p2 && !isUnlocked(p2)) return { src: p1, target: p2 };
+  if(p3 && !isUnlocked(p3)) return { src: p2, target: p3 };
+  return null;
+}
 function quizLineages(){
-  /* lignées jouables : niveau 1 aux 5 dimensions rédigées + une forme de niveau 2 */
+  /* lignées jouables : les 5 dimensions de la philosophie sont rédigées */
   return LINEAGES.filter(l => {
     const p1 = byCode(l.forms[0].code);
     return l.forms[1] && p1 && dimsComplete(p1);
@@ -1274,27 +1278,28 @@ function openQuiz(lineageId){
 function renderQuizHome(){
   const c = document.getElementById('fiche-content');
   const rows = quizLineages().map(l => {
+    const t = quizTarget(l);
     const p1 = byCode(l.forms[0].code);
-    const p2 = byCode(l.forms[1].code);
-    const done = isUnlocked(p2);
+    const shown = t ? t.src : byCode(l.forms[l.forms.length-1].code);
     return `
-      <div class="quiz-row ${done ? 'done' : ''}" data-p1="${p1.code}"
-           onclick="${done ? `openFiche(${p2.code})` : `startQuiz(${l.id})`}" tabindex="0" role="button">
-        <div class="qr-spr" data-code="${p1.code}"></div>
+      <div class="quiz-row ${t ? '' : 'done'}"
+           onclick="${t ? `startQuiz(${l.id})` : `openFiche(${shown.code})`}" tabindex="0" role="button">
+        <div class="qr-spr" data-code="${shown.code}"></div>
         <div class="qr-info">
-          <b>${p1.name.toUpperCase()}</b>
-          <span>Lignée ${l.dresseur}</span>
+          <b>${shown.name.toUpperCase()}</b>
+          <span>Sous l'aile de ${l.dresseur}</span>
         </div>
-        <div class="qr-state">${done ? '✔ NIV.2 RÉVÉLÉ' : '▶ JOUER'}</div>
+        <div class="qr-state">${t ? `⬆ FAIRE ÉVOLUER (NIV.${t.src.level} → ${t.target.level})` : '✔ LIGNÉE COMPLÈTE'}</div>
       </div>`;
   }).join('');
   c.innerHTML = `
     <div class="quiz-home">
       <div class="qz-emoji">🎓</div>
       <h3>LE QUIZZ DU PROFESSEUR CHEN</h3>
-      <p class="quiz-intro">« Montre-moi que tu connais la <b>philosophie</b> d'un Polimon :
-      devine ses 5 dimensions parmi mes propositions. Un sans-faute, et je te révèle
-      sa carte secrète de niveau 2 ! »</p>
+      <p class="quiz-intro">« Un Polimon évolue quand son dresseur maîtrise ses idées !
+      Réponds à mes 5 questions sur sa <b>philosophie</b> : avec au moins
+      <b>${QUIZ_PASS} bonnes réponses</b>, ton Polimon <b>évolue</b> et sa carte
+      secrète est révélée. Niveau 1 → 2, puis 2 → 3 ! »</p>
       <div class="quiz-list">${rows}</div>
     </div>`;
   c.querySelectorAll('.qr-spr').forEach(m => m.appendChild(spriteNode(byCode(+m.dataset.code), 56)));
@@ -1307,7 +1312,9 @@ function startQuiz(lineageId){
   if(!lin || !lin.forms[1]) return;
   const p1 = byCode(lin.forms[0].code);
   if(!dimsComplete(p1)){ renderQuizHome(); return; }
-  quiz = { lin, p1, p2code: lin.forms[1].code, qIdx: 0, good: 0 };
+  const t = quizTarget(lin);
+  if(!t){ renderQuizHome(); return; }   /* lignée déjà complète */
+  quiz = { lin, p1, src: t.src, target: t.target, qIdx: 0, good: 0 };
   renderQuizQuestion();
   const ov = document.getElementById('fiche-overlay');
   if(!ov.classList.contains('open')) openScreen('QUIZZ DU PROF. CHEN');
@@ -1328,14 +1335,15 @@ function renderQuizQuestion(){
       <div class="quiz-head">
         <div class="qh-spr" id="qh-spr"></div>
         <div>
-          <h3>${quiz.p1.name.toUpperCase()}</h3>
+          <h3>${quiz.src.name.toUpperCase()}</h3>
+          <div class="qh-sub">Sous l'aile de ${quiz.src.dresseur} · Évolution vers le niveau ${quiz.target.level}</div>
           <div class="qh-progress">${DIMENSIONS.map((x,i) =>
             `<span class="dot ${i < quiz.qIdx ? 'past' : i === quiz.qIdx ? 'cur' : ''}"></span>`).join('')}
             <b>${quiz.qIdx + 1} / ${DIMENSIONS.length}</b></div>
         </div>
       </div>
-      <div class="quiz-q">${d.icon} Quelle est la philosophie de <b>${quiz.p1.name.toUpperCase()}</b>
-        sur la dimension <b>${d.label.toUpperCase()}</b> ?</div>
+      <div class="quiz-q">${d.icon} Quelle est la philosophie du Polimon <b>${quiz.src.name.toUpperCase()}</b>
+        (sous l'aile de <b>${quiz.src.dresseur}</b>) sur la dimension <b>${d.label.toUpperCase()}</b> ?</div>
       <div class="quiz-opts">
         ${options.map(o => `<button type="button" class="quiz-opt" data-ok="${o === correct ? 1 : ''}">${o}</button>`).join('')}
       </div>
@@ -1345,7 +1353,7 @@ function renderQuizQuestion(){
         </button>
       </div>
     </div>`;
-  c.querySelector('#qh-spr').appendChild(spriteNode(quiz.p1, 84));
+  c.querySelector('#qh-spr').appendChild(spriteNode(quiz.src, 84));
   c.querySelectorAll('.quiz-opt').forEach(b => b.onclick = () => answerQuiz(b));
   document.getElementById('fiche-overlay').scrollTop = 0;
 }
@@ -1366,27 +1374,29 @@ function nextQuizStep(){
 }
 function finishQuiz(){
   const c = document.getElementById('fiche-content');
-  const win = quiz.good === DIMENSIONS.length;
-  if(win && !unlockState.codes.includes(quiz.p2code)){
-    unlockState.codes.push(quiz.p2code);
+  const win = quiz.good >= QUIZ_PASS;
+  if(win && !unlockState.codes.includes(quiz.target.code)){
+    unlockState.codes.push(quiz.target.code);
     saveUnlocks();
     renderDex();
   }
-  const p2 = byCode(quiz.p2code);
+  const src = quiz.src, tgt = quiz.target;
   c.innerHTML = `
     <div class="quiz-end ${win ? 'win' : ''}">
-      <div class="qz-emoji">${win ? '🎉' : '📚'}</div>
-      <h3>${win ? 'SANS-FAUTE !' : 'PRESQUE…'}</h3>
+      <div class="qz-emoji">${win ? '✨' : '📚'}</div>
+      <h3>${win ? 'FÉLICITATIONS !' : 'PRESQUE…'}</h3>
       <p>${win
-        ? `Bravo, tu maîtrises la philosophie de <b>${quiz.p1.name.toUpperCase()}</b> !<br>
-           La carte secrète de <b>${p2.name.toUpperCase()}</b> (niveau 2) est révélée dans le Polidex.`
-        : `Score : <b>${quiz.good} / ${DIMENSIONS.length}</b>. Il faut un sans-faute pour révéler la carte
-           secrète. Relis la carte de <b>${quiz.p1.name.toUpperCase()}</b> et retente ta chance !`}</p>
+        ? `<b>${quiz.good} / ${DIMENSIONS.length}</b> bonnes réponses. Mais… que se passe-t-il ?<br>
+           <b>${src.name.toUpperCase()}</b> évolue et devient <b>${tgt.name.toUpperCase()}</b> !<br>
+           Sa carte de niveau ${tgt.level} est maintenant révélée dans le Polidex.`
+        : `Score : <b>${quiz.good} / ${DIMENSIONS.length}</b>. Il faut au moins <b>${QUIZ_PASS} bonnes
+           réponses</b> pour faire évoluer <b>${src.name.toUpperCase()}</b>.
+           Relis sa carte et retente ta chance !`}</p>
       <div class="quiz-end-btns">
         ${win
-          ? `<button class="btn" type="button" onclick="openFiche(${p2.code})">✨ VOIR ${p2.name.toUpperCase()} ▸</button>`
+          ? `<button class="btn" type="button" onclick="openFiche(${tgt.code})">✨ VOIR ${tgt.name.toUpperCase()} ▸</button>`
           : `<button class="btn" type="button" onclick="startQuiz(${quiz.lin.id})">↺ RÉESSAYER</button>
-             <button class="btn ghost" type="button" onclick="openFiche(${quiz.p1.code})">RELIRE LA CARTE DE ${quiz.p1.name.toUpperCase()}</button>`}
+             <button class="btn ghost" type="button" onclick="openFiche(${src.code})">RELIRE LA CARTE DE ${src.name.toUpperCase()}</button>`}
         <button class="btn ghost" type="button" onclick="renderQuizHome()">CHOISIR UN AUTRE POLIMON</button>
       </div>
     </div>`;

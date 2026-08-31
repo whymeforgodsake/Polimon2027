@@ -1598,3 +1598,7 @@ footer .px{font-family:'Press Start 2P',monospace;font-size:8px;color:var(--jaun
    sont transparents et la gardent).
    ================================================================ */
 .tcg-art img{filter:none;padding:0;}
+
+/* v19.6 - bouton d'évolution sur la carte Polimon + sous-titre quizz */
+.evolve-btn{display:block;width:100%;margin:14px 0 0;text-align:center;cursor:pointer;}
+.qh-sub{font-size:.8rem;color:#8b8b98;margin-bottom:8px;}

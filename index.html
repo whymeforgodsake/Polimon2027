@@ -433,6 +433,16 @@
       <p>Fais s'affronter deux Polimons en votant pour les <b>idées</b> qui te parlent le plus.</p>
     </div>
 
+    <!-- Niveau du combat : filtre les deux sélecteurs -->
+    <div class="combat-level">
+      <label for="combat-level">NIVEAU</label>
+      <select id="combat-level" onchange="onLevelChange()">
+        <option value="1">NIV.1 · PHILOSOPHIE</option>
+        <option value="2">NIV.2 · PERSPECTIVE</option>
+        <option value="3">NIV.3 · PROGRAMME</option>
+      </select>
+    </div>
+
     <!-- Sélection façon jeu vidéo : les Polimons défilent en pixel-art -->
     <div class="pick-panels">
       <div class="pick-panel" id="panelA">

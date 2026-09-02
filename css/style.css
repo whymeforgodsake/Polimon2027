@@ -1618,7 +1618,7 @@ footer .px{font-family:'Press Start 2P',monospace;font-size:8px;color:var(--jaun
 @keyframes revealPre{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
 
 .reveal-stage{
-  position:relative;width:min(300px,76vw);aspect-ratio:63/88;
+  position:relative;width:min(344px,80vw);aspect-ratio:63/88;
   margin:10px auto 30px;perspective:1400px;
 }
 
@@ -2219,3 +2219,75 @@ body.intro-open{overflow:hidden;}
 @keyframes suckIn{to{transform:scale(0) translate(-30px,60px);opacity:0;}}
 .spr-slot.sucked .spr-name{opacity:0;transition:opacity .4s;}
 .spr-slot.sucked::after{opacity:0;transition:opacity .4s;}
+
+/* ================================================================
+   v22.1 - COMBAT plus lisible + cartes au format constant
+   ================================================================ */
+
+/* moins chargé : plus d'étiquette sous les sprites (les plaques suffisent) */
+.gb-screen .spr-name{display:none;}
+
+/* appel à la riposte : une seule ligne, avec curseur clignotant */
+.riposte-head{
+  text-align:center;font-family:'Press Start 2P',monospace;
+  font-size:clamp(8px,1.8vw,10px);color:var(--gbA);
+  margin:16px 0 12px;line-height:1.9;letter-spacing:.5px;
+}
+.riposte-head .rh-cursor{animation:rhBlink 1s steps(2) infinite;}
+@keyframes rhBlink{50%{opacity:0;}}
+
+/* les ripostes = de VRAIS boutons : relief, bandeau inversé, curseur */
+.gb-screen .idea-card{
+  position:relative;outline:none;border:3px solid var(--gbA);
+  box-shadow:5px 5px 0 var(--gbA);
+  padding:0 0 14px;overflow:hidden;
+  transition:transform .1s, box-shadow .1s, background .1s;
+}
+.gb-screen .idea-card .ic-tag{
+  display:block;background:var(--gbA);color:var(--gbD);
+  font-family:'Press Start 2P',monospace;font-size:7px;letter-spacing:1px;
+  padding:7px 10px;margin-bottom:12px;
+}
+.gb-screen .idea-card p{padding:0 14px;}
+.gb-screen .idea-card:hover:not(.revealed),.gb-screen .idea-card:focus-visible:not(.revealed){
+  transform:translate(2px,2px);box-shadow:3px 3px 0 var(--gbA);background:#ffffff;
+}
+.gb-screen .idea-card:hover p::before,.gb-screen .idea-card:focus-visible p::before{content:none;}
+.gb-screen .idea-card.revealed{box-shadow:5px 5px 0 var(--gbA);}
+.gb-screen .idea-card.picked .ic-tag::after{content:"  ✔ LA BONNE !";}
+.gb-screen .idea-card.lost .ic-tag::after{content:"  ✘ LEURRE…";}
+.gb-screen .idea-card.lost{opacity:.5;}
+
+/* ================================================================
+   v22.2 - CARTES : format constant façon vraie carte Pokémon.
+   La fenêtre d'art garde TOUJOURS le même ratio (4:3) quelle que
+   soit la taille de la carte ; le texte s'adapte, pas l'art.
+   ================================================================ */
+.dex-slide .tcg-art{aspect-ratio:3/2;flex:none;}   /* ratio d'art constant, comme une vraie carte */
+.dex-slide .tcg-inner{overflow:hidden;}
+.dex-slide .tcg-talent p{
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+  margin-top:4px;font-size:.76rem;line-height:1.4;
+}
+.dex-slide .tcg-strip{flex:none;margin:6px auto 7px;}
+.dex-slide .tcg-talent{padding-top:6px;}
+.dex-slide .tcg-attack{margin:7px 0 6px;padding-top:7px;}
+.dex-slide .tcg-foot{padding:5px 2px 4px;line-height:1.5;}
+
+/* v22.3 - menu du niveau de combat + rails vides */
+.combat-level{
+  display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:14px;
+}
+.combat-level label{
+  font-family:'Press Start 2P',monospace;font-size:8px;color:#8b8b98;letter-spacing:1px;
+}
+.combat-level select{
+  background:var(--noir2);color:var(--blanc);border:3px solid var(--jaune);
+  font-family:'Press Start 2P',monospace;font-size:8px;padding:10px 12px;cursor:pointer;
+}
+.combat-level select:disabled{opacity:.5;cursor:default;}
+.pick-empty{
+  font-family:'Press Start 2P',monospace;font-size:7px;color:#8b8b98;
+  line-height:2;padding:16px 10px;text-align:center;width:100%;
+}
+#btn-fight:disabled{opacity:.4;cursor:not-allowed;}

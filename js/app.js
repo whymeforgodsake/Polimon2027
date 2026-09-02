@@ -607,7 +607,7 @@ function trainerSprite(p, slotId){
   const l = LINEAGES.find(x => x.id === p.lineage);
   slot.className = slot.className.replace(/\bexit\b/g, '').trim();
   slot.innerHTML = '';
-  if(l) slot.appendChild(trainerAvatar(l, 'battle-tr'));
+  if(l) slot.appendChild(trainerAvatar(l, 'battle-tr', 'gb'));
 }
 /* bulles BD posées sur l'écran de jeu */
 function showBubble(side, text){
@@ -1013,7 +1013,10 @@ function railScroll(dir){
    Liste épurée : portrait (ou initiales), nom, éléments.
    Un clic ouvre la carte détaillée du dresseur (bio + lignée).
    Photo optionnelle : images/dresseurs/<id>.png. */
-function trainerAvatar(l, cls){
+function trainerAvatar(l, cls, variant){
+  /* variant : 'head' (préviews, recadrées sur le visage), 'full'
+     (illustration entière, fiche dresseur) ou 'gb' (sprite pixel, combat) */
+  variant = variant || 'head';
   const initials = l.dresseur.split(/[\s-]+/).map(w => w[0]).join('').slice(0,3).toUpperCase();
   const av = document.createElement('div');
   av.className = cls;
@@ -1021,7 +1024,9 @@ function trainerAvatar(l, cls){
   const photo = new Image();
   photo.onload = () => { av.innerHTML = ''; av.appendChild(photo); };
   photo.alt = l.dresseur;
-  photo.src = 'images/dresseurs/' + l.id + '.png';
+  photo.src = variant === 'gb'   ? 'images/dresseurs/gb/' + l.id + '.png'
+            : variant === 'full' ? 'images/dresseurs/' + l.id + '.png'
+            :                      'images/dresseurs/' + l.id + '-head.png';
   return av;
 }
 function initDresseurs(){
@@ -1087,7 +1092,7 @@ function openDresseur(id){
     <h4>SA LIGNÉE « 3P »</h4>
     <div class="t-cards" id="t-cards"></div>`;
   const av = c.querySelector('#dr-avatar');
-  av.replaceWith(trainerAvatar(l, 't-avatar'));
+  av.replaceWith(trainerAvatar(l, 't-avatar t-full', 'full'));
   /* les 3 cartes Polimon de la lignée, en vraies cartes à jouer
      (les évolutions non révélées restent des cartes secrètes) */
   const cardsBox = c.querySelector('#t-cards');

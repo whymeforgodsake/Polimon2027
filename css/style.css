@@ -2326,3 +2326,23 @@ body.intro-open{overflow:hidden;}
   .bd-bubble.foe,.bd-bubble.ally{max-width:64%;}
   .bd-bubble.ally{bottom:calc(78px + 12px);}
 }
+
+/* ================================================================
+   v23 - PORTRAITS DE DRESSEURS v2 (anime + pixel)
+   Préviews recadrées sur le visage, illustration entière dans la
+   fiche dresseur, sprite pixel dans le combat.
+   ================================================================ */
+/* fiche dresseur : le dresseur en pied, sans recadrage */
+.t-avatar.t-full{
+  width:190px;height:270px;flex:none;background:transparent;border:none;
+  display:flex;align-items:flex-end;justify-content:center;
+}
+.t-avatar.t-full img{
+  width:100%;height:100%;object-fit:contain;object-position:bottom center;
+  filter:drop-shadow(0 10px 14px rgba(0,0,0,.45));
+}
+@media(max-width:680px){
+  .t-avatar.t-full{width:140px;height:200px;}
+}
+/* sprite pixel du dresseur sur l'écran de combat */
+.battle-tr img{image-rendering:pixelated;}

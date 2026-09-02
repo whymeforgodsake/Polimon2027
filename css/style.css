@@ -2113,3 +2113,109 @@ body.intro-open{overflow:hidden;}
   .gb-sprite{width:112px !important;height:112px !important;}
   #sprA .gb-sprite{width:130px !important;height:130px !important;}
 }
+
+/* ================================================================
+   v22 - COMBAT : sélection façon jeu vidéo, bulles BD, Poliball
+   ================================================================ */
+
+/* --- sélecteurs à défilement horizontal (pixel-art) --- */
+.pick-panels{
+  display:grid;grid-template-columns:1fr auto 1fr;gap:14px;align-items:stretch;
+  margin-bottom:18px;
+}
+.pick-vs{align-self:center;font-family:'Press Start 2P',monospace;color:var(--jaune);font-size:14px;}
+.pick-panel{
+  background:var(--noir2);border:3px solid #33333c;padding:12px 12px 10px;min-width:0;
+}
+.pick-panel.foe{border-color:#4a3038;}
+.pick-panel.locked{opacity:.45;pointer-events:none;}
+.pick-title{
+  font-family:'Press Start 2P',monospace;font-size:8px;color:var(--jaune);
+  margin-bottom:10px;letter-spacing:1px;
+}
+.pick-panel.foe .pick-title{color:#ff8f8f;}
+.pick-rail{
+  display:flex;gap:8px;overflow-x:auto;scroll-snap-type:x proximity;
+  padding-bottom:8px;scrollbar-width:thin;scrollbar-color:#4a4a55 transparent;
+}
+.pick-tile{
+  flex:none;width:88px;display:flex;flex-direction:column;align-items:center;gap:6px;
+  background:#1c1c22;border:3px solid #33333c;padding:8px 4px 7px;cursor:pointer;
+  scroll-snap-align:center;transition:border-color .15s, transform .15s;
+}
+.pick-tile img,.pick-tile canvas{width:56px;height:56px;image-rendering:pixelated;}
+.pick-tile .pt-n{
+  font-family:'Press Start 2P',monospace;font-size:5.5px;color:#cfcfc6;
+  line-height:1.6;text-align:center;letter-spacing:.5px;
+}
+.pick-tile:hover{border-color:#8b8b98;transform:translateY(-2px);}
+.pick-tile.sel{border-color:var(--jaune);box-shadow:0 0 0 2px rgba(255,222,0,.35);}
+.pick-tile.off{opacity:.25;cursor:not-allowed;transform:none;}
+.pick-tile.rand .pt-q{
+  font-family:'Press Start 2P',monospace;font-size:26px;color:var(--jaune);
+  height:56px;display:flex;align-items:center;
+}
+.pick-name{
+  margin-top:8px;font-family:'Press Start 2P',monospace;font-size:7px;
+  color:#8b8b98;letter-spacing:.5px;min-height:12px;line-height:1.8;
+}
+@media(max-width:680px){
+  .pick-panels{grid-template-columns:1fr;gap:10px;}
+  .pick-vs{justify-self:center;}
+}
+
+/* --- bulles BD des idées, posées sur l'écran de jeu --- */
+.bd-bubble{
+  position:absolute;z-index:6;max-width:46%;
+  background:var(--gbD);border:3px solid var(--gbA);border-radius:12px;
+  padding:11px 13px;font-family:'Press Start 2P',monospace;font-size:7px;
+  line-height:2;color:var(--gbA);
+  box-shadow:3px 3px 0 rgba(16,16,16,.25);
+}
+.bd-bubble::after{
+  content:"";position:absolute;width:13px;height:13px;background:var(--gbD);
+  border-right:3px solid var(--gbA);border-bottom:3px solid var(--gbA);
+}
+.bd-bubble.foe{top:4%;left:3%;}
+.bd-bubble.foe::after{right:-9px;top:40%;transform:rotate(-45deg);}
+.bd-bubble.ally{bottom:31%;right:3%;}
+.bd-bubble.ally::after{left:-9px;bottom:32%;transform:rotate(135deg);}
+.bd-bubble.pop{animation:bubblePop .32s cubic-bezier(.2,.9,.3,1.3);}
+@keyframes bubblePop{from{transform:scale(.5);opacity:0;}to{transform:scale(1);opacity:1;}}
+@media(max-width:680px){
+  .bd-bubble{max-width:62%;font-size:6px;padding:8px 9px;line-height:1.9;}
+}
+
+/* --- la Poliball et la capture --- */
+.pokeball{
+  position:absolute;width:36px;height:36px;border-radius:50%;z-index:7;
+  border:3px solid var(--gbA);
+  background:linear-gradient(180deg,#8f8f89 0 44%, var(--gbA) 44% 56%, #f2f2ea 56% 100%);
+  left:16%;bottom:36%;
+}
+.pokeball::after{
+  content:"";position:absolute;left:50%;top:50%;width:9px;height:9px;
+  transform:translate(-50%,-50%);border-radius:50%;
+  background:#f2f2ea;border:3px solid var(--gbA);
+}
+.pokeball.throw{animation:ballThrow .95s cubic-bezier(.3,.5,.5,1) forwards;}
+@keyframes ballThrow{
+  0%{left:16%;bottom:34%;transform:rotate(0deg) scale(.8);}
+  55%{left:46%;bottom:88%;transform:rotate(400deg) scale(1);}
+  100%{left:66%;bottom:66%;transform:rotate(720deg) scale(1);}
+}
+.pokeball.landed{left:66%;bottom:56%;transform:rotate(720deg);transition:bottom .45s cubic-bezier(.4,0,1,1);}
+.pokeball.wobble{left:66%;bottom:56%;animation:ballWobble 1.7s ease-in-out;}
+@keyframes ballWobble{
+  0%,100%{transform:rotate(0deg);}
+  12%{transform:rotate(-24deg);}26%{transform:rotate(20deg);}
+  44%{transform:rotate(-15deg);}62%{transform:rotate(11deg);}
+  80%{transform:rotate(-5deg);}
+}
+.pokeball.caught{left:66%;bottom:56%;animation:ballCaught .6s ease;}
+@keyframes ballCaught{0%{filter:brightness(2.4);transform:scale(1.25);}100%{filter:none;transform:scale(1);}}
+/* l'adversaire aspiré dans la balle */
+.spr-slot.sucked .spr-frame{animation:suckIn .7s ease forwards;}
+@keyframes suckIn{to{transform:scale(0) translate(-30px,60px);opacity:0;}}
+.spr-slot.sucked .spr-name{opacity:0;transition:opacity .4s;}
+.spr-slot.sucked::after{opacity:0;transition:opacity .4s;}

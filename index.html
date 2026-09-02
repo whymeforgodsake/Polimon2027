@@ -403,8 +403,7 @@
   <div class="dex-wrap">
     <div class="space-header">
       <h2>📕 POLIDEX</h2>
-      <p>Explore les Polimons et découvre leurs <b>évolutions</b> en testant tes connaissances.</p>
-      <button class="btn quiz-launch" type="button" onclick="openQuiz()">🎓 LANCER LE QUIZZ · FAIS ÉVOLUER TES POLIMONS</button>
+      <p>Explore les Polimons et découvre leurs <b>évolutions</b> en remportant des <a href="#combat" style="color:var(--jaune)">combats d'idées</a>.</p>
     </div>
     <div class="dex-controls">
       <input type="text" id="dex-search" placeholder="RECHERCHER…" oninput="renderDex()">
@@ -434,10 +433,19 @@
       <p>Fais s'affronter deux Polimons en votant pour les <b>idées</b> qui te parlent le plus.</p>
     </div>
 
-    <div class="battle-pickers">
-      <select id="selA" onchange="onCombatSelect()"></select>
-      <div class="vs">VS</div>
-      <select id="selB" onchange="onCombatSelect()"></select>
+    <!-- Sélection façon jeu vidéo : les Polimons défilent en pixel-art -->
+    <div class="pick-panels">
+      <div class="pick-panel" id="panelA">
+        <div class="pick-title">👤 TON POLIMON</div>
+        <div class="pick-rail" id="railA"></div>
+        <div class="pick-name" id="pickNameA"></div>
+      </div>
+      <div class="pick-vs">VS</div>
+      <div class="pick-panel foe" id="panelB">
+        <div class="pick-title">🎯 TON ADVERSAIRE</div>
+        <div class="pick-rail" id="railB"></div>
+        <div class="pick-name" id="pickNameB"></div>
+      </div>
     </div>
     <div class="fight-cta"><button class="btn" id="btn-fight" onclick="startCombat()">⚔ LANCER LE COMBAT</button></div>
 
@@ -460,6 +468,10 @@
             <div class="spr-slot ally" id="sprA"></div>
             <div class="plate plate-ally" id="plateA"></div>
             <div class="battle-msg" id="battle-msg"></div>
+            <!-- bulles BD des idées + Poliball de capture -->
+            <div class="bd-bubble foe" id="bubbleFoe" hidden></div>
+            <div class="bd-bubble ally" id="bubbleAlly" hidden></div>
+            <div class="pokeball" id="pokeball" hidden></div>
           </div>
           <div class="compare" id="compare"></div>
         </div>

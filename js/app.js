@@ -466,14 +466,14 @@ function statBars(p){
   return { bars, note, hasAny };
 }
 
-/* ============ COMBAT - mini-jeu en 5 rounds ============
-   Pour l'instant limité au niveau 1 (Philosophie) : les contenus
-   des niveaux 2 et 3 arrivent plus tard.
-   Déroulé : sélection des 2 Polimons → LANCER LE COMBAT →
-   intro animée → 5 rounds (une dimension chacun). À chaque round,
-   les deux idées sont présentées À L'AVEUGLE (ordre mélangé) ;
-   le joueur vote, l'appartenance se révèle, le perdant du round
-   perd 20 PV. À la fin, le vainqueur est célébré. */
+/* ============ COMBAT v22 - la riposte des idées ============
+   Sélection façon jeu vidéo (sprites pixel qui défilent), puis :
+   à chaque round, l'ADVERSAIRE attaque avec son idée (bulle BD) ;
+   le joueur riposte en choisissant la bonne idée de SON Polimon
+   parmi 2 suggestions (l'autre est un leurre d'une autre lignée).
+   Bonne riposte : l'adversaire perd 20 PV ; mauvaise : toi.
+   Victoire : capture de l'idée adverse dans la Poliball, puis
+   TON Polimon évolue (sa carte secrète est révélée). */
 
 const COMBAT_LEVEL = 1;
 /* un Polimon ne peut combattre que si ses 5 idées sont écrites */
@@ -481,23 +481,76 @@ function dimsComplete(p){
   return DIMENSIONS.every(d => p.dims[d.key] && p.dims[d.key] !== 'TBD');
 }
 const PV_MAX = 100, PV_HIT = 20;
-let fight = null;   /* état du combat en cours (null = pas de combat) */
+let fight = null;                            /* état du combat en cours */
+const pickState = { a: null, b: 'rand' };    /* sélection : codes ou 'rand' */
 
 function say(text){ document.getElementById('battle-msg').textContent = text; }
-
-function fillSelects(){
-  /* Pour l'instant, seuls les dresseurs dont les visuels sont prêts
-     participent au combat. Ajoute des id ici pour en débloquer d'autres. */
-  const COMBAT_LINEAGES = [3, 5, 7, 8, 10, 13];
-  const pool = POLIMONS.filter(p => p.level === COMBAT_LEVEL
-    && COMBAT_LINEAGES.includes(p.lineage) && dimsComplete(p));
-  const opts = sel => pool.map((p,i) =>
-    `<option value="${p.code}" ${i===sel?'selected':''}>#${pad3(p.code)} ${p.name.toUpperCase()} - ${p.dresseur.toUpperCase()}</option>`).join('');
-  document.getElementById('selA').innerHTML = opts(0);
-  document.getElementById('selB').innerHTML = opts(1);
+function combatPool(){
+  return POLIMONS.filter(p => p.level === COMBAT_LEVEL && dimsComplete(p));
 }
 
-/* Plaque d'info : nom, éléments, barre de PV animée */
+/* ---------- sélection façon écran de choix de personnage ---------- */
+function buildPickers(){
+  const pool = combatPool();
+  if(!pool.length) return;
+  if(pickState.a === null || !pool.some(p => p.code === pickState.a)) pickState.a = pool[0].code;
+  buildRail('railA', 'a', pool);
+  buildRail('railB', 'b', pool);
+  updatePickNames();
+}
+function buildRail(railId, side, pool){
+  const rail = document.getElementById(railId);
+  if(!rail) return;
+  rail.innerHTML = '';
+  /* l'adversaire peut être tiré au hasard */
+  if(side === 'b'){
+    const t = document.createElement('button');
+    t.type = 'button';
+    t.className = 'pick-tile rand' + (pickState.b === 'rand' ? ' sel' : '');
+    t.innerHTML = '<span class="pt-q">?</span><span class="pt-n">AU HASARD</span>';
+    t.onclick = () => { pickState.b = 'rand'; refreshPick(); };
+    rail.appendChild(t);
+  }
+  pool.forEach(p => {
+    const t = document.createElement('button');
+    t.type = 'button';
+    const selected  = pickState[side] === p.code;
+    /* 2 Polimons identiques ne peuvent pas se battre */
+    const forbidden = side === 'b' ? pickState.a === p.code : pickState.b === p.code;
+    t.className = 'pick-tile' + (selected ? ' sel' : '') + (forbidden ? ' off' : '');
+    t.disabled = forbidden;
+    const img = document.createElement('img');
+    img.alt = p.name;
+    img.onerror = () => img.replaceWith(spriteNode(p, 56));
+    img.src = 'images/polimons/battle/front/' + p.code + '.png';
+    t.appendChild(img);
+    const n = document.createElement('span');
+    n.className = 'pt-n';
+    n.textContent = p.name.toUpperCase();
+    t.appendChild(n);
+    t.onclick = () => {
+      pickState[side] = p.code;
+      if(side === 'a' && pickState.b === p.code) pickState.b = 'rand';
+      refreshPick();
+    };
+    rail.appendChild(t);
+  });
+}
+function refreshPick(){
+  buildPickers();
+  if(!fight) renderIdle();
+}
+function updatePickNames(){
+  const a = byCode(pickState.a);
+  const nA = document.getElementById('pickNameA');
+  if(nA && a) nA.textContent = a.name.toUpperCase() + ' · ' + a.dresseur;
+  const nB = document.getElementById('pickNameB');
+  if(nB) nB.textContent = pickState.b === 'rand'
+    ? '? · Adversaire tiré au hasard'
+    : byCode(pickState.b).name.toUpperCase() + ' · ' + byCode(pickState.b).dresseur;
+}
+
+/* ---------- plaques, sprites, bulles ---------- */
 function plate(p, elId, pv, wins){
   wins = wins || 0;
   const balls = Array.from({length: DIMENSIONS.length}, (_, k) =>
@@ -508,24 +561,13 @@ function plate(p, elId, pv, wins){
     <div class="pl-hp"><span>PV:</span><div class="pl-bar"><div style="width:${pv}%;${pv<=40?'background:#c03028;':''}"></div></div></div>
     <div class="pl-foot"><span class="pl-balls">${balls}</span><span class="pl-pv">${pv}/ ${PV_MAX}</span></div>`;
 }
-function updatePv(elId, pv){
-  const box = document.getElementById(elId);
-  const bar = box.querySelector('.pl-bar div');
-  bar.style.width = pv + '%';
-  if(pv <= 40) bar.style.background = '#c03028';
-  box.querySelector('.pl-pv').textContent = pv;
-}
-
-/* Le Polimon sur la scène : image carrée entière, encadrée */
 function battleSprite(p, slotId, enter){
   const slot = document.getElementById(slotId);
-  slot.className = slot.className.replace(/\b(hit|faint|victory|enter)\b/g, '').trim();
+  slot.className = slot.className.replace(/\b(hit|faint|victory|enter|sucked)\b/g, '').trim();
   slot.innerHTML = '';
   const frame = document.createElement('div');
   frame.className = 'spr-frame';
-  /* sprites de combat dédiés (pixel-art GB 64×64) :
-     ton Polimon est vu de dos, l'adversaire de face.
-     Repli automatique sur l'artwork classique s'il n'existe pas. */
+  /* ton Polimon est vu de dos, l'adversaire de face */
   const view = slotId === 'sprA' ? 'back' : 'front';
   const img = document.createElement('img');
   img.className = 'gb-sprite';
@@ -534,16 +576,13 @@ function battleSprite(p, slotId, enter){
   img.src = 'images/polimons/battle/' + view + '/' + p.code + '.png';
   frame.appendChild(img);
   slot.appendChild(frame);
-  /* étiquette sous le Polimon : plus aucun doute sur qui est qui */
   const tag = document.createElement('span');
   tag.className = 'spr-name';
   tag.textContent = p.name.toUpperCase();
   slot.appendChild(tag);
   if(enter){ void slot.offsetWidth; slot.classList.add('enter'); }
 }
-
 function showEl(id, on){ document.getElementById(id).classList.toggle('gone', !on); }
-/* Sprite du dresseur sur la scène d'intro */
 function trainerSprite(p, slotId){
   const slot = document.getElementById(slotId);
   const l = LINEAGES.find(x => x.id === p.lineage);
@@ -551,48 +590,66 @@ function trainerSprite(p, slotId){
   slot.innerHTML = '';
   if(l) slot.appendChild(trainerAvatar(l, 'battle-tr'));
 }
-
-function combatants(){
-  return {
-    a: byCode(+document.getElementById('selA').value),
-    b: byCode(+document.getElementById('selB').value)
-  };
+/* bulles BD posées sur l'écran de jeu */
+function showBubble(side, text){
+  const el = document.getElementById(side === 'foe' ? 'bubbleFoe' : 'bubbleAlly');
+  if(!el) return;
+  el.textContent = text;
+  el.hidden = false;
+  el.classList.remove('pop');
+  void el.offsetWidth;
+  el.classList.add('pop');
+}
+function clearBubbles(){
+  ['bubbleFoe','bubbleAlly'].forEach(id => {
+    const e = document.getElementById(id);
+    if(e) e.hidden = true;
+  });
 }
 
-/* État d'attente : aperçu des deux Polimons, prêt à combattre */
+/* ---------- états ---------- */
 function renderIdle(){
-  const {a, b} = combatants();
-  if(!a || !b) return;
-  plate(a, 'plateA', PV_MAX); plate(b, 'plateB', PV_MAX);
-  trainerSprite(b, 'trFoe'); trainerSprite(a, 'trAlly');
-  showEl('trFoe', true); showEl('trAlly', true);
-  showEl('sprA', false); showEl('sprB', false);
-  showEl('plateA', false); showEl('plateB', false);
+  ['sprA','sprB','plateA','plateB','trFoe','trAlly'].forEach(id => showEl(id, false));
+  clearBubbles();
+  const pb = document.getElementById('pokeball');
+  if(pb) pb.hidden = true;
   document.getElementById('compare').innerHTML = '';
-  say(a.code === b.code
-    ? 'Un Polimon ne peut pas affronter son propre reflet… choisis deux idées différentes !'
-    : `${b.dresseur.toUpperCase()} te défie ! Lance le combat des idées.`);
+  const a = byCode(pickState.a);
+  say(a
+    ? `${a.name.toUpperCase()} est prêt ! Choisis ton adversaire, puis lance le combat des idées.`
+    : 'Choisis ton Polimon !');
 }
-function onCombatSelect(){ if(!fight) renderIdle(); }
-
 function setCombatControls(on){
-  document.getElementById('selA').disabled = !on;
-  document.getElementById('selB').disabled = !on;
   document.getElementById('btn-fight').style.display = on ? '' : 'none';
+  document.querySelectorAll('.pick-panel').forEach(p => p.classList.toggle('locked', !on));
 }
-
-function initCombat(){ fillSelects(); renderIdle(); }
+function initCombat(){ buildPickers(); renderIdle(); }
 
 /* ---------- déroulé du combat ---------- */
 function startCombat(){
-  const {a, b} = combatants();
-  if(!a || !b || a.code === b.code){ renderIdle(); return; }
+  const a = byCode(pickState.a);
+  if(!a) return;
+  let b;
+  if(pickState.b === 'rand'){
+    const pool = combatPool().filter(p => p.code !== a.code);
+    b = pool[Math.floor(Math.random() * pool.length)];
+  } else {
+    b = byCode(pickState.b);
+  }
+  if(!b || b.code === a.code){
+    say('Deux Polimons identiques ne peuvent pas se battre !');
+    return;
+  }
   fight = { a, b, pvA: PV_MAX, pvB: PV_MAX, winsA: 0, winsB: 0, round: 0, picks: [], busy: true };
   setCombatControls(false);
   document.getElementById('compare').innerHTML = '';
-  /* 1. face-à-face des dresseurs */
+  clearBubbles();
+  document.getElementById('pokeball').hidden = true;
+  ['sprA','sprB','plateA','plateB'].forEach(id => showEl(id, false));
+  /* face-à-face des dresseurs */
+  trainerSprite(b, 'trFoe'); trainerSprite(a, 'trAlly');
+  showEl('trFoe', true); showEl('trAlly', true);
   say(`${b.dresseur.toUpperCase()} VEUT SE BATTRE !`);
-  /* 2. le dresseur adverse envoie son Polimon */
   setTimeout(() => {
     document.getElementById('trFoe').classList.add('exit');
     setTimeout(() => showEl('trFoe', false), 500);
@@ -600,8 +657,7 @@ function startCombat(){
     battleSprite(b, 'sprB', true);
     plate(b, 'plateB', PV_MAX, 0);
     say(`${b.dresseur.toUpperCase()} envoie ${b.name.toUpperCase()} !`);
-  }, 1500);
-  /* 3. ton dresseur envoie le sien */
+  }, 1600);
   setTimeout(() => {
     document.getElementById('trAlly').classList.add('exit');
     setTimeout(() => showEl('trAlly', false), 500);
@@ -609,61 +665,79 @@ function startCombat(){
     battleSprite(a, 'sprA', true);
     plate(a, 'plateA', PV_MAX, 0);
     say(`En avant, ${a.name.toUpperCase()} !`);
-  }, 3000);
+  }, 3100);
   setTimeout(() => { fight.busy = false; nextRound(); }, 4400);
 }
 
 function nextRound(){
   if(!fight) return;
   if(fight.round >= DIMENSIONS.length) return endCombat();
-  const d = DIMENSIONS[fight.round];   /* niveau 1 : les 5 dimensions, dans l'ordre */
-  say(`ROUND ${fight.round + 1} / ${DIMENSIONS.length} - ${d.label.toUpperCase()} : quelle idée te parle le plus ?`);
-  const first = Math.random() < .5 ? 'a' : 'b';     /* ordre mélangé : vote à l'aveugle */
-  const order = first === 'a' ? ['a','b'] : ['b','a'];
-  const card = side => {
-    const p = fight[side];
-    return `<div class="idea-card" data-side="${side}" onclick="pickIdea('${side}')" tabindex="0" role="button">
-      <div class="own">💡 Idée de <b>${p.name.toUpperCase()}</b> (${p.dresseur})</div>
-      <p>${p.dims[d.key]}</p>
-    </div>`;
-  };
-  document.getElementById('compare').innerHTML = `
-    <div class="round-head">${d.icon} ROUND ${fight.round + 1} - DIMENSION ${d.num} · ${d.label.toUpperCase()}</div>
-    <p class="round-sub">Vote pour l'idée qui te ressemble le plus : tu découvriras ensuite quel Polimon la porte.</p>
-    <div class="idea-row">${order.map(card).join('')}</div>`;
-  document.querySelectorAll('.idea-card').forEach(c => {
-    c.addEventListener('keydown', e => {
-      if(e.key === 'Enter'){ e.preventDefault(); c.click(); }
+  const d = DIMENSIONS[fight.round];
+  clearBubbles();
+  document.getElementById('compare').innerHTML = '';
+  say(`ROUND ${fight.round + 1} / ${DIMENSIONS.length} - ${d.label.toUpperCase()}`);
+  /* 1. l'adversaire attaque avec son idée, en bulle BD */
+  setTimeout(() => {
+    showBubble('foe', fight.b.dims[d.key]);
+    say(`${fight.b.name.toUpperCase()} attaque avec son idée ! Riposte avec celle de TON Polimon.`);
+    /* 2. deux suggestions : la bonne + un leurre d'une autre lignée */
+    const correct = fight.a.dims[d.key];
+    const others = POLIMONS.filter(x =>
+      x.level === COMBAT_LEVEL && x.code !== fight.a.code && x.code !== fight.b.code &&
+      x.dims[d.key] && x.dims[d.key] !== 'TBD');
+    const decoy = others[Math.floor(Math.random() * others.length)].dims[d.key];
+    const options = shuffle([{ txt: correct, ok: 1 }, { txt: decoy, ok: 0 }]);
+    document.getElementById('compare').innerHTML = `
+      <div class="round-head">${d.icon} QUELLE EST L'IDÉE DE ${fight.a.name.toUpperCase()} ?</div>
+      <p class="round-sub">Riposte avec la vraie idée de TON Polimon - l'autre est un leurre !</p>
+      <div class="idea-row">${options.map(o => `
+        <div class="idea-card" data-ok="${o.ok ? 1 : ''}" onclick="answerRound(this)" tabindex="0" role="button">
+          <p>${o.txt}</p>
+        </div>`).join('')}
+      </div>`;
+    document.querySelectorAll('#compare .idea-card').forEach(c => {
+      c.addEventListener('keydown', e => {
+        if(e.key === 'Enter'){ e.preventDefault(); c.click(); }
+      });
     });
-  });
+  }, 800);
 }
 
-function pickIdea(winSide){
+function answerRound(card){
   if(!fight || fight.busy) return;
   fight.busy = true;
+  const ok = !!card.dataset.ok;
   const d = DIMENSIONS[fight.round];
-  const loseSide = winSide === 'a' ? 'b' : 'a';
-  const winP = fight[winSide], loseP = fight[loseSide];
-  /* révélation des deux idées */
-  document.querySelectorAll('.idea-card').forEach(c => {
-    c.classList.add('revealed', c.dataset.side === winSide ? 'picked' : 'lost');
+  document.querySelectorAll('#compare .idea-card').forEach(c => {
     c.onclick = null;
+    c.classList.add('revealed');
+    if(c.dataset.ok) c.classList.add('picked');
+    else if(c === card) c.classList.add('lost');
   });
-  /* dégâts + Pokéball gagnée */
-  if(loseSide === 'a') fight.pvA -= PV_HIT; else fight.pvB -= PV_HIT;
-  if(winSide === 'a') fight.winsA++; else fight.winsB++;
-  const slot = document.getElementById(loseSide === 'a' ? 'sprA' : 'sprB');
-  slot.classList.add('hit');
-  setTimeout(() => slot.classList.remove('hit'), 650);
-  plate(fight.a, 'plateA', fight.pvA, fight.winsA);
-  plate(fight.b, 'plateB', fight.pvB, fight.winsB);
-  say(`L'idée de ${winP.name.toUpperCase()} l'emporte ! ${loseP.name.toUpperCase()} perd ${PV_HIT} PV.`);
-  fight.picks.push({ dim: d, winner: winP });
-  /* bouton continuer */
-  const wrap = document.createElement('div');
-  wrap.className = 'continue-wrap';
-  wrap.innerHTML = `<button class="btn small" onclick="continueFight()">${fight.round < DIMENSIONS.length - 1 ? 'ROUND SUIVANT ▸' : 'VOIR LE VERDICT ▸'}</button>`;
-  document.getElementById('compare').appendChild(wrap);
+  /* ta riposte apparaît en bulle BD côté allié */
+  showBubble('ally', card.querySelector('p').textContent);
+  setTimeout(() => {
+    if(ok){
+      fight.pvB -= PV_HIT; fight.winsA++;
+      const slot = document.getElementById('sprB');
+      slot.classList.add('hit');
+      setTimeout(() => slot.classList.remove('hit'), 650);
+      say(`Riposte parfaite ! ${fight.b.name.toUpperCase()} perd ${PV_HIT} PV.`);
+    } else {
+      fight.pvA -= PV_HIT; fight.winsB++;
+      const slot = document.getElementById('sprA');
+      slot.classList.add('hit');
+      setTimeout(() => slot.classList.remove('hit'), 650);
+      say(`Ce n'était pas l'idée de ${fight.a.name.toUpperCase()}… il perd ${PV_HIT} PV !`);
+    }
+    plate(fight.a, 'plateA', fight.pvA, fight.winsA);
+    plate(fight.b, 'plateB', fight.pvB, fight.winsB);
+    fight.picks.push({ dim: d, ok });
+    const wrap = document.createElement('div');
+    wrap.className = 'continue-wrap';
+    wrap.innerHTML = `<button class="btn small" onclick="continueFight()">${fight.round < DIMENSIONS.length - 1 ? 'ROUND SUIVANT ▸' : 'VOIR LE VERDICT ▸'}</button>`;
+    document.getElementById('compare').appendChild(wrap);
+  }, 1000);
 }
 function continueFight(){
   if(!fight) return;
@@ -671,32 +745,69 @@ function continueFight(){
   nextRound();
 }
 
+function recapHtml(){
+  return `<div class="recap">${fight.picks.map(p => `
+    <div class="recap-row"><span class="rd">${p.dim.icon} ${p.dim.label}</span>
+    <span class="rw">${p.ok ? '✔ RIPOSTE RÉUSSIE' : '✘ RIPOSTE RATÉE'}</span></div>`).join('')}</div>`;
+}
+
 function endCombat(){
-  const winA = fight.pvA > fight.pvB;
-  const winP  = winA ? fight.a : fight.b;
-  const loseP = winA ? fight.b : fight.a;
-  const score = fight.picks.filter(p => p.winner.code === winP.code).length;
-  document.getElementById(winA ? 'sprA' : 'sprB').classList.add('victory');
-  document.getElementById(winA ? 'sprB' : 'sprA').classList.add('faint');
-  say(`🏆 ${winP.name.toUpperCase()} remporte le combat des idées ${score} à ${DIMENSIONS.length - score} ! ${loseP.name.toUpperCase()} est K.O.`);
-  document.getElementById('compare').innerHTML = `
-    <div class="round-head">🏆 ${winP.name.toUpperCase()} GAGNE ${score} – ${DIMENSIONS.length - score}</div>
-    <p class="round-sub">Tes idées se rapprochent ${score >= 4 ? 'nettement' : 'plutôt'} de celles de <b>${winP.dresseur}</b> (${winP.parti}) sur ces 5 dimensions.</p>
-    <div class="recap">
-      ${fight.picks.map(p => `
-        <div class="recap-row"><span class="rd">${p.dim.icon} ${p.dim.label}</span>
-        <span class="rw">${p.winner.name.toUpperCase()} <i>(${p.winner.dresseur})</i></span></div>`).join('')}
-    </div>
-    <div class="continue-wrap">
-      <button class="btn" onclick="resetCombat()">↻ REJOUER</button>
-      <button class="btn ghost" onclick="openFiche(${winP.code})">VOIR LA CARTE DE ${winP.name.toUpperCase()}</button>
-    </div>`;
-  fight = null;
+  clearBubbles();
+  const a = fight.a, b = fight.b;
+  const won = fight.pvA > fight.pvB;
+  const score = fight.winsA;
+  document.getElementById('compare').innerHTML = '';
+  if(!won){
+    document.getElementById('sprA').classList.add('faint');
+    document.getElementById('sprB').classList.add('victory');
+    say(`${a.name.toUpperCase()} est K.O. (${score} / ${DIMENSIONS.length})… Pas d'évolution cette fois. Relis sa carte et retente ta chance !`);
+    document.getElementById('compare').innerHTML = recapHtml() + `
+      <div class="continue-wrap">
+        <button class="btn" onclick="resetCombat()">↺ REJOUER</button>
+        <button class="btn ghost" onclick="openFiche(${a.code})">RELIRE LA CARTE DE ${a.name.toUpperCase()}</button>
+      </div>`;
+    fight = null;
+    return;
+  }
+  /* victoire : scénette de capture de l'idée adverse dans la Poliball */
+  fight.busy = true;
+  say(`${b.name.toUpperCase()} vacille… C'est le moment !`);
+  const ball = document.getElementById('pokeball');
+  ball.hidden = false;
+  ball.className = 'pokeball throw';
+  setTimeout(() => {
+    document.getElementById('sprB').classList.add('sucked');
+    ball.className = 'pokeball landed';
+    say('L\'idée adverse est aspirée dans la Poliball…');
+  }, 950);
+  setTimeout(() => { ball.className = 'pokeball wobble'; }, 1700);
+  setTimeout(() => {
+    ball.className = 'pokeball caught';
+    document.getElementById('sprA').classList.add('victory');
+    say(`Clic ! ${b.name.toUpperCase()} est capturé. ${a.name.toUpperCase()} remporte le combat des idées ${score} / ${DIMENSIONS.length} !`);
+  }, 3500);
+  setTimeout(() => {
+    const lin = LINEAGES.find(l => l.id === a.lineage);
+    const t = evoTarget(lin);
+    fight = null;
+    if(t){
+      if(!unlockState.codes.includes(t.target.code)){
+        unlockState.codes.push(t.target.code);
+        saveUnlocks();
+        renderDex();
+      }
+      showEvolutionReveal(t.src, t.target);
+    } else {
+      say(`Victoire ${score} / ${DIMENSIONS.length} ! La lignée de ${a.name.toUpperCase()} est déjà complète.`);
+      document.getElementById('compare').innerHTML = `
+        <div class="continue-wrap"><button class="btn" onclick="resetCombat()">↺ REJOUER</button></div>`;
+    }
+  }, 5000);
 }
 function resetCombat(){
   fight = null;
   setCombatControls(true);
-  renderIdle();
+  refreshPick();
 }
 
 /* ============ POLIDEX ============ */
@@ -762,8 +873,8 @@ function tcgNode(p, sprSize){
    Cliquer sur une carte secrète de niveau 2 lance le quizz de sa lignée. */
 function secretCardNode(p){
   const hint = p.level === 2
-    ? 'Fais évoluer le Polimon de niveau 1 de sa lignée (quizz du Prof. Chen) pour révéler cette carte !'
-    : 'Fais évoluer le Polimon de niveau 2 de sa lignée (quizz du Prof. Chen) pour révéler cette carte !';
+    ? 'Remporte un combat d\'idées avec sa lignée pour révéler cette carte !'
+    : 'Remporte un nouveau combat d\'idées avec sa lignée pour révéler cette carte !';
   const el = document.createElement('div');
   el.className = 'tcg tcg-secret';
   el.innerHTML = `
@@ -813,9 +924,9 @@ function renderDex(){
     card.setAttribute('role', 'button');
     card.tabIndex = 0;
     if(locked){
-      card.title = 'Carte secrète : fais évoluer sa lignée via le quizz pour la révéler';
-      card.onclick = () => openQuiz(p.lineage);
-      card.addEventListener('keydown', e => { if(e.key === 'Enter') openQuiz(p.lineage); });
+      card.title = 'Carte secrète : remporte un combat avec sa lignée pour la révéler';
+      card.onclick = () => goCombatFor(p.lineage);
+      card.addEventListener('keydown', e => { if(e.key === 'Enter') goCombatFor(p.lineage); });
     } else {
       card.title = 'Ouvrir la carte de ' + p.name;
       card.onclick = () => openFiche(p.code);
@@ -967,8 +1078,8 @@ function openDresseur(id){
     card.setAttribute('role', 'button');
     card.tabIndex = 0;
     if(locked){
-      card.title = 'Carte secrète : fais évoluer sa lignée via le quizz pour la révéler';
-      card.onclick = () => openQuiz(p.lineage);
+      card.title = 'Carte secrète : remporte un combat avec sa lignée pour la révéler';
+      card.onclick = () => goCombatFor(p.lineage);
     } else {
       card.title = 'Ouvrir la carte de ' + p.name;
       card.onclick = () => openFiche(p.code);
@@ -1105,9 +1216,9 @@ function renderIdeasPanel(p, d){
 function openFiche(code){
   const p = byCode(code);
   if(!p) return;
-  /* carte encore secrète : direction le quizz d'évolution de sa lignée */
+  /* carte encore secrète : direction le combat d'évolution de sa lignée */
   if(!isUnlocked(p)){
-    openQuiz(p.lineage);
+    goCombatFor(p.lineage);
     return;
   }
   const lin = LINEAGES.find(l => l.id === p.lineage);
@@ -1126,7 +1237,7 @@ function openFiche(code){
           const nf = lin.forms[p.level];
           const np = nf && byCode(nf.code);
           return np && !isUnlocked(np)
-            ? `<button class="btn evolve-btn" type="button" onclick="openQuiz(${p.lineage})">⬆ FAIRE ÉVOLUER ${p.name.toUpperCase()} (QUIZZ)</button>`
+            ? `<button class="btn evolve-btn" type="button" onclick="goCombatFor(${p.lineage})">⚔ FAIRE ÉVOLUER ${p.name.toUpperCase()} AU COMBAT</button>`
             : '';
         })()}
         <button class="btn ghost share-btn" type="button" onclick="shareCard(${p.code}, this)">📤 PARTAGER CETTE CARTE À UN AMI</button>
@@ -1275,30 +1386,14 @@ document.addEventListener('keydown', e => {
   }, {passive:true});
 })();
 
-/* ============ v19 - QUIZZ DU PROFESSEUR CHEN : L'ÉVOLUTION ============
-   Comme dans tout bon jeu de monstres de poche, un Polimon ÉVOLUE
-   quand son dresseur maîtrise ses idées. Le quizz porte sur les
-   5 dimensions de la philosophie de la lignée :
-   - réussi depuis le niveau 1 → le Polimon évolue au niveau 2 ;
-   - réussi à nouveau depuis le niveau 2 → il évolue au niveau 3.
-   3 bonnes réponses sur 5 suffisent pour déclencher l'évolution. */
-let quiz = null;
-const QUIZ_PASS = 3;   /* bonnes réponses minimales sur 5 */
-
-/* petits helpers de français : « de François Ruffin » / « d'Olivier Faure »,
-   « sur l'écologie » / « sur la société » */
-function deNom(nom){
-  return (/^[aeiouyàâéèêëîïôöûü]/i.test(nom) ? "d'" : 'de ') + `<b>${nom}</b>`;
-}
-function surDim(d){
-  const l = d.label.toLowerCase();
-  const article = /^[aeiouyàâéèêëîïôöûü]/i.test(l) ? "l'" : 'la ';
-  return `<b>${article}${l}</b>`;
-}
+/* ============ v22 - ÉVOLUTION PAR LE COMBAT ============
+   Le quizz a disparu : désormais un Polimon évolue en remportant
+   un combat d'idées. Ces helpers gèrent la cible d'évolution et
+   la révélation de la nouvelle carte (pop-up animé). */
 
 /* Quelle est la prochaine évolution à révéler pour cette lignée ?
    Retourne { src, target } ou null si la lignée est complète. */
-function quizTarget(lin){
+function evoTarget(lin){
   const p1 = byCode(lin.forms[0].code);
   const p2 = lin.forms[1] && byCode(lin.forms[1].code);
   const p3 = lin.forms[2] && byCode(lin.forms[2].code);
@@ -1306,151 +1401,28 @@ function quizTarget(lin){
   if(p3 && !isUnlocked(p3)) return { src: p2, target: p3 };
   return null;
 }
-function quizLineages(){
-  /* lignées jouables : les 5 dimensions de la philosophie sont rédigées */
-  return LINEAGES.filter(l => {
-    const p1 = byCode(l.forms[0].code);
-    return l.forms[1] && p1 && dimsComplete(p1);
-  });
-}
-function openQuiz(lineageId){
-  if(lineageId) startQuiz(lineageId);
-  else renderQuizHome();
-  openScreen('QUIZZ DU PROF. CHEN');
-}
-function renderQuizHome(){
-  const c = document.getElementById('fiche-content');
-  const rows = quizLineages().map(l => {
-    const t = quizTarget(l);
-    const shown = t ? t.src : byCode(l.forms[l.forms.length-1].code);
-    /* suivi d'évolution : 1 point par Polimon accessible dans la lignée */
-    const owned = l.forms.filter(f => isUnlocked(byCode(f.code))).length;
-    const track = l.forms.map((f, i) =>
-      `<span class="evo-dot ${i < owned ? 'on' : ''}"></span>`).join('');
-    /* les Polimons débloqués s'empilent comme des petites cartes,
-       le plus évolué sur le dessus */
-    const minis = l.forms.filter(f => isUnlocked(byCode(f.code))).map((f, i) =>
-      `<span class="qr-mini" style="--i:${i}" data-code="${f.code}"></span>`).join('');
-    return `
-      <div class="quiz-row ${t ? '' : 'done'}"
-           onclick="${t ? `startQuiz(${l.id})` : `openFiche(${shown.code})`}" tabindex="0" role="button">
-        <div class="qr-stack" style="--n:${owned}">${minis}</div>
-        <div class="qr-info">
-          <b>${shown.name.toUpperCase()}</b>
-          <span>Dresseur : ${l.dresseur}</span>
-        </div>
-        <div class="qr-track" title="${owned} / ${l.forms.length} Polimons révélés">${track}</div>
-        <div class="qr-state">${t ? '⬆ FAIRE ÉVOLUER' : '✔'}</div>
-      </div>`;
-  }).join('');
-  c.innerHTML = `
-    <div class="quiz-home">
-      <div class="qz-emoji">🎓</div>
-      <h3>LE QUIZZ DU PROFESSEUR CHEN</h3>
-      <p class="quiz-intro">Maîtrise les idées de ton Polimon et fais-le évoluer !</p>
-      <div class="quiz-list">${rows}</div>
-    </div>`;
-  c.querySelectorAll('.qr-mini').forEach(m => m.appendChild(spriteNode(byCode(+m.dataset.code), 40)));
-  c.querySelectorAll('.quiz-row').forEach(r => r.addEventListener('keydown', e => {
-    if(e.key === 'Enter'){ e.preventDefault(); r.click(); }
-  }));
-}
-function startQuiz(lineageId){
+
+/* Rejoindre l'espace combat avec le niveau 1 d'une lignée présélectionné */
+function goCombatFor(lineageId){
   const lin = LINEAGES.find(l => l.id === lineageId);
-  if(!lin || !lin.forms[1]) return;
+  if(!lin) return;
   const p1 = byCode(lin.forms[0].code);
-  if(!dimsComplete(p1)){ renderQuizHome(); return; }
-  const t = quizTarget(lin);
-  if(!t){ renderQuizHome(); return; }   /* lignée déjà complète */
-  quiz = { lin, p1, src: t.src, target: t.target, qIdx: 0, good: 0, results: [] };
-  renderQuizQuestion();
-  const ov = document.getElementById('fiche-overlay');
-  if(!ov.classList.contains('open')) openScreen('QUIZZ DU PROF. CHEN');
-  ov.scrollTop = 0;
-}
-function renderQuizQuestion(){
-  const d = DIMENSIONS[quiz.qIdx];
-  const correct = quiz.p1.dims[d.key];
-  /* 3 leurres : la même dimension chez d'autres Polimons de niveau 1 */
-  const pool = shuffle(POLIMONS.filter(x =>
-    x.level === 1 && x.lineage !== quiz.p1.lineage &&
-    x.dims[d.key] && x.dims[d.key] !== 'TBD'
-  ).map(x => x.dims[d.key]));
-  const options = shuffle([correct, ...pool.slice(0, 3)]);
-  const c = document.getElementById('fiche-content');
-  c.innerHTML = `
-    <div class="quiz-play">
-      <div class="quiz-head">
-        <div class="qh-spr" id="qh-spr"></div>
-        <div>
-          <h3>${quiz.src.name.toUpperCase()}</h3>
-          <div class="qh-sub">Dresseur : ${quiz.src.dresseur} · Évolution vers le niveau ${quiz.target.level}</div>
-          <div class="qh-progress">${DIMENSIONS.map((x,i) =>
-            `<span class="dot ${i < quiz.qIdx ? (quiz.results[i] ? 'good' : 'bad') : i === quiz.qIdx ? 'cur' : ''}"></span>`).join('')}
-            <b>${quiz.qIdx + 1} / ${DIMENSIONS.length}</b></div>
-        </div>
-      </div>
-      <div class="quiz-q">${d.icon} Quelle est la philosophie ${deNom(quiz.src.dresseur)} sur ${surDim(d)} ?</div>
-      <div class="quiz-opts">
-        ${options.map(o => `<button type="button" class="quiz-opt" data-ok="${o === correct ? 1 : ''}">${o}</button>`).join('')}
-      </div>
-      <div class="quiz-next" id="quiz-next" hidden>
-        <button class="btn" type="button" onclick="nextQuizStep()">
-          ${quiz.qIdx + 1 < DIMENSIONS.length ? 'QUESTION SUIVANTE ▸' : 'VOIR LE RÉSULTAT ▸'}
-        </button>
-      </div>
-    </div>`;
-  c.querySelector('#qh-spr').appendChild(spriteNode(quiz.src, 84));
-  c.querySelectorAll('.quiz-opt').forEach(b => b.onclick = () => answerQuiz(b));
-  document.getElementById('fiche-overlay').scrollTop = 0;
-}
-function answerQuiz(btn){
-  const ok = !!btn.dataset.ok;
-  if(ok) quiz.good++;
-  quiz.results.push(ok);
-  /* le point de la question en cours prend la couleur du résultat */
-  const cur = document.querySelector('.qh-progress .dot.cur');
-  if(cur){ cur.classList.remove('cur'); cur.classList.add(ok ? 'good' : 'bad'); }
-  document.querySelectorAll('.quiz-opt').forEach(b => {
-    b.disabled = true;
-    if(b.dataset.ok) b.classList.add('good');
-    else if(b === btn) b.classList.add('bad');
-  });
-  document.getElementById('quiz-next').hidden = false;
-}
-function nextQuizStep(){
-  quiz.qIdx++;
-  if(quiz.qIdx < DIMENSIONS.length) renderQuizQuestion();
-  else finishQuiz();
-}
-function finishQuiz(){
-  const c = document.getElementById('fiche-content');
-  const win = quiz.good >= QUIZ_PASS;
-  const src = quiz.src, tgt = quiz.target;
-  if(!win){
-    c.innerHTML = `
-      <div class="quiz-end">
-        <div class="qz-emoji">📚</div>
-        <h3>PRESQUE…</h3>
-        <p>Score : <b>${quiz.good} / ${DIMENSIONS.length}</b>. Il faut au moins <b>${QUIZ_PASS} bonnes
-           réponses</b> pour faire évoluer <b>${src.name.toUpperCase()}</b>.
-           Relis sa carte et retente ta chance !</p>
-        <div class="quiz-end-btns">
-          <button class="btn" type="button" onclick="startQuiz(${quiz.lin.id})">↺ RÉESSAYER</button>
-          <button class="btn ghost" type="button" onclick="openFiche(${src.code})">RELIRE LA CARTE DE ${src.name.toUpperCase()}</button>
-          <button class="btn ghost" type="button" onclick="renderQuizHome()">CHOISIR UN AUTRE POLIMON</button>
-        </div>
-      </div>`;
-    return;
+  closeFiche();
+  go('combat');
+  if(p1 && dimsComplete(p1)){
+    if(fight){ fight = null; }
+    pickState.a = p1.code;
+    if(pickState.b === p1.code) pickState.b = 'rand';
+    setCombatControls(true);
+    refreshPick();
+    const t = document.querySelector('#railA .pick-tile.sel');
+    if(t) t.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' });
   }
-  /* victoire : la carte secrète tournoie sur elle-même puis se
-     retourne pour révéler l'évolution, halo doré + étincelles */
-  if(!unlockState.codes.includes(tgt.code)){
-    unlockState.codes.push(tgt.code);
-    saveUnlocks();
-    renderDex();
-  }
-  /* étincelles : jaillissement radial depuis le centre de la carte */
+}
+
+/* Pop-up de révélation : la carte secrète tournoie puis se révèle */
+function showEvolutionReveal(src, tgt){
+  const c = document.getElementById('fiche-content');
   const sparks = Array.from({length: 18}, (_, i) => {
     const ang  = (i / 18) * Math.PI * 2 + Math.random() * 0.5;
     const dist = 130 + Math.random() * 150;
@@ -1483,13 +1455,14 @@ function finishQuiz(){
         <h3>${src.name.toUpperCase()} ÉVOLUE EN ${tgt.name.toUpperCase()} !</h3>
         <p>Tu as débloqué une nouvelle carte Polimon.</p>
         <div class="quiz-end-btns">
-          <button class="btn" type="button" onclick="closeFiche();go('polidex')">📕 RETOUR AU POLIDEX ▸</button>
+          <button class="btn" type="button" onclick="openFiche(${tgt.code})">✨ VOIR ${tgt.name.toUpperCase()} ▸</button>
+          <button class="btn ghost" type="button" onclick="closeFiche();resetCombat()">⚔ RETOUR AU COMBAT</button>
         </div>
       </div>
     </div>`;
   c.querySelector('.flip-back').appendChild(secretCardNode(tgt));
   c.querySelector('.flip-front').appendChild(tcgNode(tgt, 220));
-  document.getElementById('fiche-overlay').scrollTop = 0;
+  openScreen('ÉVOLUTION !');
 }
 
 /* ============ v20 - INTRO CINÉMATIQUE ============

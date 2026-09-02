@@ -183,7 +183,7 @@ const POLIMON_DATA = {
        utiliser un fichier au nom différent de la convention. */
   lineages: [
     {
-      id: 1, dresseur: "Fabien Roussel", parti: "PCF", elements: ["Acier", "Combat"],
+      id: 1, dresseur: "Fabien Roussel", parti: "PCF", elements: ["Combat", "Acier"],
       statut: "Non déclaré", intentions: "<5%",
       bioReelle: "Secrétaire national du PCF, candidat 2022 (2,3 %)",
       faits: "Communisme « du travail et de la fête », gauche populaire",

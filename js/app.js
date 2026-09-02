@@ -15,7 +15,16 @@ const LEVELS     = POLIMON_DATA.levels;
 /* Lignées masquées temporairement du site entier
    (Bardella tant que Marine Le Pen est en lice) */
 const HIDDEN_LINEAGES = [11];
-const LINEAGES   = POLIMON_DATA.lineages.filter(l => !HIDDEN_LINEAGES.includes(l.id));
+/* Ordre d'affichage des lignées (dresseurs, Polidex, sélection du
+   combat) : Tondelier avant Faure, Retailleau avant Le Pen/Zemmour. */
+const LINEAGE_ORDER = [1, 2, 3, 5, 4, 6, 7, 8, 9, 13, 10, 11, 12];
+const lineageRank = id => {
+  const i = LINEAGE_ORDER.indexOf(id);
+  return i === -1 ? 99 : i;
+};
+const LINEAGES   = POLIMON_DATA.lineages
+  .filter(l => !HIDDEN_LINEAGES.includes(l.id))
+  .sort((a, b) => lineageRank(a.id) - lineageRank(b.id));
 const CHAPTERS   = POLIMON_DATA.chapters;
 
 /* ---------- Aplatir les lignées : 36 Polimons ---------- */
@@ -486,8 +495,9 @@ const pickState = { a: null, b: 'rand' };    /* sélection : codes ou 'rand' */
 
 function say(text){ document.getElementById('battle-msg').textContent = text; }
 function combatPool(){
-  return POLIMONS.filter(p =>
-    p.level === combatLevel && dimsComplete(p) && isUnlocked(p));
+  return POLIMONS
+    .filter(p => p.level === combatLevel && dimsComplete(p) && isUnlocked(p))
+    .sort((a, b) => lineageRank(a.lineage) - lineageRank(b.lineage));
 }
 /* changement de niveau dans le menu déroulant */
 function onLevelChange(){
@@ -937,7 +947,7 @@ function renderDex(){
     (!lv || p.level === lv) &&
     (!el || p.elements.includes(el)) &&
     (!q || p.name.toLowerCase().includes(q) || p.dresseur.toLowerCase().includes(q) || p.parti.toLowerCase().includes(q))
-  ).sort((a, b) => a.lineage - b.lineage || a.level - b.level);
+  ).sort((a, b) => lineageRank(a.lineage) - lineageRank(b.lineage) || a.level - b.level);
   rail.innerHTML = '';
   list.forEach(p => {
     const slide = document.createElement('div');

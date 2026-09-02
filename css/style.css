@@ -2291,3 +2291,38 @@ body.intro-open{overflow:hidden;}
   line-height:2;padding:16px 10px;text-align:center;width:100%;
 }
 #btn-fight:disabled{opacity:.4;cursor:not-allowed;}
+
+/* ================================================================
+   v22.4 - GAME BOY À TAILLE FIXE + bulles qui ne masquent plus
+   les plaques. L'écran de combat a une hauteur constante ; la
+   plaque adverse s'aligne en bas de sa rangée (la bulle vit en
+   haut), la plaque alliée en haut de la sienne (bulle en bas).
+   ================================================================ */
+.gb-screen .battle{
+  height:560px;min-height:0;
+  grid-template-rows:250px 1fr auto;
+  align-items:center;
+}
+.gb-screen .plate-foe{align-self:end;margin-bottom:6px;}
+.gb-screen .spr-slot.foe{align-self:end;}
+.gb-screen .plate-ally{align-self:start;margin-top:6px;}
+.gb-screen .spr-slot.ally{align-self:start;}
+.gb-screen .battle-msg{align-self:end;min-height:78px;}
+
+/* bulle adverse : en haut à gauche, AU-DESSUS de la plaque */
+.bd-bubble.foe{top:8px;left:3%;max-width:56%;}
+.bd-bubble.foe::after{right:-9px;top:55%;transform:rotate(-45deg);}
+/* bulle alliée : en bas à droite, SOUS la plaque, au-dessus du message */
+.bd-bubble.ally{bottom:calc(78px + 18px);right:3%;max-width:56%;}
+.bd-bubble.ally::after{left:-9px;bottom:40%;transform:rotate(135deg);}
+
+/* la zone de riposte réserve toujours sa place : la console ne bouge plus */
+.gb-screen .compare{min-height:380px;display:flex;flex-direction:column;justify-content:flex-start;}
+.gb-screen .compare:empty{min-height:380px;}
+
+@media(max-width:680px){
+  .gb-screen .battle{height:470px;grid-template-rows:205px 1fr auto;}
+  .gb-screen .compare,.gb-screen .compare:empty{min-height:560px;}
+  .bd-bubble.foe,.bd-bubble.ally{max-width:64%;}
+  .bd-bubble.ally{bottom:calc(78px + 12px);}
+}

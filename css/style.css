@@ -2346,3 +2346,108 @@ body.intro-open{overflow:hidden;}
 }
 /* sprite pixel du dresseur sur l'écran de combat */
 .battle-tr img{image-rendering:pixelated;}
+
+/* ================================================================
+   v24 - FICHE DRESSEUR : portrait 3D « cutout » + lignée en éventail
+   + respiration générale de la fiche.
+   ================================================================ */
+
+/* respiration générale de l'écran fiche */
+#fiche-overlay .fiche{padding:38px 34px 70px;}
+.fiche-aside h4,.t-hero-info h4{margin-top:30px;letter-spacing:.5px;}
+.t-fact,.t-bio{line-height:1.75;margin-top:10px;color:#d9d4c4;}
+
+/* --- le héros : portrait 3D à gauche, infos à droite --- */
+.t-hero{
+  display:grid;grid-template-columns:minmax(280px,380px) minmax(0,1fr);
+  gap:30px 54px;align-items:start;margin-bottom:14px;
+}
+.t-hero-info .t-name{margin-top:6px;}
+.t-hero-info .t-tags{margin:14px 0 4px;}
+.t-hero-info .t-badges{margin-top:10px;}
+
+/* --- portrait 3D : couches à profondeurs différentes --- */
+.t-card3d{
+  --rx:0deg;--ry:0deg;
+  position:relative;aspect-ratio:5/7;width:100%;
+  perspective:900px;cursor:pointer;
+}
+.t-card3d > div{
+  transition:transform .28s cubic-bezier(.2,.7,.3,1);
+}
+.t3-shadow{
+  position:absolute;inset:0;border-radius:14px;
+  background:linear-gradient(160deg,var(--tc1),var(--tc2));
+  opacity:.5;filter:blur(30px) saturate(.9);
+  transform:rotateX(var(--rx)) rotateY(var(--ry)) translate3d(0,26px,-40px);
+}
+.t3-bg{
+  position:absolute;inset:0;border-radius:14px;overflow:hidden;
+  background:
+    repeating-linear-gradient(45deg, rgba(255,255,255,.06) 0 12px, transparent 12px 24px),
+    linear-gradient(165deg,var(--tc1),var(--tc2) 65%, #16161a 130%);
+  box-shadow:inset 0 0 0 2px rgba(0,0,0,.35), 0 18px 40px rgba(0,0,0,.55);
+  transform:rotateX(var(--rx)) rotateY(var(--ry)) translate3d(0,0,0);
+}
+.t3-bg::after{  /* voile sombre en bas pour asseoir le texte */
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(to top, rgba(0,0,0,.62), transparent 45%);
+}
+/* le cadre doré, à mi-profondeur : le dresseur passera DEVANT */
+.t3-frame{
+  position:absolute;inset:22px;pointer-events:none;
+  border:5px solid var(--jaune);
+  transform:rotateX(var(--rx)) rotateY(var(--ry)) translate3d(0,0,30px);
+}
+/* le personnage détouré, au premier plan : il sort du cadre */
+.t3-cutout{
+  position:absolute;inset:0;display:flex;align-items:flex-end;justify-content:center;
+  transform:rotateX(var(--rx)) rotateY(var(--ry)) translate3d(0,0,55px) scale(.96);
+  transform-origin:bottom center;
+}
+.t3-cutout img{
+  width:88%;height:94%;object-fit:contain;object-position:bottom center;
+  filter:drop-shadow(0 14px 18px rgba(0,0,0,.55));
+}
+/* nom + parti, tout devant */
+.t3-content{
+  position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;
+  padding:34px 30px;pointer-events:none;
+  transform:rotateX(var(--rx)) rotateY(var(--ry)) translate3d(0,0,80px);
+}
+.t3-content h2{
+  font-family:'Press Start 2P',monospace;font-size:clamp(11px,1.6vw,15px);
+  color:#fffef5;text-shadow:0 3px 0 rgba(0,0,0,.6), 0 0 24px rgba(0,0,0,.5);
+  line-height:1.7;margin:0;
+}
+.t3-content span{
+  color:rgba(255,254,245,.85);font-size:.9rem;margin-top:6px;
+  text-shadow:0 2px 6px rgba(0,0,0,.7);
+}
+.t-card3d.noimg .t3-cutout{display:none;}
+
+/* --- la lignée : 3 cartes en éventail, côte à côte --- */
+.t-lineage-title{margin-top:44px !important;text-align:center;}
+.t-cards.fan{
+  display:flex;justify-content:center;align-items:flex-end;
+  gap:0;flex-wrap:nowrap;margin-top:26px;padding:26px 0 22px;
+}
+.t-cards.fan .dex-slide{
+  width:min(280px,58vw);margin:0 -30px;
+  transition:transform .28s cubic-bezier(.2,.8,.3,1);
+  transform-origin:bottom center;
+}
+.t-cards.fan .dex-slide:nth-child(1){transform:rotate(-8deg) translateY(18px);}
+.t-cards.fan .dex-slide:nth-child(2){transform:rotate(0deg);z-index:2;}
+.t-cards.fan .dex-slide:nth-child(3){transform:rotate(8deg) translateY(18px);}
+.t-cards.fan .dex-slide:hover{
+  transform:rotate(0deg) translateY(-22px) scale(1.05);z-index:6;
+}
+
+@media(max-width:860px){
+  #fiche-overlay .fiche{padding:26px 16px 60px;}
+  .t-hero{grid-template-columns:1fr;gap:26px;}
+  .t-card3d{max-width:330px;margin:0 auto;width:100%;}
+  .t-cards.fan{overflow:hidden;padding-left:6px;padding-right:6px;}
+  .t-cards.fan .dex-slide{width:min(190px,50vw);margin:0 -60px;}
+}

@@ -1070,13 +1070,26 @@ function openDresseur(id){
   if(!l) return;
   const c = document.getElementById('fiche-content');
   const statutCls = l.statut === 'Déclaré' ? 'ok' : 'soon';
+  const c1 = ELEMENTS[l.elements[0]], c2 = ELEMENTS[l.elements[1]];
   c.innerHTML = `
-    <div class="t-head">
-      <div class="t-avatar" id="dr-avatar"></div>
-      <div>
+    <div class="t-hero">
+      <!-- portrait 3D : le dresseur sort de son cadre et suit la souris -->
+      <div class="t-card3d" id="t-card3d" style="--tc1:${c1.color};--tc2:${c2.color}">
+        <div class="t3-shadow"></div>
+        <div class="t3-bg"></div>
+        <div class="t3-frame"></div>
+        <div class="t3-cutout"><img src="images/dresseurs/${l.id}.png" alt="${l.dresseur}"
+             onerror="this.parentElement.parentElement.classList.add('noimg')"></div>
+        <div class="t3-content">
+          <h2>${l.dresseur.toUpperCase()}</h2>
+          <span>${l.parti}</span>
+        </div>
+      </div>
+      <!-- infos à droite -->
+      <div class="t-hero-info">
         <div class="t-name">${l.dresseur.toUpperCase()}</div>
         <div class="t-parti">${l.parti.toUpperCase()}</div>
-        <div>${l.elements.map(e => {
+        <div class="t-tags">${l.elements.map(e => {
           const d = ELEMENTS[e];
           return `<span class="tag" style="background:${d.color}">${d.emoji} ${e.toUpperCase()}</span>`;
         }).join('')}</div>
@@ -1084,16 +1097,15 @@ function openDresseur(id){
           ${l.statut ? `<span class="stat ${statutCls}">${l.statut.toUpperCase()}</span>` : ''}
           ${l.intentions && l.intentions !== '?' ? `<span class="stat soon">INTENTIONS DE VOTE : ${l.intentions}</span>` : ''}
         </div>
+        ${l.bioReelle ? `<h4>QUI EST-CE ?</h4><p class="t-fact">${l.bioReelle}. ${l.faits ? l.faits + '.' : ''}</p>` : ''}
+        <h4>SON PROFIL DE DRESSEUR</h4>
+        <p class="t-bio">${l.bio || ''}</p>
       </div>
     </div>
-    ${l.bioReelle ? `<h4>QUI EST-CE ?</h4><p class="t-fact">${l.bioReelle}. ${l.faits ? l.faits + '.' : ''}</p>` : ''}
-    <h4>SON PROFIL DE DRESSEUR</h4>
-    <p class="t-bio">${l.bio || ''}</p>
-    <h4>SA LIGNÉE « 3P »</h4>
-    <div class="t-cards" id="t-cards"></div>`;
-  const av = c.querySelector('#dr-avatar');
-  av.replaceWith(trainerAvatar(l, 't-avatar t-full', 'full'));
-  /* les 3 cartes Polimon de la lignée, en vraies cartes à jouer
+    <h4 class="t-lineage-title">SA LIGNÉE « 3P »</h4>
+    <div class="t-cards fan" id="t-cards"></div>`;
+  attachTilt(c.querySelector('#t-card3d'));
+  /* les 3 cartes Polimon de la lignée, en éventail
      (les évolutions non révélées restent des cartes secrètes) */
   const cardsBox = c.querySelector('#t-cards');
   l.forms.forEach(f => {
@@ -1117,6 +1129,25 @@ function openDresseur(id){
     cardsBox.appendChild(slot);
   });
   openScreen('FICHE DRESSEUR');
+}
+
+/* Inclinaison 3D douce qui suit la souris (portrait du dresseur).
+   Les couches (fond, cadre, personnage, texte) sont à des
+   profondeurs différentes : le dresseur « sort » de son cadre. */
+function attachTilt(card){
+  if(!card || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const MAX = 13;
+  card.addEventListener('mousemove', e => {
+    const r = card.getBoundingClientRect();
+    const x = ((e.clientX - r.left) / r.width  - .5) * 2;
+    const y = ((e.clientY - r.top)  / r.height - .5) * 2;
+    card.style.setProperty('--ry', (x * MAX).toFixed(2) + 'deg');
+    card.style.setProperty('--rx', (-y * MAX).toFixed(2) + 'deg');
+  });
+  card.addEventListener('mouseleave', () => {
+    card.style.setProperty('--ry', '0deg');
+    card.style.setProperty('--rx', '0deg');
+  });
 }
 
 /* ============ LES IDÉES (N1 / N2 / N3) ============

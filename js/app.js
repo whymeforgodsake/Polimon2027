@@ -661,6 +661,18 @@ function setCombatControls(on){
 function initCombat(){ buildPickers(); renderIdle(); }
 
 /* ---------- déroulé du combat ---------- */
+/* Sur grand écran (≥1240px), la sélection est collée à gauche et tout
+   l'écran de jeu est visible : aucun scroll nécessaire. En-dessous,
+   on amène automatiquement la bonne zone sous les yeux du joueur. */
+function wideCombat(){
+  return window.matchMedia('(min-width:1240px)').matches;
+}
+function combatScroll(sel, block){
+  if(wideCombat()) return;
+  const el = document.querySelector(sel);
+  if(el) el.scrollIntoView({ behavior: 'smooth', block: block || 'nearest' });
+}
+
 function startCombat(){
   const a = byCode(pickState.a);
   if(!a) return;
@@ -685,6 +697,7 @@ function startCombat(){
   trainerSprite(b, 'trFoe'); trainerSprite(a, 'trAlly');
   showEl('trFoe', true); showEl('trAlly', true);
   say(`${b.dresseur.toUpperCase()} VEUT SE BATTRE !`);
+  combatScroll('.gameboy', 'start');
   setTimeout(() => {
     document.getElementById('trFoe').classList.add('exit');
     setTimeout(() => showEl('trFoe', false), 500);
@@ -735,6 +748,8 @@ function nextRound(){
         if(e.key === 'Enter'){ e.preventDefault(); c.click(); }
       });
     });
+    /* mobile : on centre les ripostes (l'idée adverse reste juste au-dessus) */
+    combatScroll('#compare', 'center');
   }, 800);
 }
 
@@ -751,6 +766,7 @@ function answerRound(card){
   });
   /* ta riposte apparaît en bulle BD côté allié */
   showBubble('ally', card.querySelector('p').textContent);
+  combatScroll('#battle', 'center');
   setTimeout(() => {
     if(ok){
       fight.pvB -= PV_HIT; fight.winsA++;
@@ -786,6 +802,7 @@ function recapHtml(){
 
 function endCombat(){
   clearBubbles();
+  combatScroll('#battle', 'center');
   const a = fight.a, b = fight.b;
   const won = fight.pvA > fight.pvB;
   const score = fight.winsA;
@@ -799,6 +816,7 @@ function endCombat(){
         <button class="btn" onclick="resetCombat()">↺ REJOUER</button>
         <button class="btn ghost" onclick="openFiche(${a.code})">RELIRE LA CARTE DE ${a.name.toUpperCase()}</button>
       </div>`;
+    setTimeout(() => combatScroll('#compare', 'center'), 1600);
     fight = null;
     return;
   }
@@ -841,6 +859,8 @@ function resetCombat(){
   fight = null;
   setCombatControls(true);
   refreshPick();
+  /* mobile : on remonte vers la sélection pour préparer le prochain duel */
+  combatScroll('#combat-side', 'start');
 }
 
 /* ============ POLIDEX ============ */

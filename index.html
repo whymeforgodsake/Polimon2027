@@ -428,6 +428,10 @@
 <!-- ================= ESPACE COMBAT ================= -->
 <section id="combat" class="space">
   <div class="combat-wrap">
+    <!-- Sur grand écran : la sélection vit dans une colonne à gauche
+         (elle reste visible sans scroller), la console à droite. -->
+    <div class="combat-flex">
+    <div class="combat-side" id="combat-side">
     <div class="space-header">
       <h2>⚔️ ESPACE COMBAT</h2>
       <p>Fais s'affronter deux Polimons en votant pour les <b>idées</b> qui te parlent le plus.</p>
@@ -458,7 +462,9 @@
       </div>
     </div>
     <div class="fight-cta"><button class="btn" id="btn-fight" onclick="startCombat()">⚔ LANCER LE COMBAT</button></div>
+    </div><!-- /combat-side -->
 
+    <div class="combat-main">
     <!-- La console : le combat se joue DANS une grosse Game Boy -->
     <div class="gameboy">
       <div class="gb-top">
@@ -502,6 +508,8 @@
         <i></i><i></i><i></i><i></i><i></i><i></i>
       </div>
     </div>
+    </div><!-- /combat-main -->
+    </div><!-- /combat-flex -->
   </div>
 </section>
 

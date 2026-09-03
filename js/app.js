@@ -1573,30 +1573,84 @@ function initIntro(){
   intro.hidden = false;
   document.body.classList.add('intro-open');
 
-  let leaving = false;
+  const walker  = document.getElementById('introWalk');
+  const content = document.getElementById('introContent');
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  let leaving = false, arrived = false;
+  let target = 0, cur = 0, touchY = null, raf = 0;
+
   const leave = () => {
     if(leaving) return;
     leaving = true;
     try { localStorage.setItem('polimon-intro-seen', '1'); } catch(e){}
     intro.classList.add('leave');
     document.body.classList.remove('intro-open');
-    setTimeout(() => intro.remove(), 1100);
+    setTimeout(() => intro.remove(), 1150);
     cleanup();
   };
-  const onWheel  = e => { if(e.deltaY > 0) leave(); };
-  const onTouch  = () => leave();
-  const onKey    = e => {
-    if([' ', 'Enter', 'ArrowDown', 'PageDown'].includes(e.key)){ e.preventDefault(); leave(); }
+
+  /* Sachez atteint le centre : « ! » de rencontre, puis l'iris s'ouvre */
+  const arrive = () => {
+    if(arrived) return;
+    arrived = true;
+    intro.classList.add('arrived');
+    setTimeout(leave, 700);
   };
+
+  /* le défilement fait DESCENDRE Sachez (caché au-dessus au départ) */
+  const paint = () => {
+    if(leaving) return;
+    cur += (target - cur) * 0.13;
+    if(Math.abs(target - cur) < 0.0008) cur = target;
+    const H  = window.innerHeight;
+    const y0 = -190;                 /* entièrement caché au-dessus */
+    const y1 = H * 0.5 - 78;         /* Sachez centré au milieu de l'écran */
+    if(walker) walker.style.transform = `translate(-50%, ${y0 + cur * (y1 - y0)}px)`;
+    /* le logo s'efface à mesure que Sachez approche */
+    if(content && cur > 0.01){
+      content.style.opacity   = String(Math.max(0, 1 - cur * 1.3));
+      content.style.transform = `translateY(${cur * 26}px)`;
+    }
+    if(cur >= 0.995 && target >= 1){ arrive(); return; }
+    raf = requestAnimationFrame(paint);
+  };
+
+  const bump = v => {
+    target = Math.min(1, Math.max(0, target + v));
+  };
+  const onWheel = e => {
+    if(reduced){ if(e.deltaY > 0) leave(); return; }
+    bump(e.deltaY / 850);
+  };
+  const onTouchStart = e => { touchY = e.touches[0].clientY; };
+  const onTouchMove  = e => {
+    if(reduced){ leave(); return; }
+    if(touchY === null){ touchY = e.touches[0].clientY; return; }
+    bump((touchY - e.touches[0].clientY) / 420);
+    touchY = e.touches[0].clientY;
+  };
+  const onKey = e => {
+    if([' ', 'Enter', 'ArrowDown', 'PageDown'].includes(e.key)){
+      e.preventDefault();
+      if(reduced){ leave(); return; }
+      bump(0.34);
+    }
+  };
+  const onClick = () => { if(reduced){ leave(); return; } target = 1; };
   const cleanup = () => {
     window.removeEventListener('wheel', onWheel);
-    window.removeEventListener('touchmove', onTouch);
+    window.removeEventListener('touchstart', onTouchStart);
+    window.removeEventListener('touchmove', onTouchMove);
     window.removeEventListener('keydown', onKey);
+    cancelAnimationFrame(raf);
   };
   window.addEventListener('wheel', onWheel, {passive:true});
-  window.addEventListener('touchmove', onTouch, {passive:true});
+  window.addEventListener('touchstart', onTouchStart, {passive:true});
+  window.addEventListener('touchmove', onTouchMove, {passive:true});
   window.addEventListener('keydown', onKey);
-  intro.addEventListener('click', leave);
+  intro.addEventListener('click', onClick);
+  raf = requestAnimationFrame(paint);
 }
 
 /* ============ INIT ============ */

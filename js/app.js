@@ -484,49 +484,56 @@ function statBars(p){
    Victoire : capture de l'idée adverse dans la Poliball, puis
    TON Polimon évolue (sa carte secrète est révélée). */
 
-let combatLevel = 1;   /* niveau choisi dans le menu déroulant (1, 2 ou 3) */
+let combatLevel = 1;   /* niveau choisi dans la cinématique d'avant-combat */
 /* un Polimon ne peut combattre que si ses 5 idées sont écrites */
 function dimsComplete(p){
   return DIMENSIONS.every(d => p.dims[d.key] && p.dims[d.key] !== 'TBD');
 }
 const PV_MAX = 100, PV_HIT = 20;
+const LEVEL_NAMES = { 1: 'PHILOSOPHIE', 2: 'PERSPECTIVE', 3: 'PROGRAMME' };
 let fight = null;                            /* état du combat en cours */
-const pickState = { a: null, b: 'rand' };    /* sélection : codes ou 'rand' */
+const pickState = { a: null, b: 'rand' };    /* sélection : ids de lignée ou 'rand' */
 
 function say(text){ document.getElementById('battle-msg').textContent = text; }
-function combatPool(){
-  return POLIMONS
-    .filter(p => p.level === combatLevel && dimsComplete(p) && isUnlocked(p))
-    .sort((a, b) => lineageRank(a.lineage) - lineageRank(b.lineage));
+const linById = id => LINEAGES.find(l => l.id === id);
+/* dresseurs sélectionnables : leur lignée a ses 5 idées écrites */
+function trainerPool(){
+  return LINEAGES.filter(l => dimsComplete(byCode(l.forms[0].code)));
 }
-/* changement de niveau dans le menu déroulant */
-function onLevelChange(){
-  if(fight) return;
-  combatLevel = +document.getElementById('combat-level').value || 1;
-  pickState.a = null;
-  pickState.b = 'rand';
-  refreshPick();
+/* le Polimon d'une lignée à un niveau donné */
+function polOf(lin, level){
+  const f = lin && lin.forms[level - 1];
+  return f ? byCode(f.code) : null;
+}
+/* Un niveau se joue si TON Polimon de ce niveau est débloqué
+   (il faut gagner au niveau précédent pour le faire évoluer).
+   L'adversaire, lui, peut être non débloqué : il apparaît en pixel. */
+function levelInfo(A, B, n){
+  const pa = polOf(A, n), pb = polOf(B, n);
+  if(!pa || !pb) return { ok: false, why: 'Contenu à venir' };
+  if(!isUnlocked(pa)){
+    const prev = polOf(A, n - 1);
+    return { ok: false, lock: true, pa, pb,
+      why: `Gagne un combat NIV.${n - 1} avec ${prev ? prev.name.toUpperCase() : A.dresseur} pour faire évoluer ton Polimon` };
+  }
+  return { ok: true, pa, pb };
 }
 
 /* ---------- sélection façon écran de choix de personnage ---------- */
 function buildPickers(){
-  const pool = combatPool();
+  const pool = trainerPool();
   const fightBtn = document.getElementById('btn-fight');
   if(pool.length < 2){
-    /* pas assez de Polimons révélés à ce niveau pour un duel */
     ['railA','railB'].forEach(id => {
       const r = document.getElementById(id);
-      if(r) r.innerHTML = '<div class="pick-empty">Pas assez de Polimons de niveau ' + combatLevel +
-        ' révélés… Fais-les évoluer en gagnant des combats de niveau inférieur !</div>';
+      if(r) r.innerHTML = '<div class="pick-empty">Pas assez de dresseurs prêts pour un duel…</div>';
     });
-    const nA = document.getElementById('pickNameA'), nB = document.getElementById('pickNameB');
-    if(nA) nA.textContent = ''; if(nB) nB.textContent = '';
     if(fightBtn) fightBtn.disabled = true;
     return;
   }
   if(fightBtn) fightBtn.disabled = false;
-  if(pickState.a === null || !pool.some(p => p.code === pickState.a)) pickState.a = pool[0].code;
-  if(pickState.b !== 'rand' && !pool.some(p => p.code === pickState.b)) pickState.b = 'rand';
+  if(pickState.a === null || !pool.some(l => l.id === pickState.a)) pickState.a = pool[0].id;
+  if(pickState.b !== 'rand' && !pool.some(l => l.id === pickState.b)) pickState.b = 'rand';
   buildRail('railA', 'a', pool);
   buildRail('railB', 'b', pool);
   updatePickNames();
@@ -544,26 +551,31 @@ function buildRail(railId, side, pool){
     t.onclick = () => { pickState.b = 'rand'; refreshPick(); };
     rail.appendChild(t);
   }
-  pool.forEach(p => {
+  pool.forEach(l => {
     const t = document.createElement('button');
     t.type = 'button';
-    const selected  = pickState[side] === p.code;
-    /* 2 Polimons identiques ne peuvent pas se battre */
-    const forbidden = side === 'b' ? pickState.a === p.code : pickState.b === p.code;
-    t.className = 'pick-tile' + (selected ? ' sel' : '') + (forbidden ? ' off' : '');
+    const selected  = pickState[side] === l.id;
+    /* on ne s'affronte pas soi-même */
+    const forbidden = side === 'b' ? pickState.a === l.id : pickState.b === l.id;
+    t.className = 'pick-tile tr' + (selected ? ' sel' : '') + (forbidden ? ' off' : '');
     t.disabled = forbidden;
     const img = document.createElement('img');
-    img.alt = p.name;
-    img.onerror = () => img.replaceWith(spriteNode(p, 56));
-    img.src = 'images/polimons/battle/front/' + p.code + '.png';
+    img.alt = l.dresseur;
+    img.onerror = () => {
+      const s = document.createElement('span');
+      s.className = 'pt-init';
+      s.textContent = l.dresseur.split(/[\s-]+/).map(w => w[0]).join('').slice(0, 3).toUpperCase();
+      img.replaceWith(s);
+    };
+    img.src = 'images/dresseurs/' + l.id + '-head.png';
     t.appendChild(img);
     const n = document.createElement('span');
     n.className = 'pt-n';
-    n.textContent = p.name.toUpperCase();
+    n.textContent = l.dresseur.split(' ').pop().toUpperCase();
     t.appendChild(n);
     t.onclick = () => {
-      pickState[side] = p.code;
-      if(side === 'a' && pickState.b === p.code) pickState.b = 'rand';
+      pickState[side] = l.id;
+      if(side === 'a' && pickState.b === l.id) pickState.b = 'rand';
       refreshPick();
     };
     rail.appendChild(t);
@@ -574,13 +586,14 @@ function refreshPick(){
   if(!fight) renderIdle();
 }
 function updatePickNames(){
-  const a = byCode(pickState.a);
+  const a = linById(pickState.a);
   const nA = document.getElementById('pickNameA');
-  if(nA && a) nA.textContent = a.name.toUpperCase() + ' · ' + a.dresseur;
+  if(nA && a) nA.textContent = a.dresseur + ' · ' + a.parti;
   const nB = document.getElementById('pickNameB');
-  if(nB) nB.textContent = pickState.b === 'rand'
-    ? '? · Adversaire tiré au hasard'
-    : byCode(pickState.b).name.toUpperCase() + ' · ' + byCode(pickState.b).dresseur;
+  if(nB){
+    const b = pickState.b === 'rand' ? null : linById(pickState.b);
+    nB.textContent = b ? b.dresseur + ' · ' + b.parti : '? · Adversaire tiré au hasard';
+  }
 }
 
 /* ---------- plaques, sprites, bulles ---------- */
@@ -643,20 +656,14 @@ function renderIdle(){
   const pb = document.getElementById('pokeball');
   if(pb) pb.hidden = true;
   document.getElementById('compare').innerHTML = '';
-  const a = byCode(pickState.a);
-  if(combatPool().length < 2){
-    say(`Pas encore assez de Polimons de niveau ${combatLevel} révélés pour un duel !`);
-  } else {
-    say(a
-      ? `${a.name.toUpperCase()} est prêt ! Choisis ton adversaire, puis lance le combat des idées.`
-      : 'Choisis ton Polimon !');
-  }
+  const a = linById(pickState.a);
+  say(a
+    ? `${a.dresseur.toUpperCase()} est prêt ! Choisis ton adversaire, puis lance le combat des idées.`
+    : 'Choisis ton dresseur !');
 }
 function setCombatControls(on){
   document.getElementById('btn-fight').style.display = on ? '' : 'none';
   document.querySelectorAll('.pick-panel').forEach(p => p.classList.toggle('locked', !on));
-  const lv = document.getElementById('combat-level');
-  if(lv) lv.disabled = !on;
 }
 function initCombat(){ buildPickers(); renderIdle(); }
 
@@ -673,20 +680,78 @@ function combatScroll(sel, block){
   if(el) el.scrollIntoView({ behavior: 'smooth', block: block || 'nearest' });
 }
 
+/* LANCER LE COMBAT : d'abord la cinématique de présentation des
+   deux dresseurs, avec le choix du niveau. Le duel démarre ensuite. */
 function startCombat(){
-  const a = byCode(pickState.a);
-  if(!a) return;
-  let b;
+  const A = linById(pickState.a);
+  if(!A) return;
+  let B;
   if(pickState.b === 'rand'){
-    const pool = combatPool().filter(p => p.code !== a.code);
-    b = pool[Math.floor(Math.random() * pool.length)];
+    const pool = trainerPool().filter(l => l.id !== A.id);
+    B = pool[Math.floor(Math.random() * pool.length)];
   } else {
-    b = byCode(pickState.b);
+    B = linById(pickState.b);
   }
-  if(!b || b.code === a.code){
-    say('Deux Polimons identiques ne peuvent pas se battre !');
+  if(!B || B.id === A.id){
+    say('Deux dresseurs identiques ne peuvent pas s\'affronter !');
     return;
   }
+  openVs(A, B);
+}
+
+/* ---------- cinématique VS + choix du niveau ---------- */
+let vsPair = null;
+function openVs(A, B){
+  vsPair = { A, B };
+  const ov = document.getElementById('vs-overlay');
+  if(!ov) return;
+  document.getElementById('vsImgA').src = 'images/dresseurs/' + A.id + '.png';
+  document.getElementById('vsImgB').src = 'images/dresseurs/' + B.id + '.png';
+  document.getElementById('vsNameA').textContent = A.dresseur.toUpperCase();
+  document.getElementById('vsPartiA').textContent = A.parti;
+  document.getElementById('vsNameB').textContent = B.dresseur.toUpperCase();
+  document.getElementById('vsPartiB').textContent = B.parti;
+  /* les 3 niveaux, avec verrous explicites */
+  const btns = document.getElementById('vsBtns');
+  btns.innerHTML = [1, 2, 3].map(n => {
+    const inf = levelInfo(A, B, n);
+    if(inf.ok){
+      return `<button type="button" class="vs-lv" onclick="chooseLevel(${n})">
+        <span class="lv-t">NIV.${n} · ${LEVEL_NAMES[n]}</span>
+        <span class="lv-s">${inf.pa.name.toUpperCase()} VS ${inf.pb.name.toUpperCase()}</span>
+      </button>`;
+    }
+    return `<div class="vs-lv lock">
+      <span class="lv-t">🔒 NIV.${n} · ${LEVEL_NAMES[n]}</span>
+      <span class="lv-s">${inf.why}</span>
+    </div>`;
+  }).join('');
+  ov.hidden = false;
+  document.body.classList.add('vs-open');
+  void ov.offsetWidth;
+  ov.classList.add('in');
+}
+function closeVs(){
+  const ov = document.getElementById('vs-overlay');
+  if(!ov) return;
+  vsPair = null;
+  ov.classList.remove('in');
+  ov.classList.add('out');
+  document.body.classList.remove('vs-open');
+  setTimeout(() => { ov.hidden = true; ov.classList.remove('out'); }, 450);
+}
+function chooseLevel(n){
+  if(!vsPair) return;
+  const inf = levelInfo(vsPair.A, vsPair.B, n);
+  if(!inf.ok) return;
+  combatLevel = n;
+  const pa = inf.pa, pb = inf.pb;
+  closeVs();
+  setTimeout(() => beginFight(pa, pb), 380);
+}
+
+/* ---------- le duel lui-même, dans la console ---------- */
+function beginFight(a, b){
   fight = { a, b, pvA: PV_MAX, pvB: PV_MAX, winsA: 0, winsB: 0, round: 0, picks: [], busy: true };
   setCombatControls(false);
   document.getElementById('compare').innerHTML = '';
@@ -1491,7 +1556,7 @@ function evoTarget(lin){
   return null;
 }
 
-/* Rejoindre l'espace combat avec le niveau 1 d'une lignée présélectionné */
+/* Rejoindre l'espace combat avec le dresseur d'une lignée présélectionné */
 function goCombatFor(lineageId){
   const lin = LINEAGES.find(l => l.id === lineageId);
   if(!lin) return;
@@ -1500,11 +1565,8 @@ function goCombatFor(lineageId){
   go('combat');
   if(p1 && dimsComplete(p1)){
     if(fight){ fight = null; }
-    combatLevel = 1;
-    const lv = document.getElementById('combat-level');
-    if(lv) lv.value = '1';
-    pickState.a = p1.code;
-    if(pickState.b === p1.code) pickState.b = 'rand';
+    pickState.a = lin.id;
+    if(pickState.b === lin.id) pickState.b = 'rand';
     setCombatControls(true);
     refreshPick();
     const t = document.querySelector('#railA .pick-tile.sel');

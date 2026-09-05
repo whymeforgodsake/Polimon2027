@@ -2694,3 +2694,127 @@ body.intro-open{overflow:hidden;}
   .intro-walk{display:none;}
   #intro.leave{animation:none;display:none;}
 }
+
+/* ================================================================
+   v28 - SÉLECTION PAR DRESSEURS + CINÉMATIQUE VS
+   Les rails de sélection montrent les dresseurs (portraits anime).
+   LANCER LE COMBAT ouvre une cinématique plein écran : les deux
+   dresseurs entrent face à face, puis le joueur choisit le niveau
+   (philosophie / perspective / programme). Un niveau verrouillé
+   explique clairement comment le débloquer.
+   ================================================================ */
+/* tuiles dresseurs : portrait anime, pas de pixelisation */
+.pick-tile.tr img{
+  width:56px;height:56px;image-rendering:auto;object-fit:cover;object-position:top center;
+  border-radius:6px;
+}
+.pick-tile.tr .pt-init{
+  width:56px;height:56px;display:flex;align-items:center;justify-content:center;
+  font-family:'Press Start 2P',monospace;font-size:12px;color:var(--jaune);
+}
+.combat-side .pick-tile.tr img,.combat-side .pick-tile.tr .pt-init{width:44px;height:44px;}
+
+/* --- la cinématique --- */
+body.vs-open{overflow:hidden;}
+#vs-overlay{
+  position:fixed;inset:0;z-index:9500;overflow:hidden;
+  background:
+    repeating-linear-gradient(0deg, rgba(255,255,255,.02) 0 1px, transparent 1px 3px),
+    #0c0c0f;
+}
+#vs-overlay.out{opacity:0;transition:opacity .4s ease;}
+.vs-half{
+  position:absolute;top:0;bottom:0;width:60%;
+  display:flex;align-items:flex-end;
+  transition:transform .65s cubic-bezier(.2,.85,.25,1);
+}
+.vs-half.vs-left{
+  left:0;justify-content:flex-start;
+  background:linear-gradient(115deg, rgba(255,222,0,.16), rgba(255,222,0,0) 65%);
+  clip-path:polygon(0 0, 100% 0, calc(100% - 18vw) 100%, 0 100%);
+  transform:translateX(-102%);
+}
+.vs-half.vs-right{
+  right:0;justify-content:flex-end;
+  background:linear-gradient(-115deg, rgba(214,40,40,.2), rgba(214,40,40,0) 65%);
+  clip-path:polygon(18vw 0, 100% 0, 100% 100%, 0 100%);
+  transform:translateX(102%);
+}
+#vs-overlay.in .vs-half{transform:translateX(0);}
+.vs-half img{
+  height:min(74vh,640px);width:auto;object-fit:contain;
+  margin:0 0 0 6vw;
+  filter:drop-shadow(0 18px 30px rgba(0,0,0,.6));
+}
+.vs-half.vs-right img{margin:0 6vw 0 0;}
+.vs-name{
+  position:absolute;top:12vh;left:7vw;text-align:left;
+  display:flex;flex-direction:column;gap:10px;
+  opacity:0;transform:translateY(-14px);
+  transition:opacity .5s ease .55s, transform .5s ease .55s;
+}
+.vs-half.vs-right .vs-name{left:auto;right:7vw;text-align:right;}
+#vs-overlay.in .vs-name{opacity:1;transform:none;}
+.vs-name b{
+  font-family:'Press Start 2P',monospace;font-size:clamp(11px,1.6vw,17px);
+  color:#fff;letter-spacing:1px;line-height:1.7;text-shadow:3px 3px 0 #000;
+}
+.vs-name span{
+  font-family:'Press Start 2P',monospace;font-size:clamp(7px,1vw,10px);
+  color:var(--jaune);letter-spacing:1px;
+}
+.vs-flash{
+  position:absolute;left:50%;top:34%;transform:translate(-50%,-50%) scale(0);
+  font-family:'Press Start 2P',monospace;font-size:clamp(34px,7vw,64px);
+  color:var(--jaune);text-shadow:4px 4px 0 #000, -3px -3px 0 var(--rouge);
+  z-index:3;
+}
+#vs-overlay.in .vs-flash{animation:vsPop .5s cubic-bezier(.2,.9,.3,1.35) .5s forwards;}
+@keyframes vsPop{from{transform:translate(-50%,-50%) scale(0) rotate(-14deg);}to{transform:translate(-50%,-50%) scale(1) rotate(-6deg);}}
+
+/* le choix du niveau, en bas */
+.vs-levels{
+  position:absolute;left:50%;bottom:5vh;transform:translate(-50%,26px);
+  width:min(560px,92vw);z-index:4;text-align:center;
+  opacity:0;transition:opacity .5s ease 1.05s, transform .5s ease 1.05s;
+}
+#vs-overlay.in .vs-levels{opacity:1;transform:translate(-50%,0);}
+.vs-q{
+  font-family:'Press Start 2P',monospace;font-size:clamp(9px,1.4vw,12px);
+  color:#fff;letter-spacing:1px;margin-bottom:16px;text-shadow:2px 2px 0 #000;
+}
+.vs-btns{display:flex;flex-direction:column;gap:10px;margin-bottom:14px;}
+.vs-lv{
+  display:flex;flex-direction:column;gap:7px;align-items:flex-start;text-align:left;
+  background:var(--noir2);border:3px solid var(--jaune);padding:13px 16px;cursor:pointer;
+  transition:transform .12s, box-shadow .12s;
+}
+.vs-lv:hover{transform:translate(-2px,-2px);box-shadow:4px 4px 0 rgba(255,222,0,.4);}
+.vs-lv .lv-t{
+  font-family:'Press Start 2P',monospace;font-size:clamp(9px,1.3vw,11px);
+  color:var(--jaune);letter-spacing:1px;
+}
+.vs-lv .lv-s{
+  font-family:'Press Start 2P',monospace;font-size:clamp(6px,.95vw,7.5px);
+  color:#cfcfc6;letter-spacing:.5px;line-height:1.9;
+}
+.vs-lv.lock{
+  border-color:#3a3a44;cursor:not-allowed;opacity:.75;
+}
+.vs-lv.lock:hover{transform:none;box-shadow:none;}
+.vs-lv.lock .lv-t{color:#8b8b98;}
+.vs-lv.lock .lv-s{color:#8b8b98;}
+.vs-back{margin-top:2px;}
+
+@media(max-width:680px){
+  .vs-half{width:78%;}
+  .vs-half img{height:44vh;margin:0 0 30vh 2vw;}
+  .vs-half.vs-right img{margin:0 2vw 30vh 0;}
+  .vs-name{top:5vh;left:5vw;max-width:44vw;gap:7px;}
+  .vs-name b{font-size:10px;overflow-wrap:break-word;}
+  .vs-name span{font-size:7px;}
+  .vs-half.vs-right .vs-name{right:5vw;left:auto;top:calc(5vh + 64px);}
+  .vs-flash{top:26%;}
+  .vs-levels{bottom:3vh;}
+  .vs-lv{padding:11px 12px;}
+}

@@ -439,23 +439,13 @@
     <div class="combat-side" id="combat-side">
     <div class="space-header">
       <h2>⚔️ ESPACE COMBAT</h2>
-      <p>Fais s'affronter deux Polimons en votant pour les <b>idées</b> qui te parlent le plus.</p>
+      <p>Choisis ton <b>dresseur</b> et ton adversaire, puis affronte-les dans le combat des <b>idées</b>.</p>
     </div>
 
-    <!-- Niveau du combat : filtre les deux sélecteurs -->
-    <div class="combat-level">
-      <label for="combat-level">NIVEAU</label>
-      <select id="combat-level" onchange="onLevelChange()">
-        <option value="1">NIV.1 · PHILOSOPHIE</option>
-        <option value="2">NIV.2 · PERSPECTIVE</option>
-        <option value="3">NIV.3 · PROGRAMME</option>
-      </select>
-    </div>
-
-    <!-- Sélection façon jeu vidéo : les Polimons défilent en pixel-art -->
+    <!-- Sélection façon jeu vidéo : les dresseurs défilent -->
     <div class="pick-panels">
       <div class="pick-panel" id="panelA">
-        <div class="pick-title">👤 TON POLIMON</div>
+        <div class="pick-title">👤 TON DRESSEUR</div>
         <div class="pick-rail" id="railA"></div>
         <div class="pick-name" id="pickNameA"></div>
       </div>
@@ -529,6 +519,25 @@
   </div>
 </section>
 </main>
+
+<!-- cinématique d'avant-combat : les deux dresseurs face à face,
+     puis choix du niveau du combat -->
+<div id="vs-overlay" hidden>
+  <div class="vs-half vs-left">
+    <img id="vsImgA" alt="">
+    <div class="vs-name"><b id="vsNameA"></b><span id="vsPartiA"></span></div>
+  </div>
+  <div class="vs-half vs-right">
+    <img id="vsImgB" alt="">
+    <div class="vs-name"><b id="vsNameB"></b><span id="vsPartiB"></span></div>
+  </div>
+  <div class="vs-flash" aria-hidden="true">VS</div>
+  <div class="vs-levels">
+    <div class="vs-q">CHOISIS LE NIVEAU DU COMBAT</div>
+    <div class="vs-btns" id="vsBtns"></div>
+    <button class="btn ghost vs-back" onclick="closeVs()">◀ RETOUR</button>
+  </div>
+</div>
 
 <!-- écran de détail (fiche Polimon / carte dresseur) -->
 <div id="fiche-overlay">

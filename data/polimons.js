@@ -230,6 +230,13 @@ const POLIMON_DATA = {
     },
     {
       id: 3, dresseur: "Jean-Luc Mélenchon", parti: "LFI", elements: ["Feu", "Roche"],
+      /* Carte spéciale : se révèle quand les 3 Polimons de la lignée
+         ont triomphé au combat (l'évolution ultime, en quelque sorte). */
+      speciale: {
+        code: 103,
+        title: "La République, c'est moi !",
+        image: "images/polimons/special/3.jpg"
+      },
       statut: "Déclaré", intentions: "10-20%",
       bioReelle: "Fondateur de LFI, 3e en 2022 avec ~22 %",
       faits: "Refuse la primaire de gauche ; ligne de rupture",

@@ -64,6 +64,17 @@ function saveUnlocks(){
 function isUnlocked(p){
   return p.level === 1 || unlockState.all || unlockState.codes.includes(p.code);
 }
+/* Carte spéciale d'une lignée : révélée quand ses 3 Polimons ont
+   triomphé (elle se débloque en gagnant un combat de niveau 3). */
+function isSpecialeUnlocked(l){
+  return !!(l && l.speciale && (unlockState.all || unlockState.codes.includes(l.speciale.code)));
+}
+/* Majuscules « pixel » : la police rétro n'a pas de capitales
+   accentuées (É s'affiche comme un é minuscule), on retire donc
+   les accents en passant en majuscules : É -> E, À -> A… */
+function UP(s){
+  return String(s).toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+}
 function shuffle(a){
   for(let i = a.length - 1; i > 0; i--){
     const j = Math.floor(Math.random() * (i + 1));
@@ -195,7 +206,7 @@ function initChoixScene(){
       b.style.top  = o.y + '%';
       b.setAttribute('aria-label', p.name + ' : dimension ' + d.label);
       const txt = (p.dims[d.key] && p.dims[d.key] !== 'TBD') ? p.dims[d.key] : 'À compléter…';
-      b.innerHTML = `<span class="hs-dtip"><b>${d.icon} ${p.name.toUpperCase()} · ${d.label.toUpperCase()}</b><i>${txt}</i></span>`;
+      b.innerHTML = `<span class="hs-dtip"><b>${d.icon} ${UP(p.name)} · ${UP(d.label)}</b><i>${txt}</i></span>`;
       b.addEventListener('click', e => e.preventDefault());
       art.appendChild(b);
     });
@@ -207,7 +218,7 @@ function initChoixScene(){
     z.style.left = s.poli.x + '%';
     z.style.top  = s.poli.y + '%';
     z.setAttribute('aria-label', 'Choisir ' + p.name + ' comme compagnon');
-    z.innerHTML = `<span class="hs-ring"></span><span class="hs-name">CHOISIR ${p.name.toUpperCase()} ▸</span>`;
+    z.innerHTML = `<span class="hs-ring"></span><span class="hs-name">CHOISIR ${UP(p.name)} ▸</span>`;
     z.addEventListener('click', () => selectBranch(s.branch));
     art.appendChild(z);
   });
@@ -291,7 +302,7 @@ function applyBranchEp2(branch){
     img.src = 'images/story/ep2/' + img.dataset.ep2 + '-' + B.starter + '.webp';
   });
   document.querySelectorAll('[data-ep2-name]').forEach(el => {
-    el.textContent = ally.name.toUpperCase();
+    el.textContent = UP(ally.name);
   });
   document.querySelectorAll('[data-eq]').forEach(el => {
     const side = el.dataset.eq.split(':')[0], key = el.dataset.eq.split(':')[1];
@@ -456,7 +467,7 @@ function tint(hex, alpha){
 function elTags(p){
   return p.elements.map(e => {
     const d = ELEMENTS[e];
-    return `<span class="tag" style="background:${d.color}">${d.emoji} ${e.toUpperCase()}</span>`;
+    return `<span class="tag" style="background:${d.color}">${d.emoji} ${UP(e)}</span>`;
   }).join('');
 }
 function lvlInfo(n){ return LEVELS[n-1]; }
@@ -514,7 +525,7 @@ function levelInfo(A, B, n){
   if(!isUnlocked(pa)){
     const prev = polOf(A, n - 1);
     return { ok: false, lock: true, pa, pb,
-      why: `Gagne un combat NIV.${n - 1} avec ${prev ? prev.name.toUpperCase() : A.dresseur} pour faire évoluer ton Polimon` };
+      why: `Gagne un combat NIV.${n - 1} avec ${prev ? UP(prev.name) : A.dresseur} pour faire évoluer ton Polimon` };
   }
   return { ok: true, pa, pb };
 }
@@ -564,14 +575,14 @@ function buildRail(railId, side, pool){
     img.onerror = () => {
       const s = document.createElement('span');
       s.className = 'pt-init';
-      s.textContent = l.dresseur.split(/[\s-]+/).map(w => w[0]).join('').slice(0, 3).toUpperCase();
+      s.textContent = UP(l.dresseur.split(/[\s-]+/).map(w => w[0]).join('').slice(0, 3));
       img.replaceWith(s);
     };
     img.src = 'images/dresseurs/' + l.id + '-head.png';
     t.appendChild(img);
     const n = document.createElement('span');
     n.className = 'pt-n';
-    n.textContent = l.dresseur.split(' ').pop().toUpperCase();
+    n.textContent = UP(l.dresseur.split(' ').pop());
     t.appendChild(n);
     t.onclick = () => {
       pickState[side] = l.id;
@@ -602,7 +613,7 @@ function plate(p, elId, pv, wins){
   const balls = Array.from({length: DIMENSIONS.length}, (_, k) =>
     `<span class="ball ${k < wins ? 'full' : ''}"></span>`).join('');
   document.getElementById(elId).innerHTML = `
-    <div class="pl-name">${p.name.toUpperCase()} <span class="pl-l">:N${p.level}</span></div>
+    <div class="pl-name">${UP(p.name)} <span class="pl-l">:N${p.level}</span></div>
     <div class="pl-sub">${p.dresseur}</div>
     <div class="pl-hp"><span>PV:</span><div class="pl-bar"><div style="width:${pv}%;${pv<=40?'background:#c03028;':''}"></div></div></div>
     <div class="pl-foot"><span class="pl-balls">${balls}</span><span class="pl-pv">${pv}/ ${PV_MAX}</span></div>`;
@@ -658,7 +669,7 @@ function renderIdle(){
   document.getElementById('compare').innerHTML = '';
   const a = linById(pickState.a);
   say(a
-    ? `${a.dresseur.toUpperCase()} est prêt ! Choisis ton adversaire, puis lance le combat des idées.`
+    ? `${UP(a.dresseur)} est prêt ! Choisis ton adversaire, puis lance le combat des idées.`
     : 'Choisis ton dresseur !');
 }
 function setCombatControls(on){
@@ -707,9 +718,9 @@ function openVs(A, B){
   if(!ov) return;
   document.getElementById('vsImgA').src = 'images/dresseurs/' + A.id + '.png';
   document.getElementById('vsImgB').src = 'images/dresseurs/' + B.id + '.png';
-  document.getElementById('vsNameA').textContent = A.dresseur.toUpperCase();
+  document.getElementById('vsNameA').textContent = UP(A.dresseur);
   document.getElementById('vsPartiA').textContent = A.parti;
-  document.getElementById('vsNameB').textContent = B.dresseur.toUpperCase();
+  document.getElementById('vsNameB').textContent = UP(B.dresseur);
   document.getElementById('vsPartiB').textContent = B.parti;
   /* les 3 niveaux, avec verrous explicites */
   const btns = document.getElementById('vsBtns');
@@ -718,7 +729,7 @@ function openVs(A, B){
     if(inf.ok){
       return `<button type="button" class="vs-lv" onclick="chooseLevel(${n})">
         <span class="lv-t">NIV.${n} · ${LEVEL_NAMES[n]}</span>
-        <span class="lv-s">${inf.pa.name.toUpperCase()} VS ${inf.pb.name.toUpperCase()}</span>
+        <span class="lv-s">${UP(inf.pa.name)} VS ${UP(inf.pb.name)}</span>
       </button>`;
     }
     return `<div class="vs-lv lock">
@@ -761,7 +772,7 @@ function beginFight(a, b){
   /* face-à-face des dresseurs */
   trainerSprite(b, 'trFoe'); trainerSprite(a, 'trAlly');
   showEl('trFoe', true); showEl('trAlly', true);
-  say(`${b.dresseur.toUpperCase()} VEUT SE BATTRE !`);
+  say(`${UP(b.dresseur)} VEUT SE BATTRE !`);
   combatScroll('.gameboy', 'start');
   setTimeout(() => {
     document.getElementById('trFoe').classList.add('exit');
@@ -769,7 +780,7 @@ function beginFight(a, b){
     showEl('sprB', true); showEl('plateB', true);
     battleSprite(b, 'sprB', true);
     plate(b, 'plateB', PV_MAX, 0);
-    say(`${b.dresseur.toUpperCase()} envoie ${b.name.toUpperCase()} !`);
+    say(`${UP(b.dresseur)} envoie ${UP(b.name)} !`);
   }, 1600);
   setTimeout(() => {
     document.getElementById('trAlly').classList.add('exit');
@@ -777,7 +788,7 @@ function beginFight(a, b){
     showEl('sprA', true); showEl('plateA', true);
     battleSprite(a, 'sprA', true);
     plate(a, 'plateA', PV_MAX, 0);
-    say(`En avant, ${a.name.toUpperCase()} !`);
+    say(`En avant, ${UP(a.name)} !`);
   }, 3100);
   setTimeout(() => { fight.busy = false; nextRound(); }, 4400);
 }
@@ -788,11 +799,11 @@ function nextRound(){
   const d = DIMENSIONS[fight.round];
   clearBubbles();
   document.getElementById('compare').innerHTML = '';
-  say(`ROUND ${fight.round + 1}/${DIMENSIONS.length} · ${d.label.toUpperCase()}`);
+  say(`ROUND ${fight.round + 1}/${DIMENSIONS.length} · ${UP(d.label)}`);
   /* 1. l'adversaire attaque avec son idée, en bulle BD */
   setTimeout(() => {
     showBubble('foe', fight.b.dims[d.key]);
-    say(`ROUND ${fight.round + 1}/${DIMENSIONS.length} · ${d.label.toUpperCase()} - ${fight.b.name.toUpperCase()} attaque ! À toi de riposter ▼`);
+    say(`ROUND ${fight.round + 1}/${DIMENSIONS.length} · ${UP(d.label)} - ${UP(fight.b.name)} attaque ! A toi de riposter ▼`);
     /* 2. deux suggestions : la bonne + un leurre d'une autre lignée */
     const correct = fight.a.dims[d.key];
     const others = POLIMONS.filter(x =>
@@ -801,7 +812,7 @@ function nextRound(){
     const decoy = others[Math.floor(Math.random() * others.length)].dims[d.key];
     const options = shuffle([{ txt: correct, ok: 1 }, { txt: decoy, ok: 0 }]);
     document.getElementById('compare').innerHTML = `
-      <div class="riposte-head"><span class="rh-cursor">▼</span> RIPOSTE AVEC LA VRAIE IDÉE DE ${fight.a.name.toUpperCase()}</div>
+      <div class="riposte-head"><span class="rh-cursor">▼</span> RIPOSTE AVEC LA VRAIE IDEE DE ${UP(fight.a.name)}</div>
       <div class="idea-row">${options.map((o, i) => `
         <div class="idea-card" data-ok="${o.ok ? 1 : ''}" onclick="answerRound(this)" tabindex="0" role="button">
           <span class="ic-tag">▶ RIPOSTE ${i === 0 ? 'A' : 'B'}</span>
@@ -838,13 +849,13 @@ function answerRound(card){
       const slot = document.getElementById('sprB');
       slot.classList.add('hit');
       setTimeout(() => slot.classList.remove('hit'), 650);
-      say(`Riposte parfaite ! ${fight.b.name.toUpperCase()} perd ${PV_HIT} PV.`);
+      say(`Riposte parfaite ! ${UP(fight.b.name)} perd ${PV_HIT} PV.`);
     } else {
       fight.pvA -= PV_HIT; fight.winsB++;
       const slot = document.getElementById('sprA');
       slot.classList.add('hit');
       setTimeout(() => slot.classList.remove('hit'), 650);
-      say(`Ce n'était pas l'idée de ${fight.a.name.toUpperCase()}… il perd ${PV_HIT} PV !`);
+      say(`Ce n'était pas l'idée de ${UP(fight.a.name)}… il perd ${PV_HIT} PV !`);
     }
     plate(fight.a, 'plateA', fight.pvA, fight.winsA);
     plate(fight.b, 'plateB', fight.pvB, fight.winsB);
@@ -862,7 +873,7 @@ function continueFight(){
 function recapHtml(){
   return `<div class="recap">${fight.picks.map(p => `
     <div class="recap-row"><span class="rd">${p.dim.icon} ${p.dim.label}</span>
-    <span class="rw">${p.ok ? '✔ RIPOSTE RÉUSSIE' : '✘ RIPOSTE RATÉE'}</span></div>`).join('')}</div>`;
+    <span class="rw">${p.ok ? '✔ RIPOSTE REUSSIE' : '✘ RIPOSTE RATEE'}</span></div>`).join('')}</div>`;
 }
 
 function endCombat(){
@@ -875,11 +886,11 @@ function endCombat(){
   if(!won){
     document.getElementById('sprA').classList.add('faint');
     document.getElementById('sprB').classList.add('victory');
-    say(`${a.name.toUpperCase()} est K.O. (${score} / ${DIMENSIONS.length})… Pas d'évolution cette fois. Relis sa carte et retente ta chance !`);
+    say(`${UP(a.name)} est K.O. (${score} / ${DIMENSIONS.length})… Pas d'évolution cette fois. Relis sa carte et retente ta chance !`);
     document.getElementById('compare').innerHTML = recapHtml() + `
       <div class="continue-wrap">
         <button class="btn" onclick="resetCombat()">↺ REJOUER</button>
-        <button class="btn ghost" onclick="openFiche(${a.code})">RELIRE LA CARTE DE ${a.name.toUpperCase()}</button>
+        <button class="btn ghost" onclick="openFiche(${a.code})">RELIRE LA CARTE DE ${UP(a.name)}</button>
       </div>`;
     setTimeout(() => combatScroll('#compare', 'center'), 1600);
     fight = null;
@@ -887,7 +898,7 @@ function endCombat(){
   }
   /* victoire : scénette de capture de l'idée adverse dans la Poliball */
   fight.busy = true;
-  say(`${b.name.toUpperCase()} vacille… C'est le moment !`);
+  say(`${UP(b.name)} vacille… C'est le moment !`);
   const ball = document.getElementById('pokeball');
   ball.hidden = false;
   ball.className = 'pokeball throw';
@@ -900,7 +911,7 @@ function endCombat(){
   setTimeout(() => {
     ball.className = 'pokeball caught';
     document.getElementById('sprA').classList.add('victory');
-    say(`Clic ! ${b.name.toUpperCase()} est capturé. ${a.name.toUpperCase()} remporte le combat des idées ${score} / ${DIMENSIONS.length} !`);
+    say(`Clic ! ${UP(b.name)} est capturé. ${UP(a.name)} remporte le combat des idées ${score} / ${DIMENSIONS.length} !`);
   }, 3500);
   setTimeout(() => {
     const lin = LINEAGES.find(l => l.id === a.lineage);
@@ -914,7 +925,7 @@ function endCombat(){
       }
       showEvolutionReveal(t.src, t.target);
     } else {
-      say(`Victoire ${score} / ${DIMENSIONS.length} ! La lignée de ${a.name.toUpperCase()} est déjà complète.`);
+      say(`Victoire ${score} / ${DIMENSIONS.length} ! La lignée de ${UP(a.name)} est déjà complète.`);
       document.getElementById('compare').innerHTML = `
         <div class="continue-wrap"><button class="btn" onclick="resetCombat()">↺ REJOUER</button></div>`;
     }
@@ -932,7 +943,7 @@ function resetCombat(){
 function initDex(){
   const sel = document.getElementById('dex-element');
   sel.innerHTML += Object.keys(ELEMENTS).map(e =>
-    `<option value="${e}">${ELEMENTS[e].emoji} ${e.toUpperCase()}</option>`).join('');
+    `<option value="${e}">${ELEMENTS[e].emoji} ${UP(e)}</option>`).join('');
   /* La molette verticale fait défiler le carrousel horizontalement,
      comme sur les galeries de cartes officielles. */
   const rail = document.getElementById('dex-rail');
@@ -1023,17 +1034,101 @@ function secretCardNode(p){
 /* Le Polidex en carrousel : toutes les cartes côte à côte, triées par
    lignée puis par niveau (les 3 évolutions se suivent), défilement
    horizontal doux (molette, flèches, doigt) avec magnétisme léger. */
+/* La carte spéciale d'une lignée : une illustration unique, traitée
+   comme une carte de « niveau 4 ». Cachée : dos doré. Révélée :
+   l'illustration complète, avec l'effet holographique. */
+function specialeCardNode(l, revealed){
+  const sp = l.speciale;
+  const el = document.createElement('div');
+  if(revealed === undefined) revealed = isSpecialeUnlocked(l);
+  if(revealed){
+    el.className = 'tcg tcg-speciale';
+    el.innerHTML = `<img class="sp-img" src="${sp.image}" alt="${sp.title}">`;
+    attachHolo(el);
+  } else {
+    el.className = 'tcg tcg-secret tcg-gold';
+    el.innerHTML = `
+      <div class="tcg-inner">
+        <div class="tcg-head">
+          <span class="tcg-stage">SPECIALE</span>
+          <span class="tcg-name">???</span>
+          <span class="tcg-pv">PV<b>?</b></span>
+          <span class="tcg-elicon">⭐</span>
+        </div>
+        <div class="tcg-art"><span class="secret-q gold-q">★</span></div>
+        <div class="tcg-strip">CARTE SPÉCIALE · ${l.dresseur}</div>
+        <div class="tcg-talent">
+          <span class="talent-pill">Légende</span>
+          <span class="talent-name">Carte spéciale</span>
+          <p>Fais triompher les 3 Polimons de ${l.dresseur} au combat pour révéler cette carte légendaire !</p>
+        </div>
+        <div class="tcg-foot">
+          <span>Faiblesse<br><b>?</b></span>
+          <span>Résistance<br><b>?</b></span>
+          <span>Retraite<br><b>?</b></span>
+        </div>
+      </div>`;
+  }
+  return el;
+}
+/* branchements clic/clavier d'une carte spéciale (Polidex + fiche dresseur) */
+function wireSpecialeCard(card, l){
+  card.setAttribute('role', 'button');
+  card.tabIndex = 0;
+  if(isSpecialeUnlocked(l)){
+    card.title = 'Ouvrir la carte spéciale de ' + l.dresseur;
+    card.onclick = () => openSpeciale(l.id);
+  } else {
+    card.title = 'Fais triompher les 3 Polimons de ' + l.dresseur + ' pour révéler cette carte';
+    card.onclick = () => goCombatFor(l.id);
+  }
+  card.addEventListener('keydown', e => { if(e.key === 'Enter') card.click(); });
+}
+/* Vue plein écran de la carte spéciale */
+function openSpeciale(id){
+  const l = LINEAGES.find(x => x.id === id);
+  if(!l || !l.speciale || !isSpecialeUnlocked(l)) return;
+  const c = document.getElementById('fiche-content');
+  c.innerHTML = `
+    <div class="speciale-view">
+      <div class="dex-slide sp-big"></div>
+      <div class="sp-info">
+        <h3>${UP(l.speciale.title)}</h3>
+        <p>Carte spéciale de <b>${l.dresseur}</b>. Elle célèbre le triomphe de ses 3 Polimons au combat des idées.</p>
+        <button class="btn ghost" type="button" onclick="openDresseur(${l.id})">◀ REVOIR ${UP(l.dresseur)}</button>
+      </div>
+    </div>`;
+  c.querySelector('.sp-big').appendChild(specialeCardNode(l, true));
+  openScreen('CARTE SPECIALE');
+}
+
 function renderDex(){
   const q  = document.getElementById('dex-search').value.trim().toLowerCase();
-  const lv = +document.getElementById('dex-level').value;
+  const lvRaw = document.getElementById('dex-level').value;
+  const spMode = lvRaw === 'S';             /* mode « cartes spéciales » */
+  const lv = spMode ? 0 : +lvRaw;
   const el = document.getElementById('dex-element').value;
   const rail = document.getElementById('dex-rail');
+  /* les lignées à carte spéciale qui passent les filtres courants */
+  const matchSpec = LINEAGES.filter(l => l.speciale &&
+    (!el || l.elements.includes(el)) &&
+    (!q || l.dresseur.toLowerCase().includes(q) || l.parti.toLowerCase().includes(q) ||
+      l.speciale.title.toLowerCase().includes(q)));
+  const specSlide = l => {
+    const slide = document.createElement('div');
+    slide.className = 'dex-slide';
+    const card = specialeCardNode(l);
+    wireSpecialeCard(card, l);
+    slide.appendChild(card);
+    return slide;
+  };
   const list = POLIMONS.filter(p =>
     (!lv || p.level === lv) &&
     (!el || p.elements.includes(el)) &&
     (!q || p.name.toLowerCase().includes(q) || p.dresseur.toLowerCase().includes(q) || p.parti.toLowerCase().includes(q))
   ).sort((a, b) => lineageRank(a.lineage) - lineageRank(b.lineage) || a.level - b.level);
   rail.innerHTML = '';
+  if(spMode) list.length = 0;               /* mode spécial : cartes spéciales uniquement */
   list.forEach(p => {
     const slide = document.createElement('div');
     slide.className = 'dex-slide';
@@ -1052,7 +1147,13 @@ function renderDex(){
     }
     slide.appendChild(card);
     rail.appendChild(slide);
+    /* la carte spéciale se range après le Polimon niveau 3 de sa lignée */
+    if(!lv && p.level === 3){
+      const linSp = matchSpec.find(l => l.id === p.lineage);
+      if(linSp) rail.appendChild(specSlide(linSp));
+    }
   });
+  if(spMode) matchSpec.forEach(l => rail.appendChild(specSlide(l)));
   /* dernière carte du rail : le code secret */
   const endSlide = document.createElement('div');
   endSlide.className = 'dex-slide';
@@ -1073,9 +1174,12 @@ function renderDex(){
   rail.appendChild(endSlide);
   rail.scrollLeft = 0;
   const revealed = POLIMONS.filter(isUnlocked).length;
-  document.getElementById('dex-count').textContent =
-    list.length + ' / ' + POLIMONS.length + ' Polimons affichés · ' +
-    revealed + ' / ' + POLIMONS.length + ' cartes révélées';
+  const allSpec = LINEAGES.filter(l => l.speciale);
+  const revSpec = allSpec.filter(isSpecialeUnlocked).length;
+  document.getElementById('dex-count').textContent = spMode
+    ? matchSpec.length + ' carte(s) spéciale(s) affichée(s) · ' + revSpec + ' / ' + allSpec.length + ' révélée(s)'
+    : list.length + ' / ' + POLIMONS.length + ' Polimons affichés · ' +
+      revealed + ' / ' + POLIMONS.length + ' cartes révélées';
 }
 
 /* Le code secret révèle toutes les cartes */
@@ -1112,7 +1216,7 @@ function trainerAvatar(l, cls, variant){
   /* variant : 'head' (préviews, recadrées sur le visage), 'full'
      (illustration entière, fiche dresseur) ou 'gb' (sprite pixel, combat) */
   variant = variant || 'head';
-  const initials = l.dresseur.split(/[\s-]+/).map(w => w[0]).join('').slice(0,3).toUpperCase();
+  const initials = UP(l.dresseur.split(/[\s-]+/).map(w => w[0]).join('').slice(0,3));
   const av = document.createElement('div');
   av.className = cls;
   av.innerHTML = `<span class="initials">${initials}</span>`;
@@ -1138,15 +1242,15 @@ function initDresseurs(){
     bar.style.setProperty('--c1', c1.color);
     bar.innerHTML = `
       <div class="tb-id">
-        <div class="tb-name">${l.dresseur.toUpperCase()}</div>
+        <div class="tb-name">${UP(l.dresseur)}</div>
         <div class="tb-parti">${l.parti}</div>
       </div>
       <div class="tb-el">${l.elements.map(e => {
         const d = ELEMENTS[e];
-        return `<span class="tag" style="background:${d.color}">${d.emoji} ${e.toUpperCase()}</span>`;
+        return `<span class="tag" style="background:${d.color}">${d.emoji} ${UP(e)}</span>`;
       }).join('')}</div>
       <div class="tb-badges">
-        ${l.statut ? `<span class="stat ${statutCls}">${l.statut.toUpperCase()}</span>` : ''}
+        ${l.statut ? `<span class="stat ${statutCls}">${UP(l.statut)}</span>` : ''}
         ${l.intentions && l.intentions !== '?' ? `<span class="tb-int">${l.intentions}</span>` : ''}
       </div>
       <div class="tb-go">▸</div>`;
@@ -1176,20 +1280,20 @@ function openDresseur(id){
         <div class="t3-cutout"><img src="images/dresseurs/${l.id}.png" alt="${l.dresseur}"
              onerror="this.parentElement.parentElement.classList.add('noimg')"></div>
         <div class="t3-content">
-          <h2>${l.dresseur.toUpperCase()}</h2>
+          <h2>${UP(l.dresseur)}</h2>
           <span>${l.parti}</span>
         </div>
       </div>
       <!-- infos à droite -->
       <div class="t-hero-info">
-        <div class="t-name">${l.dresseur.toUpperCase()}</div>
-        <div class="t-parti">${l.parti.toUpperCase()}</div>
+        <div class="t-name">${UP(l.dresseur)}</div>
+        <div class="t-parti">${UP(l.parti)}</div>
         <div class="t-tags">${l.elements.map(e => {
           const d = ELEMENTS[e];
-          return `<span class="tag" style="background:${d.color}">${d.emoji} ${e.toUpperCase()}</span>`;
+          return `<span class="tag" style="background:${d.color}">${d.emoji} ${UP(e)}</span>`;
         }).join('')}</div>
         <div class="t-badges">
-          ${l.statut ? `<span class="stat ${statutCls}">${l.statut.toUpperCase()}</span>` : ''}
+          ${l.statut ? `<span class="stat ${statutCls}">${UP(l.statut)}</span>` : ''}
           ${l.intentions && l.intentions !== '?' ? `<span class="stat soon">INTENTIONS DE VOTE : ${l.intentions}</span>` : ''}
         </div>
         ${l.bioReelle ? `<h4>QUI EST-CE ?</h4><p class="t-fact">${l.bioReelle}. ${l.faits ? l.faits + '.' : ''}</p>` : ''}
@@ -1197,7 +1301,7 @@ function openDresseur(id){
         <p class="t-bio">${l.bio || ''}</p>
       </div>
     </div>
-    <h4 class="t-lineage-title">SA LIGNÉE « 3P »</h4>
+    <h4 class="t-lineage-title">SES POLIMONS</h4>
     <div class="t-cards fan" id="t-cards"></div>`;
   attachTilt(c.querySelector('#t-card3d'));
   /* les 3 cartes Polimon de la lignée, en éventail
@@ -1223,6 +1327,15 @@ function openDresseur(id){
     slot.appendChild(card);
     cardsBox.appendChild(slot);
   });
+  /* la carte spéciale, 4e carte de l'éventail (dos doré tant que cachée) */
+  if(l.speciale){
+    const slot = document.createElement('div');
+    slot.className = 'dex-slide';
+    const card = specialeCardNode(l);
+    wireSpecialeCard(card, l);
+    slot.appendChild(card);
+    cardsBox.appendChild(slot);
+  }
   openScreen('FICHE DRESSEUR');
 }
 
@@ -1278,7 +1391,7 @@ function ideasSection(p){
           const txt = (p.dims[d.key] && p.dims[d.key] !== 'TBD') ? p.dims[d.key] : null;
           return `
           <div class="idea-full${txt ? '' : ' empty'}" style="animation-delay:${(i++) * 90}ms">
-            <div class="if-head"><span class="if-ico">${d.icon}</span><b>${d.label.toUpperCase()}</b></div>
+            <div class="if-head"><span class="if-ico">${d.icon}</span><b>${UP(d.label)}</b></div>
             <p>${txt || 'Cette dimension arrive bientôt…'}</p>
           </div>`;
         }).join('')}
@@ -1295,7 +1408,7 @@ function ideasSection(p){
           return `
           <button class="itab${i === 0 ? ' active' : ''}" id="itab-${d.num}" role="tab"
                   onclick="switchDim(${p.code}, ${d.num})">
-            <span class="ico">${d.icon}</span><span class="lb">${d.label.toUpperCase()}</span>
+            <span class="ico">${d.icon}</span><span class="lb">${UP(d.label)}</span>
             <span class="cnt${st.filled ? ' on' : ''}">${st.badge}</span>
           </button>`;
         }).join('')}
@@ -1339,7 +1452,7 @@ function renderIdeasPanel(p, d){
     const done = n2.filter(s => hasIdea(detail, s.code));
     const todo = n2.filter(s => !hasIdea(detail, s.code));
     html += done.map(card).join('');
-    if(!done.length) html += `<div class="idea-empty"${delay()}>Les perspectives de ${p.name.toUpperCase()} sur « ${d.label} » sont encore en préparation…</div>`;
+    if(!done.length) html += `<div class="idea-empty"${delay()}>Les perspectives de ${UP(p.name)} sur « ${d.label} » sont encore en préparation…</div>`;
     if(todo.length) html += `
       <div class="idea-todo"${delay()}>
         <span class="lbl">À COMPLÉTER</span>
@@ -1353,7 +1466,7 @@ function renderIdeasPanel(p, d){
       const todo = n3.filter(s => !hasIdea(detail, s.code));
       return `
         <div class="idea-group"${delay()}>
-          <div class="idea-group-h">${s2.code} - ${s2.label.toUpperCase()}</div>
+          <div class="idea-group-h">${s2.code} - ${UP(s2.label)}</div>
           ${done.map(card).join('')}
           ${todo.length ? `
           <div class="idea-todo">
@@ -1391,14 +1504,14 @@ function openFiche(code){
           const nf = lin.forms[p.level];
           const np = nf && byCode(nf.code);
           return np && !isUnlocked(np)
-            ? `<button class="btn evolve-btn" type="button" onclick="goCombatFor(${p.lineage})">⚔ FAIRE ÉVOLUER ${p.name.toUpperCase()} AU COMBAT</button>`
+            ? `<button class="btn evolve-btn" type="button" onclick="goCombatFor(${p.lineage})">⚔ FAIRE EVOLUER ${UP(p.name)} AU COMBAT</button>`
             : '';
         })()}
         <button class="btn ghost share-btn" type="button" onclick="shareCard(${p.code}, this)">📤 PARTAGER CETTE CARTE À UN AMI</button>
       </div>
       <!-- Colonne principale : les idées, au premier plan -->
       <div class="f-ideas fiche-aside">
-        <h3>#${pad3(p.code)} ${p.name.toUpperCase()}</h3>
+        <h3>#${pad3(p.code)} ${UP(p.name)}</h3>
         <div class="sub">
           ${elTags(p)} &nbsp; Niveau ${p.level} · <b>${lvlInfo(p.level).label}</b> - ${lvlInfo(p.level).desc}
         </div>
@@ -1411,17 +1524,17 @@ function openFiche(code){
         <!-- Le dresseur : portrait (si disponible) + lien vers sa fiche -->
         <div class="fh-trainer" onclick="openDresseur(${p.lineage})" tabindex="0" role="button" aria-label="Voir la fiche de ${p.dresseur}">
           <span class="fh-tav" id="fh-drav"></span>
-          <span class="fh-tinfo"><b>${p.dresseur.toUpperCase()}</b><span>${p.parti}</span></span>
+          <span class="fh-tinfo"><b>${UP(p.dresseur)}</b><span>${p.parti}</span></span>
           <span class="fh-tgo">VOIR SA FICHE ▸</span>
         </div>
-        <h4>LIGNÉE D'ÉVOLUTION « 3P »</h4>
+        <h4>SES EVOLUTIONS</h4>
         <div class="evo-row">
           ${lin.forms.map((f,i) => {
             const fp = byCode(f.code), locked = fp && !isUnlocked(fp);
             return `
             <div class="evo-step ${f.code===p.code?'cur':''} ${locked?'locked':''}" onclick="openFiche(${f.code})">
               <div class="mini ${locked?'mini-secret':''}" data-code="${f.code}">${locked?'<span class="q">?</span>':''}</div>
-              <span class="nm">${locked ? '???' : f.name.toUpperCase()}</span>
+              <span class="nm">${locked ? '???' : UP(f.name)}</span>
               <span class="lv">Niv.${i+1} ${lvlInfo(i+1).label}</span>
             </div>${i<2?'<span class="evo-arr">▶</span>':''}`;}).join('')}
         </div>
@@ -1553,6 +1666,9 @@ function evoTarget(lin){
   const p3 = lin.forms[2] && byCode(lin.forms[2].code);
   if(p2 && !isUnlocked(p2)) return { src: p1, target: p2 };
   if(p3 && !isUnlocked(p3)) return { src: p2, target: p3 };
+  /* les 3 Polimons ont triomphé : la carte spéciale se révèle */
+  if(lin.speciale && !isSpecialeUnlocked(lin))
+    return { src: p3, target: { speciale: true, lineage: lin.id, code: lin.speciale.code, name: lin.speciale.title } };
   return null;
 }
 
@@ -1577,6 +1693,8 @@ function goCombatFor(lineageId){
 /* Pop-up de révélation : la carte secrète tournoie puis se révèle */
 function showEvolutionReveal(src, tgt){
   const c = document.getElementById('fiche-content');
+  const isSp = !!tgt.speciale;
+  const linSp = isSp ? LINEAGES.find(x => x.id === tgt.lineage) : null;
   const sparks = Array.from({length: 18}, (_, i) => {
     const ang  = (i / 18) * Math.PI * 2 + Math.random() * 0.5;
     const dist = 130 + Math.random() * 150;
@@ -1606,17 +1724,21 @@ function showEvolutionReveal(src, tgt){
         <div class="reveal-flash"></div>
       </div>
       <div class="reveal-after">
-        <h3>${src.name.toUpperCase()} ÉVOLUE EN ${tgt.name.toUpperCase()} !</h3>
-        <p>Tu as débloqué une nouvelle carte Polimon.</p>
+        <h3>${isSp
+          ? UP(linSp.dresseur) + ' A FAIT TRIOMPHER SES 3 POLIMONS !'
+          : UP(src.name) + ' EVOLUE EN ' + UP(tgt.name) + ' !'}</h3>
+        <p>${isSp ? 'Tu as débloqué sa carte spéciale légendaire.' : 'Tu as débloqué une nouvelle carte Polimon.'}</p>
         <div class="quiz-end-btns">
-          <button class="btn" type="button" onclick="openFiche(${tgt.code})">✨ VOIR ${tgt.name.toUpperCase()} ▸</button>
+          ${isSp
+            ? `<button class="btn" type="button" onclick="openSpeciale(${linSp.id})">⭐ VOIR LA CARTE SPECIALE ▸</button>`
+            : `<button class="btn" type="button" onclick="openFiche(${tgt.code})">✨ VOIR ${UP(tgt.name)} ▸</button>`}
           <button class="btn ghost" type="button" onclick="closeFiche();resetCombat()">⚔ RETOUR AU COMBAT</button>
         </div>
       </div>
     </div>`;
-  c.querySelector('.flip-back').appendChild(secretCardNode(tgt));
-  c.querySelector('.flip-front').appendChild(tcgNode(tgt, 220));
-  openScreen('ÉVOLUTION !');
+  c.querySelector('.flip-back').appendChild(isSp ? specialeCardNode(linSp, false) : secretCardNode(tgt));
+  c.querySelector('.flip-front').appendChild(isSp ? specialeCardNode(linSp, true) : tcgNode(tgt, 220));
+  openScreen(isSp ? 'CARTE SPECIALE !' : 'EVOLUTION !');
 }
 
 /* ============ v20 - INTRO CINÉMATIQUE ============

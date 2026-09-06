@@ -3280,3 +3280,14 @@ body.vs-open{overflow:hidden;}
   .ps-title{font-size:7px;}
   .ps-sub{font-size:5px;}
 }
+
+/* ================================================================
+   v34 - NUMÉRO DE VERSION discret à côté du logo
+   (la valeur vit dans index.html : <span class="site-ver">)
+   ================================================================ */
+.brand{display:flex;align-items:flex-end;gap:6px;}
+.site-ver{
+  font-family:'Press Start 2P',monospace;font-size:6px;color:#4a4a55;
+  letter-spacing:.5px;line-height:1;padding-bottom:3px;
+  pointer-events:none;
+}

@@ -535,9 +535,8 @@ function levelInfo(A, B, n){
   const pa = polOf(A, n), pb = polOf(B, n);
   if(!pa || !pb) return { ok: false, why: 'Contenu à venir' };
   if(!isUnlocked(pa)){
-    const prev = polOf(A, n - 1);
     return { ok: false, lock: true, pa, pb,
-      why: `Gagne un combat NIV.${n - 1} avec ${prev ? UP(prev.name) : A.dresseur} pour faire évoluer ton Polimon` };
+      why: `Gagne d'abord un combat NIV.${n - 1} avec ${UP(A.dresseur)} pour faire évoluer son Polimon` };
   }
   return { ok: true, pa, pb };
 }
@@ -1083,6 +1082,93 @@ function renderCmpTable(){
   t.innerHTML = html;
 }
 
+
+/* ============ v37 - LE SERMENT DU CITOYEN ============
+   Sous le combat : on peut débloquer un Polimon de son choix en
+   faisant une promesse de citoyen (une promesse différente par
+   Polimon). Les cartes spéciales, elles, ne se gagnent QU'au combat. */
+const PROMESSES = [
+  "Je promets d'aller voter en 2027.",
+  "Je promets de respecter les opinions des autres.",
+  "Je promets de lire le programme d'au moins 3 candidats.",
+  "Je promets de vérifier une information avant de la partager.",
+  "Je promets d'écouter un désaccord jusqu'au bout.",
+  "Je promets d'expliquer mon vote sans mépriser celui des autres.",
+  "Je promets de débattre des idées sans attaquer les personnes.",
+  "Je promets de m'informer auprès de plusieurs sources.",
+  "Je promets d'aider un proche à s'inscrire sur les listes électorales.",
+  "Je promets de ne pas relayer une rumeur non vérifiée.",
+  "Je promets de questionner mes propres certitudes.",
+  "Je promets de parler politique sans gâcher le repas de famille.",
+  "Je promets de lire un article en entier avant de le commenter.",
+  "Je promets de respecter le résultat des urnes.",
+  "Je promets de me renseigner sur les candidats que je n'aime pas.",
+  "Je promets de voter avec ma tête autant qu'avec mon cœur.",
+  "Je promets de ne pas voter par habitude, sans réfléchir.",
+  "Je promets d'encourager un jeune à aller voter.",
+  "Je promets de distinguer les faits des opinions.",
+  "Je promets de changer d'avis si les faits me contredisent.",
+  "Je promets de défendre le droit des autres à ne pas être d'accord.",
+  "Je promets de regarder un débat en entier avant de juger.",
+  "Je promets de comparer les programmes avant de choisir.",
+  "Je promets de rester curieux des idées nouvelles."
+];
+function promiseFor(p){ return PROMESSES[(p.code * 7) % PROMESSES.length]; }
+function lockedPolimons(){
+  return POLIMONS.filter(p => !isUnlocked(p))
+    .sort((a, b) => lineageRank(a.lineage) - lineageRank(b.lineage) || a.level - b.level);
+}
+function renderPromise(){
+  const rail = document.getElementById('pbRail');
+  if(!rail) return;
+  const confirm = document.getElementById('pbConfirm');
+  if(confirm) confirm.hidden = true;
+  const locked = lockedPolimons();
+  if(!locked.length){
+    rail.innerHTML = '<div class="pb-done">Toutes les cartes secrètes sont déjà révélées. Bravo, dresseur !</div>';
+    return;
+  }
+  rail.innerHTML = '';
+  locked.forEach(p => {
+    const lin = linById(p.lineage);
+    const t = document.createElement('button');
+    t.type = 'button';
+    t.className = 'pb-tile';
+    t.innerHTML = `<span class="pb-q">?</span>
+      <span class="pb-n">niveau ${p.level}</span>
+      <span class="pb-d">${lin ? UP(lin.dresseur.split(' ').pop()) : ''}</span>`;
+    t.onclick = () => choosePromise(p.code);
+    rail.appendChild(t);
+  });
+}
+function choosePromise(code){
+  const p = byCode(code);
+  const box = document.getElementById('pbConfirm');
+  if(!p || !box) return;
+  const lin = linById(p.lineage);
+  box.hidden = false;
+  box.innerHTML = `
+    <div class="pb-oath">« ${promiseFor(p)} »</div>
+    <div class="pb-sub">Cette promesse révèle le Polimon niveau ${p.level} de ${lin ? lin.dresseur : ''}.</div>
+    <div class="pb-btns">
+      <button class="btn" type="button" onclick="makePromise(${p.code})">🤝 JE PROMETS</button>
+      <button class="btn ghost" type="button" onclick="document.getElementById('pbConfirm').hidden = true">ANNULER</button>
+    </div>`;
+  box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+function makePromise(code){
+  const p = byCode(code);
+  if(!p || isUnlocked(p)) return;
+  unlockState.codes.push(p.code);
+  saveUnlocks();
+  renderDex();
+  renderPromise();
+  refreshPick();
+  const lin = linById(p.lineage);
+  const prev = lin && lin.forms[p.level - 2] ? byCode(lin.forms[p.level - 2].code) : p;
+  showEvolutionReveal(prev, p, 'promise');
+}
+
 /* ============ POLIDEX ============ */
 function initDex(){
   const sel = document.getElementById('dex-element');
@@ -1146,7 +1232,6 @@ function tcgNode(p, sprSize){
    Cliquer sur une carte secrète de niveau 2 lance le quizz de sa lignée. */
 function secretCardNode(p){
   const lin = LINEAGES.find(l => l.id === p.lineage);
-  const prev = lin && lin.forms[p.level - 2] ? byCode(lin.forms[p.level - 2].code) : null;
   const el = document.createElement('div');
   el.className = 'tcg tcg-hidden';
   el.innerHTML = `
@@ -1155,8 +1240,8 @@ function secretCardNode(p){
       <div class="hid-q">?</div>
       <div class="sp-label">CARTE SECRETE</div>
       <div class="sp-line"></div>
-      <div class="sp-owner">Polimon NIV.${p.level}${lin ? ' · ' + lin.dresseur : ''}</div>
-      <p class="sp-hint">Gagne un combat NIV.${p.level - 1} avec ${prev ? prev.name : 'sa lignee'}<br>pour le faire evoluer et reveler cette carte</p>
+      <div class="sp-owner">Polimon niveau ${p.level}${lin ? ' de ' + lin.dresseur : ''}</div>
+      <p class="sp-hint">Gagne un combat avec ${lin ? lin.dresseur : 'son dresseur'}<br>pour faire evoluer son Polimon<br>et reveler cette carte</p>
       <div class="sp-shine"></div>
     </div>`;
   return el;
@@ -1291,6 +1376,7 @@ function renderDex(){
     </div>`;
   rail.appendChild(endSlide);
   rail.scrollLeft = 0;
+  if(typeof renderPromise === 'function') renderPromise();
   const revealed = POLIMONS.filter(isUnlocked).length;
   const allSpec = LINEAGES.filter(l => l.speciale);
   const revSpec = allSpec.filter(isSpecialeUnlocked).length;
@@ -1984,7 +2070,7 @@ function goCombatFor(lineageId){
 }
 
 /* Pop-up de révélation : la carte secrète tournoie puis se révèle */
-function showEvolutionReveal(src, tgt){
+function showEvolutionReveal(src, tgt, mode){
   const c = document.getElementById('fiche-content');
   const isSp = !!tgt.speciale;
   const linSp = isSp ? LINEAGES.find(x => x.id === tgt.lineage) : null;
@@ -2019,8 +2105,12 @@ function showEvolutionReveal(src, tgt){
       <div class="reveal-after">
         <h3>${isSp
           ? UP(linSp.dresseur) + ' A FAIT TRIOMPHER SES 3 POLIMONS !'
-          : UP(src.name) + ' EVOLUE EN ' + UP(tgt.name) + ' !'}</h3>
-        <p>${isSp ? 'Tu as débloqué sa carte spéciale légendaire.' : 'Tu as débloqué une nouvelle carte Polimon.'}</p>
+          : mode === 'promise'
+            ? 'PROMESSE FAITE : ' + UP(tgt.name) + ' EST REVELE !'
+            : UP(src.name) + ' EVOLUE EN ' + UP(tgt.name) + ' !'}</h3>
+        <p>${isSp ? 'Tu as débloqué sa carte spéciale légendaire.'
+             : mode === 'promise' ? 'Tiens ta parole, dresseur. La carte rejoint ton Polidex.'
+             : 'Tu as débloqué une nouvelle carte Polimon.'}</p>
         <div class="quiz-end-btns">
           ${isSp
             ? `<button class="btn" type="button" onclick="openSpeciale(${linSp.id})">⭐ VOIR LA CARTE SPECIALE ▸</button>`
@@ -2135,6 +2225,7 @@ initIntro();
 initChapters();
 initChoixScene();
 initCombat();
+renderPromise();
 initDex();
 initDresseurs();
 initComparator();

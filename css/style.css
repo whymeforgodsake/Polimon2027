@@ -3439,3 +3439,35 @@ body.vs-open{overflow:hidden;}
   .cmp-slots{grid-template-columns:repeat(2,1fr);}
   .cprow{grid-template-columns:110px repeat(var(--cols,2), minmax(150px,1fr));}
 }
+
+/* ================================================================
+   v37 - LE SERMENT DU CITOYEN (débloquer un Polimon par promesse)
+   ================================================================ */
+.promise-box{
+  max-width:900px;margin:34px auto 0;
+  background:var(--noir2);border:3px solid #33333c;padding:20px 20px 22px;
+}
+.pb-head h3{font-family:'Press Start 2P',monospace;font-size:11px;color:var(--jaune);letter-spacing:1px;margin-bottom:10px;}
+.pb-head p{color:#9a9a90;font-size:.92rem;margin-bottom:16px;}
+.pb-rail{display:flex;gap:8px;flex-wrap:wrap;}
+.pb-tile{
+  display:flex;flex-direction:column;align-items:center;gap:5px;
+  width:78px;padding:9px 4px 8px;background:#1c1c22;border:2px solid #33333c;cursor:pointer;
+  transition:border-color .15s, transform .15s;
+}
+.pb-tile:hover{border-color:#8b8b98;transform:translateY(-2px);}
+.pb-q{
+  font-family:'Press Start 2P',monospace;font-size:17px;color:#c9d2ea;
+  text-shadow:0 0 10px rgba(150,180,255,.5);
+}
+.pb-n{color:#8b8b98;font-size:.72rem;}
+.pb-d{font-family:'Press Start 2P',monospace;font-size:5px;color:#cfcfc6;letter-spacing:.5px;}
+.pb-done{color:#9a9a90;padding:8px 2px;}
+.pb-confirm{
+  margin-top:16px;border-top:1px solid #2c2c34;padding-top:16px;text-align:center;
+}
+.pb-oath{
+  font-size:1.15rem;color:#f0f0e8;font-weight:600;margin-bottom:8px;line-height:1.5;
+}
+.pb-sub{color:#8b8b98;font-size:.85rem;margin-bottom:14px;}
+.pb-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}

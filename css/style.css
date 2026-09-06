@@ -2932,3 +2932,214 @@ body.vs-open{overflow:hidden;}
 .tcg .tcg-attack{margin:4px 0 3px;}
 .tcg .tcg-flavor{padding:2px 8px;line-height:1.4;}
 .tcg .tcg-strip{padding:2px 8px;}
+
+/* ================================================================
+   v30 - DOS PREMIUM DE LA CARTE SPÉCIALE
+   Face cachée épurée : liseré doré, fond noir profond, une étoile
+   qui respire, le nom du dresseur, un reflet qui balaie la carte.
+   Ni statistiques, ni fenêtre d'image.
+   ================================================================ */
+.tcg-gold{
+  padding:8px;
+  background:linear-gradient(160deg,#f6e2a2 0%,#caa53f 30%,#7c5f16 55%,#e3c476 80%,#9a7a22 100%);
+  cursor:pointer;
+}
+.sp-back{
+  position:relative;height:100%;overflow:hidden;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:clamp(6px,2.6cqw,12px);text-align:center;
+  background:
+    radial-gradient(120% 90% at 50% 42%, #241c08 0%, #120d04 68%, #0a0702 100%);
+  border-radius:9px;
+  box-shadow:inset 0 0 0 1px rgba(246,226,162,.55), inset 0 0 0 5px rgba(246,226,162,.12);
+  padding:8% 10%;
+}
+.sp-glow{
+  position:absolute;left:50%;top:38%;width:70%;aspect-ratio:1;
+  transform:translate(-50%,-50%);border-radius:50%;
+  background:radial-gradient(circle, rgba(255,216,110,.22) 0%, transparent 65%);
+  pointer-events:none;
+}
+.sp-star{
+  font-size:clamp(34px,17cqw,58px);line-height:1;
+  color:#f6dd8f;
+  text-shadow:0 0 18px rgba(255,215,100,.65), 0 0 46px rgba(255,200,60,.3);
+  animation:spStar 3s ease-in-out infinite;
+}
+@keyframes spStar{0%,100%{transform:scale(1);opacity:.92;}50%{transform:scale(1.07);opacity:1;}}
+.sp-label{
+  font-family:'Press Start 2P',monospace;font-size:clamp(6px,2.8cqw,9px);
+  color:#e9cf8a;letter-spacing:3px;
+}
+.sp-line{
+  width:38%;height:1px;
+  background:linear-gradient(90deg,transparent,#caa53f,transparent);
+}
+.sp-owner{
+  font-size:clamp(.7rem,4cqw,1rem);color:#f3e6c0;letter-spacing:.5px;
+}
+.sp-hint{
+  font-size:clamp(.55rem,3cqw,.74rem);line-height:1.7;color:#8d7b4e;margin:0;
+}
+/* reflet qui balaie doucement la carte */
+.sp-shine{
+  position:absolute;inset:-40%;pointer-events:none;
+  background:linear-gradient(115deg, transparent 42%, rgba(255,240,190,.10) 50%, transparent 58%);
+  animation:spShine 4.6s ease-in-out infinite;
+}
+@keyframes spShine{0%,18%{transform:translateX(-55%);}62%,100%{transform:translateX(55%);}}
+@media(prefers-reduced-motion:reduce){
+  .sp-star,.sp-shine{animation:none;}
+}
+
+/* ================================================================
+   v31 - AVENTURE DYNAMISÉE
+   Le prospectus est posé sur le chemin ; deux maisons bordent la
+   carte : Sachez y entre (l'écran s'assombrit, il disparaît par la
+   porte) et en ressort. La présentation du Prof. Chen se joue en
+   diapositives projetées au mur, qui glissent horizontalement.
+   ================================================================ */
+/* objets posés sur la carte (positionnés par js) */
+.map-prop{
+  position:absolute;z-index:55;pointer-events:none;
+  image-rendering:pixelated;
+  filter:drop-shadow(0 5px 0 rgba(0,0,0,.3));
+}
+#prop-paper{left:56px;width:44px;animation:paperGlow 1.8s ease-in-out infinite;}
+@keyframes paperGlow{
+  0%,100%{filter:drop-shadow(0 4px 0 rgba(0,0,0,.3)) drop-shadow(0 0 4px rgba(255,222,0,.25));}
+  50%{filter:drop-shadow(0 4px 0 rgba(0,0,0,.3)) drop-shadow(0 0 12px rgba(255,222,0,.8));}
+}
+#prop-paper.taken{
+  transition:transform .6s ease, opacity .6s ease;
+  transform:translateY(-46px) scale(.4) rotate(24deg);opacity:0;
+  animation:none;
+}
+.map-prop.house{left:118px;width:130px;}
+@media(max-width:1023px){.map-prop{display:none;}}
+
+/* Sachez « entre » dans la maison : il glisse vers la porte et disparaît */
+#walker,#follower{
+  transition:transform .65s ease, opacity .65s ease;
+}
+#walker.inside,#follower.inside{
+  transform:translateX(96px) translateY(-8px) scale(.55);
+  opacity:0;
+}
+/* le « ! » quand il trouve le prospectus */
+#walker::after{
+  content:"!";position:absolute;left:50%;top:-26px;transform:translate(-50%,8px) scale(.4);
+  font-family:'Press Start 2P',monospace;font-size:20px;color:var(--jaune);
+  text-shadow:2px 2px 0 #000;opacity:0;
+}
+#walker.found::after{animation:introExcl .4s cubic-bezier(.2,.9,.3,1.4) forwards;}
+
+/* voile « intérieur » : la carte s'assombrit, les scènes restent nettes */
+#indoor-veil{
+  position:fixed;inset:0;z-index:4;pointer-events:none;
+  background:rgba(8,8,12,.55);
+  opacity:0;transition:opacity .8s ease;
+}
+#indoor-veil.on{opacity:1;}
+#story{position:relative;z-index:10;}
+#walker,#follower{z-index:60;}
+
+/* --- la salle de projection --- */
+.projscene{height:420vh;position:relative;margin:0 auto 12vh;}
+.proj-sticky{
+  position:sticky;top:64px;height:calc(100vh - 80px);
+  display:flex;align-items:center;justify-content:center;
+}
+.proj-room{
+  width:min(860px,94vw);position:relative;
+  background:#101014;border:var(--px) solid var(--noir);
+  box-shadow:0 0 0 3px var(--jaune), 0 24px 50px rgba(0,0,0,.6);
+  padding:22px 26px 18px;
+}
+.proj-title{
+  font-family:'Press Start 2P',monospace;font-size:8px;color:#8b8b98;
+  letter-spacing:1px;text-align:center;margin-bottom:14px;
+}
+.proj-screen{
+  position:relative;overflow:hidden;cursor:pointer;
+  border:6px solid #2a2a32;border-radius:4px;
+  background:#000;
+  box-shadow:0 0 34px rgba(255,244,200,.14), inset 0 0 26px rgba(0,0,0,.7);
+}
+.proj-track{
+  display:flex;height:100%;
+  transition:transform .45s cubic-bezier(.25,.8,.3,1);
+  will-change:transform;
+}
+.proj-slide{flex:0 0 100%;}
+.proj-slide img{
+  display:block;width:100%;height:100%;object-fit:cover;
+  filter:brightness(1.04) contrast(.96) sepia(.12);
+}
+/* scintillement du projecteur */
+.proj-flicker{
+  position:absolute;inset:0;pointer-events:none;
+  background:
+    repeating-linear-gradient(0deg, rgba(255,255,255,.03) 0 1px, transparent 1px 3px);
+  animation:projFlick 3.4s steps(2) infinite;
+  mix-blend-mode:screen;
+}
+@keyframes projFlick{0%,100%{opacity:.5;}50%{opacity:.9;}}
+/* faisceau lumineux depuis le projecteur */
+.proj-beam{
+  position:absolute;left:50%;bottom:52px;width:60%;height:34px;
+  transform:translateX(-50%);
+  background:linear-gradient(to top, rgba(255,244,200,.16), transparent);
+  clip-path:polygon(46% 100%, 54% 100%, 100% 0, 0 0);
+  pointer-events:none;
+}
+.proj-machine{
+  margin:10px auto 0;width:64px;height:22px;border-radius:4px;
+  background:linear-gradient(180deg,#3a3a44,#22222a);
+  border:2px solid #16161c;position:relative;
+}
+.proj-machine i{
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:14px;height:14px;border-radius:50%;
+  background:radial-gradient(circle,#fff6cf 20%,#c9a94a 65%,#5c4c16);
+  box-shadow:0 0 12px rgba(255,244,200,.8);
+}
+/* les répliques de Chen : une par diapositive */
+.proj-caps{position:relative;margin-top:14px;min-height:118px;}
+.proj-cap{
+  position:absolute;inset:0;margin:0;max-width:none;
+  opacity:0;transform:translateY(8px);transition:opacity .4s ease, transform .4s ease;
+  pointer-events:none;
+}
+.proj-cap.active{opacity:1;transform:none;pointer-events:auto;}
+.proj-nav{
+  display:flex;justify-content:space-between;align-items:center;margin-top:12px;
+  font-family:'Press Start 2P',monospace;font-size:7px;color:#8b8b98;letter-spacing:1px;
+}
+.proj-nav .proj-hint{animation:introPulse 1.8s ease infinite;}
+@media(max-width:680px){
+  .projscene{height:460vh;}
+  .proj-sticky{top:56px;height:calc(100vh - 66px);}
+  .proj-room{padding:14px 12px 12px;}
+  .proj-caps{min-height:170px;}
+}
+@media(prefers-reduced-motion:reduce){
+  .proj-flicker{animation:none;}
+  #prop-paper{animation:none;}
+}
+/* v31b : dimension de l'écran de projection */
+.proj-screen{height:min(46vh,430px);}
+@media(max-width:680px){.proj-screen{height:min(34vh,300px);}}
+/* v31c : une seule réplique visible à la fois sous l'écran */
+.proj-cap{
+  visibility:hidden;
+  transition:opacity .3s ease, transform .3s ease, visibility 0s .3s;
+  background:#fdfdf4;
+}
+.proj-cap.active{
+  visibility:visible;
+  transition:opacity .3s ease, transform .3s ease, visibility 0s;
+}
+/* v31d : la barre de navigation du projecteur ne se coupe pas */
+.proj-nav span{white-space:nowrap;}
+@media(max-width:680px){.proj-nav{font-size:6px;gap:8px;}}

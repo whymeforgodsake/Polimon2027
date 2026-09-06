@@ -89,7 +89,10 @@ function go(space){
   document.querySelectorAll('a.navlink, a.brand').forEach(a => a.classList.toggle('active', a.dataset.nav === space));
   if(location.hash !== '#' + space) history.replaceState(null, '', '#' + space);
   window.scrollTo({top:0, behavior:'instant'});
-  if(space === 'aventure') observeScenes();
+  if(space === 'aventure'){
+    observeScenes();
+    setTimeout(() => { if(typeof layoutAdventure === 'function'){ layoutAdventure(); adventureDirector(); } }, 120);
+  }
 }
 window.addEventListener('hashchange', () => {
   const h = location.hash.replace('#','') || 'aventure';
@@ -271,6 +274,8 @@ function selectBranch(branch, restoring){
   /* le bouton « recommencer » devient disponible */
   const rb = document.getElementById('restart-btn');
   if(rb) rb.hidden = false;
+  /* la carte a changé de hauteur : on repositionne papier et maisons */
+  setTimeout(() => { if(typeof layoutAdventure === 'function') layoutAdventure(); }, 450);
 }
 
 /* ============ RECOMMENCER LA PARTIE ============
@@ -1046,27 +1051,17 @@ function specialeCardNode(l, revealed){
     el.innerHTML = `<img class="sp-img" src="${sp.image}" alt="${sp.title}">`;
     attachHolo(el);
   } else {
-    el.className = 'tcg tcg-secret tcg-gold';
+    /* dos premium : sobre, doré, sans statistiques ni fenêtre d'image */
+    el.className = 'tcg tcg-gold';
     el.innerHTML = `
-      <div class="tcg-inner">
-        <div class="tcg-head">
-          <span class="tcg-stage">SPECIALE</span>
-          <span class="tcg-name">???</span>
-          <span class="tcg-pv">PV<b>?</b></span>
-          <span class="tcg-elicon">⭐</span>
-        </div>
-        <div class="tcg-art"><span class="secret-q gold-q">★</span></div>
-        <div class="tcg-strip">CARTE SPÉCIALE · ${l.dresseur}</div>
-        <div class="tcg-talent">
-          <span class="talent-pill">Légende</span>
-          <span class="talent-name">Carte spéciale</span>
-          <p>Fais triompher les 3 Polimons de ${l.dresseur} au combat pour révéler cette carte légendaire !</p>
-        </div>
-        <div class="tcg-foot">
-          <span>Faiblesse<br><b>?</b></span>
-          <span>Résistance<br><b>?</b></span>
-          <span>Retraite<br><b>?</b></span>
-        </div>
+      <div class="sp-back">
+        <div class="sp-glow"></div>
+        <div class="sp-star">★</div>
+        <div class="sp-label">CARTE SPECIALE</div>
+        <div class="sp-line"></div>
+        <div class="sp-owner">${l.dresseur}</div>
+        <p class="sp-hint">Fais triompher ses 3 Polimons<br>pour révéler cette carte</p>
+        <div class="sp-shine"></div>
       </div>`;
   }
   return el;
@@ -1358,7 +1353,7 @@ function attachTilt(card){
   });
 }
 
-/* ============ LES IDÉES (N1 / N2 / N3) ============
+/* ============ LES IDEES (N1 / N2 / N3) ============
    Présentation par onglets : une dimension à la fois, plus lisible.
    - Niv.1 : la philosophie (X.0.0) en pleine lumière.
    - Niv.2 : philosophie en intro + les 5 sous-dimensions (X.Y.0) -
@@ -1401,7 +1396,7 @@ function ideasSection(p){
   const sub = p.level === 2 ? 'SES PERSPECTIVES' : 'SON PROGRAMME';
   return `
     <div class="ideas" id="ideas-box">
-      <h4>LES IDÉES - ${sub}</h4>
+      <h4>LES IDEES - ${sub}</h4>
       <div class="ideas-tabs" role="tablist">
         ${DIMENSIONS.map((d, i) => {
           const st = ideaStats(p, d);
@@ -1625,6 +1620,108 @@ document.addEventListener('keydown', e => {
   const prev = (e.key === ' ' && e.shiftKey)  || e.key === 'ArrowUp'   || e.key === 'PageUp';
   if((next && stepScene(1)) || (prev && stepScene(-1))) e.preventDefault();
 });
+
+/* ============ v31 - AVENTURE DYNAMISÉE ============
+   Le prospectus attend sur le chemin ; deux maisons bordent la carte.
+   Quand Sachez (fixe à l'écran) atteint un objet au fil du défilement,
+   l'événement se joue : « ! » et ramassage du papier, entrée dans la
+   maison (il glisse vers la porte, l'écran s'assombrit), sortie… */
+const ADV = { paperY: 0, zones: [], paperTaken: false, ready: false };
+function layoutAdventure(){
+  const paper = document.getElementById('prop-paper');
+  const h1 = document.getElementById('prop-house1');
+  const h2 = document.getElementById('prop-house2');
+  const flyer = document.getElementById('scene-flyer');
+  const classroom = document.getElementById('scene-classroom');
+  const resolve = document.getElementById('scene-resolve');
+  const choose = document.getElementById('scene-choosecompanion');
+  const branch = document.getElementById('branch-scene');
+  const proj = document.getElementById('projscene');
+  if(!paper || !flyer || !classroom) return;
+  const sect = document.getElementById('aventure');
+  const base = sect.getBoundingClientRect().top + scrollY;
+  const top = el => el.getBoundingClientRect().top + scrollY - base;
+  const bottom = el => top(el) + el.offsetHeight;
+  /* le papier, posé sur le chemin à hauteur de la scène du prospectus */
+  ADV.paperY = top(flyer) + 60;
+  paper.style.top = ADV.paperY + 'px';
+  /* maison 1 : la classe du Prof. Chen (retrouvailles + diapositives) */
+  const z1s = top(classroom) - 40;
+  const z1e = Math.max(proj ? bottom(proj) - innerHeight * 0.35 : 0,
+                       resolve ? bottom(resolve) : 0);
+  h1.style.top = z1s + 'px';
+  /* maison 2 : le choix du compagnon */
+  const z2s = top(choose) - 40;
+  const branchVisible = branch && !branch.hidden;
+  const endEl = branchVisible ? branch : document.getElementById('choix-art');
+  const z2e = endEl ? bottom(endEl.closest('.scene') || endEl) : z2s + 900;
+  h2.style.top = z2s + 'px';
+  ADV.zones = [[z1s + 40, z1e], [z2s + 40, z2e]];
+  ADV.ready = true;
+}
+function adventureDirector(){
+  if(!ADV.ready) return;
+  const walker = document.getElementById('walker');
+  if(!walker) return;
+  const aventureOn = document.getElementById('aventure').classList.contains('visible');
+  const wideOk = window.matchMedia('(min-width:1024px)').matches;
+  const y = scrollY + innerHeight * 0.44 + 50;   /* les pieds de Sachez */
+  /* il trouve le prospectus : « ! », le papier vole vers lui */
+  if(!ADV.paperTaken && aventureOn && wideOk && y >= ADV.paperY){
+    ADV.paperTaken = true;
+    const p = document.getElementById('prop-paper');
+    if(p) p.classList.add('taken');
+    walker.classList.add('found');
+    setTimeout(() => walker.classList.remove('found'), 1300);
+  }
+  /* dans une maison : Sachez disparaît par la porte, la carte s'assombrit */
+  const inside = aventureOn && ADV.zones.some(([a, b]) => y > a && y < b);
+  walker.classList.toggle('inside', inside);
+  const fol = document.getElementById('follower');
+  if(fol) fol.classList.toggle('inside', inside);
+  const veil = document.getElementById('indoor-veil');
+  if(veil) veil.classList.toggle('on', inside);
+}
+
+/* Les diapositives du Prof. Chen : le défilement (ou un clic sur
+   l'écran) fait glisser les images projetées horizontalement. */
+function initProjector(){
+  const outer = document.getElementById('projscene');
+  if(!outer) return;
+  const track = document.getElementById('projTrack');
+  const caps = Array.from(outer.querySelectorAll('.proj-cap'));
+  const count = document.getElementById('projCount');
+  const N = track.children.length;
+  let cur = -1;
+  const update = () => {
+    const r = outer.getBoundingClientRect();
+    const span = outer.offsetHeight - window.innerHeight;
+    if(span <= 0) return;
+    const p = Math.min(1, Math.max(0, -r.top / span));
+    const t = p * (N - 1);
+    track.style.transform = `translateX(${(-t * 100).toFixed(2)}%)`;
+    const idx = Math.max(0, Math.min(N - 1, Math.round(t)));
+    if(idx !== cur){
+      cur = idx;
+      caps.forEach((c, i) => c.classList.toggle('active', i === idx));
+      if(count) count.textContent = `DIAPO ${idx + 1} / ${N}`;
+    }
+  };
+  window.addEventListener('scroll', update, { passive: true });
+  window.addEventListener('resize', update);
+  const screen = document.getElementById('projScreen');
+  if(screen) screen.addEventListener('click', () => {
+    const span = outer.offsetHeight - window.innerHeight;
+    const step = span / (N - 1);
+    window.scrollBy({ top: cur < N - 1 ? step : window.innerHeight * 0.9, behavior: 'smooth' });
+  });
+  update();
+}
+window.addEventListener('scroll', adventureDirector, { passive: true });
+window.addEventListener('resize', () => { layoutAdventure(); adventureDirector(); });
+window.addEventListener('load', () => setTimeout(() => { layoutAdventure(); adventureDirector(); }, 350));
+setTimeout(() => { layoutAdventure(); adventureDirector(); }, 700);
+
 /* ============ MARCHEUR & AIDE CLAVIER ============
    Sachez (vu de dos) marche sur le chemin pendant le défilement ;
    l'aide clavier s'affiche une fois arrivé dans l'histoire. */
@@ -1845,6 +1942,7 @@ initCombat();
 initDex();
 initDresseurs();
 initParallax();
+initProjector();
 const h0 = location.hash.replace('#','');
 go(['aventure','combat','polidex','dresseurs'].includes(h0) ? h0 : 'aventure');
 observeScenes();

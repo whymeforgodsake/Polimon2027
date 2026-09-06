@@ -62,6 +62,12 @@
   <div id="walker" aria-hidden="true"><img src="images/story/sachez-marche.png" alt=""></div>
   <!-- Le Polimon choisi suit Sachez sur le chemin -->
   <div id="follower" aria-hidden="true" hidden><img id="follower-img" src="" alt=""></div>
+  <!-- Objets posés sur la carte : le prospectus et les deux maisons -->
+  <img id="prop-paper"  class="map-prop" src="images/story/paper.png" alt="" aria-hidden="true">
+  <img id="prop-house1" class="map-prop house" src="images/story/maison-1.png" alt="" aria-hidden="true">
+  <img id="prop-house2" class="map-prop house" src="images/story/maison-2.png" alt="" aria-hidden="true">
+  <!-- voile « intérieur » quand Sachez est dans une maison -->
+  <div id="indoor-veil" aria-hidden="true"></div>
   <!-- Aide clavier du scrollytelling -->
   <div id="kbd-hint" aria-hidden="true"><span class="k">ESPACE</span> scène suivante</div>
 
@@ -107,7 +113,7 @@
       </div>
     </div>
 
-    <div class="scene">
+    <div class="scene" id="scene-flyer">
       <div class="art"><img src="images/story/ep1/02-found-flyer.webp" alt="Sachez examine un étrange prospectus près du panneau d'affichage du village"></div>
       <div class="pxbox dialog caption right">
         <div class="speaker blue">NARRATEUR</div>
@@ -121,7 +127,7 @@
       </div>
     </div>
 
-    <div class="scene">
+    <div class="scene" id="scene-classroom">
       <div class="art"><img src="images/story/ep1/03-classroom-reunion.webp" alt="Sachez retrouve le Professeur Chen dans son ancienne salle de classe"></div>
       <div class="cap-stack">
         <div class="pxbox dialog">
@@ -137,43 +143,51 @@
       </div>
     </div>
 
-    <div class="scene">
-      <div class="art"><img src="images/story/ep1/04-ideas-take-form.webp" alt="Une idée prend forme et se matérialise en petit compagnon devant le Professeur Chen"></div>
-      <div class="pxbox dialog caption right">
-        <div class="speaker">PROF. CHEN</div>
-        <p>Quand une personne croit fermement en une idée politique, alors celle-ci prend forme et se matérialise comme <b>Polimon</b>. Les Polimons sont des idées qui ont pris vie, ils en possèdent donc les caractéristiques : ils s'adoptent, ils s'affrontent, et bien sûr… ils évoluent.</p>
-        <span class="arrow">▼</span>
+    <!-- La présentation du Professeur Chen : des diapositives projetées
+         au mur de la classe. Le défilement (ou un clic sur l'écran)
+         fait glisser les images horizontalement. -->
+    <div class="projscene" id="projscene">
+      <div class="proj-sticky">
+        <div class="proj-room">
+          <div class="proj-title">— LA PRESENTATION DU PROFESSEUR CHEN —</div>
+          <div class="proj-screen" id="projScreen" title="Clique pour passer à la diapositive suivante">
+            <div class="proj-track" id="projTrack">
+              <div class="proj-slide"><img src="images/story/ep1/04-ideas-take-form.webp" alt="Une idée prend forme et se matérialise en petit compagnon"></div>
+              <div class="proj-slide"><img src="images/story/ep1/05-three-levels.webp" alt="Au tableau, un compagnon grandit en trois étapes"></div>
+              <div class="proj-slide"><img src="images/story/ep1/06-five-dimensions.webp" alt="Les cinq dimensions au tableau"></div>
+              <div class="proj-slide"><img src="images/story/ep1/07-ideas-across-country.webp" alt="Des dresseurs répandent leurs idées à travers le pays"></div>
+            </div>
+            <div class="proj-flicker"></div>
+          </div>
+          <div class="proj-beam" aria-hidden="true"></div>
+          <div class="proj-machine" aria-hidden="true"><i></i></div>
+          <div class="proj-caps">
+            <div class="pxbox dialog proj-cap">
+              <div class="speaker">PROF. CHEN</div>
+              <p>Quand une personne croit fermement en une idée politique, alors celle-ci prend forme et se matérialise comme <b>Polimon</b>. Les Polimons sont des idées qui ont pris vie : ils s'adoptent, ils s'affrontent, et bien sûr… ils évoluent.</p>
+            </div>
+            <div class="pxbox dialog proj-cap">
+              <div class="speaker">PROF. CHEN</div>
+              <p>Lorsque son dresseur maîtrise parfaitement les idées politiques qu'il représente, le Polimon évolue. Chaque Polimon connaît <b>3 niveaux d'évolution « 3P »</b> : <b>Philosophie</b>, <b>Perspective</b> et <b>Programme</b>.</p>
+            </div>
+            <div class="pxbox dialog proj-cap">
+              <div class="speaker">PROF. CHEN</div>
+              <p>Par ailleurs, les idées portées par les Polimons s'expriment toujours dans les mêmes <b>5 dimensions</b> : l'<b>individu</b>, la <b>société</b>, l'<b>économie</b>, l'<b>écologie</b> et la <b>géopolitique</b>.</p>
+            </div>
+            <div class="pxbox dialog proj-cap">
+              <div class="speaker">PROF. CHEN</div>
+              <p>En cette période d'élection, de <b>grands dresseurs</b> répandent leurs idées, ou Polimons, par milliers à travers le pays. Cependant, peu de gens cherchent vraiment à les domestiquer, et ne peuvent donc pas voter de manière éclairée…</p>
+            </div>
+          </div>
+          <div class="proj-nav">
+            <span id="projCount">DIAPO 1 / 4</span>
+            <span class="proj-hint">▼ DEFILE OU CLIQUE SUR L'ECRAN</span>
+          </div>
+        </div>
       </div>
     </div>
 
-    <div class="scene">
-      <div class="art"><img src="images/story/ep1/05-three-levels.webp" alt="Au tableau, un compagnon grandit en trois étapes"></div>
-      <div class="pxbox dialog caption">
-        <div class="speaker">PROF. CHEN</div>
-        <p>Lorsque son dresseur maîtrise parfaitement les idées politiques qu'il représente, le Polimon évolue pour devenir plus grand et fort. Chaque Polimon connaît <b>3 niveaux d'évolution « 3P »</b>, selon la tangibilité de ses idées : <b>Philosophie</b>, <b>Perspective</b> et <b>Programme</b>.</p>
-        <span class="arrow">▼</span>
-      </div>
-    </div>
-
-    <div class="scene">
-      <div class="art"><img src="images/story/ep1/06-five-dimensions.webp" alt="Le Professeur Chen explique les cinq dimensions au tableau"></div>
-      <div class="pxbox dialog caption right">
-        <div class="speaker">PROF. CHEN</div>
-        <p>Par ailleurs, les idées portées par les Polimons s'expriment toujours dans les mêmes <b>5 dimensions</b> : l'<b>individu</b>, la <b>société</b>, l'<b>économie</b>, l'<b>écologie</b> et la <b>géopolitique</b>.</p>
-        <span class="arrow">▼</span>
-      </div>
-    </div>
-
-    <div class="scene">
-      <div class="art"><img src="images/story/ep1/07-ideas-across-country.webp" alt="Trois dresseurs lointains répandent leurs idées sur des chemins qui se ramifient à travers le pays"></div>
-      <div class="pxbox dialog caption">
-        <div class="speaker">PROF. CHEN</div>
-        <p>En cette période d'élection, de <b>grands dresseurs</b> répandent leurs idées, ou Polimons, par milliers à travers le pays. Cependant, peu de gens cherchent vraiment à les domestiquer, et ne peuvent donc pas voter de manière éclairée…</p>
-        <span class="arrow">▼</span>
-      </div>
-    </div>
-
-    <div class="scene">
+    <div class="scene" id="scene-resolve">
       <div class="art"><img src="images/story/ep1/08-sachez-resolve.webp" alt="Sachez, déterminé, annonce au Professeur Chen qu'il veut dresser ses propres idées"></div>
       <div class="cap-stack right">
         <div class="pxbox dialog">
@@ -189,7 +203,7 @@
       </div>
     </div>
 
-    <div class="scene">
+    <div class="scene" id="scene-choosecompanion">
       <div class="art"><img src="images/story/ep1/09-choose-companion.webp" alt="Trois Polimons de niveau 1 attendent sur la table"></div>
       <div class="pxbox dialog caption">
         <div class="speaker">PROF. CHEN</div>

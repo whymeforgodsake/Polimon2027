@@ -141,6 +141,9 @@ function typeDialog(box){
   })(box);
   const total = nodes.reduce((s, x) => s + x.text.length, 0);
   if(!total) return;
+  /* on fige la hauteur de la bulle pendant la frappe : sinon toute
+     la page « respire » et les positions de la carte bougent */
+  box.style.minHeight = box.offsetHeight + 'px';
   nodes.forEach(x => x.n.textContent = '');
   box.classList.add('typing');
   const step = total > 260 ? 3 : 2;          // textes longs : un peu plus vite
@@ -1638,83 +1641,147 @@ function layoutAdventure(){
   const branch = document.getElementById('branch-scene');
   const proj = document.getElementById('projscene');
   if(!paper || !flyer || !classroom) return;
-  const sect = document.getElementById('aventure');
-  const base = sect.getBoundingClientRect().top + scrollY;
-  const top = el => el.getBoundingClientRect().top + scrollY - base;
+  /* positions de mise en page (offsetTop), insensibles aux transforms
+     d'apparition des scènes - sinon les zones bougeraient */
+  const top = el => { let y = 0; let n = el; while(n){ y += n.offsetTop; n = n.offsetParent; } return y; };
   const bottom = el => top(el) + el.offsetHeight;
   /* le papier, posé sur le chemin à hauteur de la scène du prospectus */
   ADV.paperY = top(flyer) + 60;
-  paper.style.top = ADV.paperY + 'px';
   /* maison 1 : la classe du Prof. Chen (retrouvailles + diapositives) */
   const z1s = top(classroom) - 40;
   const z1e = Math.max(proj ? bottom(proj) - innerHeight * 0.35 : 0,
                        resolve ? bottom(resolve) : 0);
-  h1.style.top = z1s + 'px';
+
   /* maison 2 : le choix du compagnon */
   const z2s = top(choose) - 40;
   const branchVisible = branch && !branch.hidden;
   const endEl = branchVisible ? branch : document.getElementById('choix-art');
   const z2e = endEl ? bottom(endEl.closest('.scene') || endEl) : z2s + 900;
-  h2.style.top = z2s + 'px';
+
   ADV.zones = [[z1s + 40, z1e], [z2s + 40, z2e]];
+  /* ancrages des objets sur la carte (position document) */
+  ADV.props = [
+    { el: paper, doc: ADV.paperY },
+    { el: h1, doc: z1s },
+    { el: h2, doc: z2s }
+  ];
   ADV.ready = true;
 }
 function adventureDirector(){
   if(!ADV.ready) return;
   const walker = document.getElementById('walker');
   if(!walker) return;
-  const aventureOn = document.getElementById('aventure').classList.contains('visible');
-  const wideOk = window.matchMedia('(min-width:1024px)').matches;
+  const sect = document.getElementById('aventure');
+  const aventureOn = sect.classList.contains('visible');
+  const wideOk = window.matchMedia('(min-width:900px)').matches;
   const y = scrollY + innerHeight * 0.44 + 50;   /* les pieds de Sachez */
-  /* il trouve le prospectus : « ! », le papier vole vers lui */
-  if(!ADV.paperTaken && aventureOn && wideOk && y >= ADV.paperY){
-    ADV.paperTaken = true;
-    const p = document.getElementById('prop-paper');
-    if(p) p.classList.add('taken');
+
+  /* portion du défilement passée « à l'intérieur » avant un point donné :
+     la carte ne bouge pas pendant ces portions */
+  const frozen = v => ADV.zones.reduce((sum, z) =>
+    sum + Math.max(0, Math.min(v, z[1]) - z[0]), 0);
+  /* position de la carte-monde : elle suit la page dehors, se fige dedans */
+  const mapPos = scrollY - frozen(y);
+  const und = document.getElementById('map-underlay');
+  if(und) und.style.backgroundPosition = `34px ${-mapPos}px, 0 ${-mapPos}px`;
+  /* les objets sont accrochés à la carte */
+  (ADV.props || []).forEach(pr => {
+    if(!pr.el) return;
+    const world = pr.doc - frozen(pr.doc);
+    pr.el.style.top = (world - mapPos) + 'px';
+  });
+
+  /* le prospectus : ramassé quand Sachez l'atteint, reposé si on remonte */
+  const paper = document.getElementById('prop-paper');
+  const takenNow = y >= ADV.paperY;
+  if(paper) paper.classList.toggle('taken', takenNow);
+  if(takenNow && !ADV.paperTaken && aventureOn && wideOk){
     walker.classList.add('found');
     setTimeout(() => walker.classList.remove('found'), 1300);
   }
-  /* dans une maison : Sachez disparaît par la porte, la carte s'assombrit */
-  const inside = aventureOn && ADV.zones.some(([a, b]) => y > a && y < b);
-  walker.classList.toggle('inside', inside);
+  ADV.paperTaken = takenNow;
+
+  /* Sachez oblique vers la porte (droite), disparaît à l'intérieur,
+     puis ressort en revenant vers le chemin (gauche). */
+  const WOFF = 96, APP = 300, FADE = 90;
+  let tx = 0, op = 1, inside = false, facing = 'down';
+  for(const [a, b] of ADV.zones){
+    if(y >= a - APP && y < a){
+      tx = ((y - (a - APP)) / APP) * WOFF;
+      facing = 'right';
+    } else if(y >= a && y < b){
+      inside = true; tx = WOFF;
+      op = Math.max(0, 1 - (y - a) / FADE);
+    } else if(y >= b && y < b + APP){
+      tx = (1 - (y - b) / APP) * WOFF;
+      op = Math.min(1, (y - b) / FADE);
+      facing = 'left';
+    }
+  }
+  walker.style.transform = `translateX(${tx.toFixed(1)}px)`;
+  walker.style.opacity = op.toFixed(2);
+  walker.dataset.facing = inside ? 'in' : facing;   /* prêt pour les sprites orientés */
   const fol = document.getElementById('follower');
-  if(fol) fol.classList.toggle('inside', inside);
+  if(fol){ fol.style.transform = walker.style.transform; fol.style.opacity = walker.style.opacity; }
+  /* à l'intérieur : voile sombre, la carte est déjà figée par mapPos */
+  const isIn = inside && aventureOn;
+  sect.classList.toggle('indoors', isIn);
   const veil = document.getElementById('indoor-veil');
-  if(veil) veil.classList.toggle('on', inside);
+  if(veil) veil.classList.toggle('on', isIn);
 }
+/* si la hauteur de la page change (images chargées, scène révélée…),
+   on repositionne papier et maisons */
+(function(){
+  let lastH = 0;
+  setInterval(() => {
+    const h = document.documentElement.scrollHeight;
+    if(h !== lastH){ lastH = h; layoutAdventure(); adventureDirector(); }
+  }, 900);
+})();
 
 /* Les diapositives du Prof. Chen : le défilement (ou un clic sur
    l'écran) fait glisser les images projetées horizontalement. */
 function initProjector(){
   const outer = document.getElementById('projscene');
   if(!outer) return;
-  const track = document.getElementById('projTrack');
+  const win = document.getElementById('projWindow');
+  const slides = Array.from(win.querySelectorAll('.proj-slide'));
   const caps = Array.from(outer.querySelectorAll('.proj-cap'));
   const count = document.getElementById('projCount');
-  const N = track.children.length;
+  const N = slides.length;
   let cur = -1;
+  const show = idx => {
+    if(idx === cur) return;
+    cur = idx;
+    slides.forEach((sl, i) => sl.classList.toggle('active', i === idx));
+    caps.forEach((c, i) => c.classList.toggle('active', i === idx));
+    if(count) count.textContent = `DIAPO ${idx + 1} / ${N} ▼`;
+    /* flash de changement de diapositive + la bulle se ré-anime */
+    win.classList.remove('chg');
+    void win.offsetWidth;
+    win.classList.add('chg');
+    const cap = caps[idx];
+    if(cap && !REDUCED_MOTION){
+      delete cap.dataset.typed;
+      setTimeout(() => typeDialog(cap), 180);
+    }
+  };
   const update = () => {
     const r = outer.getBoundingClientRect();
     const span = outer.offsetHeight - window.innerHeight;
     if(span <= 0) return;
     const p = Math.min(1, Math.max(0, -r.top / span));
-    const t = p * (N - 1);
-    track.style.transform = `translateX(${(-t * 100).toFixed(2)}%)`;
-    const idx = Math.max(0, Math.min(N - 1, Math.round(t)));
-    if(idx !== cur){
-      cur = idx;
-      caps.forEach((c, i) => c.classList.toggle('active', i === idx));
-      if(count) count.textContent = `DIAPO ${idx + 1} / ${N}`;
-    }
+    show(Math.max(0, Math.min(N - 1, Math.round(p * (N - 1)))));
   };
   window.addEventListener('scroll', update, { passive: true });
   window.addEventListener('resize', update);
-  const screen = document.getElementById('projScreen');
-  if(screen) screen.addEventListener('click', () => {
+  const art = document.getElementById('projScreen');
+  if(art) art.addEventListener('click', () => {
     const span = outer.offsetHeight - window.innerHeight;
     const step = span / (N - 1);
     window.scrollBy({ top: cur < N - 1 ? step : window.innerHeight * 0.9, behavior: 'smooth' });
   });
+  show(0);
   update();
 }
 window.addEventListener('scroll', adventureDirector, { passive: true });

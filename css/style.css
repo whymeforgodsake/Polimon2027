@@ -3143,3 +3143,140 @@ body.vs-open{overflow:hidden;}
 /* v31d : la barre de navigation du projecteur ne se coupe pas */
 .proj-nav span{white-space:nowrap;}
 @media(max-width:680px){.proj-nav{font-size:6px;gap:8px;}}
+
+/* ================================================================
+   v32 - AVENTURE, RETOUCHES
+   1) À l'intérieur d'une maison, la CARTE se fige (seules les
+      scènes défilent) : fond en attachement fixe + voile plus dense.
+   2) Le projecteur ne fait plus glisser les scènes : les images
+      changent SUR PLACE avec un flash de diapositive.
+   3) Sachez oblique vers la porte (déplacement piloté en js,
+      prêt pour les sprites orientés gauche/droite).
+   ================================================================ */
+/* la carte se fige quand on est à l'intérieur */
+#aventure.indoors{background-attachment:fixed, fixed;}
+#indoor-veil{background:rgba(8,8,12,.68);}
+/* le déplacement de Sachez est piloté en js : transitions courtes */
+#walker,#follower{transition:transform .2s linear, opacity .35s ease;}
+#walker.inside,#follower.inside{transform:none;opacity:1;}   /* obsolète, neutralisé */
+/* le papier, un peu plus présent sur le chemin */
+#prop-paper{left:60px;width:52px;}
+
+/* --- projecteur : diapositives empilées, changement sur place --- */
+.proj-track{
+  display:block;position:relative;height:100%;
+  transform:none !important;transition:none;
+}
+.proj-slide{
+  position:absolute;inset:0;
+  opacity:0;transition:opacity .45s ease;
+}
+.proj-slide.active{opacity:1;}
+.proj-slide img{width:100%;height:100%;object-fit:cover;}
+/* le flash au changement de diapositive */
+.proj-screen::after{
+  content:"";position:absolute;inset:0;z-index:4;pointer-events:none;
+  background:#fff7dd;opacity:0;
+}
+.proj-screen.chg::after{animation:projFlash .4s ease;}
+@keyframes projFlash{0%{opacity:0;}22%{opacity:.8;}100%{opacity:0;}}
+@media(prefers-reduced-motion:reduce){
+  .proj-screen.chg::after{animation:none;}
+}
+
+/* ================================================================
+   v33 - AVENTURE, ARCHITECTURE CARTE + PROJECTEUR « UNE IMAGE »
+   La carte devient une sous-couche fixe pilotée en js : elle défile
+   avec la page dehors, et SE FIGE réellement quand Sachez est à
+   l'intérieur (fiable sur tous les navigateurs). Le prospectus et
+   les maisons sont accrochés à la carte (ils se figent avec elle).
+   La présentation de Chen : une seule image (Chen au tableau) avec
+   une fenêtre de projection intégrée où les explications défilent.
+   ================================================================ */
+/* --- la carte en sous-couche --- */
+#aventure{position:relative;z-index:0;background:none;}
+#map-underlay{
+  position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:
+    url(../images/map-path.png) repeat-y 34px 0,
+    url(../images/map-village.png) repeat 0 0;
+  background-size:104px auto, 1280px;
+}
+/* les objets sont accrochés à la carte (position pilotée en js) */
+.map-prop{position:fixed;top:-600px;}
+/* visibles dès 900px (fenêtres réduites / zoom) */
+@media(min-width:900px){
+  #walker,#follower,.map-prop{display:block;}
+}
+@media(max-width:899px){
+  #walker,#follower,.map-prop{display:none;}
+}
+
+/* --- projecteur : une seule image, la fenêtre de projection dedans --- */
+.projscene{height:420vh;position:relative;margin:0 auto 12vh;}
+.proj-sticky{
+  position:sticky;top:74px;height:auto;
+  display:block;
+}
+.proj-art{position:relative;cursor:pointer;}
+.proj-art .proj-base{display:block;width:100%;}
+/* la fenêtre de projection, calée sur le tableau de la classe */
+.proj-window{
+  position:absolute;left:35%;top:7%;width:41%;height:50%;
+  background:
+    repeating-linear-gradient(0deg, rgba(0,0,0,.03) 0 1px, transparent 1px 3px),
+    rgba(240,244,232,.97);
+  box-shadow:0 0 26px rgba(255,250,220,.55), inset 0 0 18px rgba(0,0,0,.12);
+  border:3px solid rgba(40,44,34,.65);border-radius:3px;
+  overflow:hidden;
+}
+.proj-slide{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6%;
+  padding:5% 6%;text-align:center;
+  opacity:0;transition:opacity .45s ease;
+}
+.proj-slide.active{opacity:1;}
+.ps-title{
+  font-family:'Press Start 2P',monospace;font-size:clamp(8px,1.1vw,13px);
+  color:#2a3324;letter-spacing:1px;
+}
+.ps-sub{
+  font-family:'Press Start 2P',monospace;font-size:clamp(5px,.7vw,8px);
+  color:#5a6350;letter-spacing:.5px;line-height:1.9;
+}
+.proj-slide .ps-one{height:52%;width:auto;object-fit:contain;}
+.ps-row{display:flex;align-items:center;justify-content:center;gap:4%;height:46%;}
+.ps-row img{height:100%;width:auto;object-fit:contain;}
+.ps-row.heads img{border-radius:8px;}
+.ps-row span{font-family:'Press Start 2P',monospace;font-size:clamp(8px,1vw,14px);color:#2a3324;}
+.ps-dims{
+  display:flex;flex-direction:column;gap:7%;height:62%;justify-content:center;
+  font-family:'Press Start 2P',monospace;font-size:clamp(6px,.85vw,10px);color:#2a3324;
+}
+/* scintillement + flash au changement de diapositive */
+.proj-flick{
+  position:absolute;inset:0;pointer-events:none;mix-blend-mode:multiply;
+  background:repeating-linear-gradient(0deg, rgba(0,0,0,.02) 0 1px, transparent 1px 3px);
+  animation:projFlick 3.4s steps(2) infinite;
+}
+.proj-window::after{
+  content:"";position:absolute;inset:0;background:#fffbe6;opacity:0;pointer-events:none;
+}
+.proj-window.chg::after{animation:projFlash .4s ease;}
+/* compteur, discret dans le coin de l'image */
+.proj-counter{
+  position:absolute;right:10px;bottom:10px;
+  font-family:'Press Start 2P',monospace;font-size:8px;color:var(--jaune);
+  background:rgba(12,12,15,.82);padding:8px 10px;letter-spacing:1px;
+  animation:introPulse 2s ease infinite;
+}
+/* les répliques : mêmes bulles que les autres scènes */
+.proj-caps{position:relative;margin-top:16px;min-height:132px;}
+@media(max-width:680px){
+  .projscene{height:460vh;}
+  .proj-sticky{top:60px;}
+  .proj-caps{min-height:190px;}
+  .ps-title{font-size:7px;}
+  .ps-sub{font-size:5px;}
+}

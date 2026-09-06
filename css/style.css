@@ -3165,7 +3165,6 @@ body.vs-open{overflow:hidden;}
 /* --- projecteur : diapositives empilées, changement sur place --- */
 .proj-track{
   display:block;position:relative;height:100%;
-  transform:none !important;transition:none;
 }
 .proj-slide{
   position:absolute;inset:0;
@@ -3291,3 +3290,31 @@ body.vs-open{overflow:hidden;}
   letter-spacing:.5px;line-height:1;padding-bottom:3px;
   pointer-events:none;
 }
+
+/* ================================================================
+   v35 - AVENTURE : diapositives fluides, scènes qui « popent »,
+   Sachez orienté (sprites gauche/droite), prospectus au sol
+   ================================================================ */
+/* le ruban de diapositives glisse en continu, de droite à gauche */
+.proj-window .proj-track{
+  position:absolute;inset:0;
+  display:flex;height:100%;width:100%;
+  transform:none;transition:none;
+  will-change:transform;
+}
+.proj-window .proj-slide{
+  position:relative;inset:auto;flex:0 0 100%;
+  opacity:1;transition:none;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6%;
+  padding:5% 6%;text-align:center;
+}
+/* les scènes surgissent plus franchement quand Sachez arrive à leur niveau */
+.scene{
+  margin:0 auto 12vh;opacity:0;transform:translateY(72px) scale(.96);
+  transition:opacity .5s ease, transform .55s cubic-bezier(.2,.85,.3,1.12);
+}
+.scene.on{opacity:1;transform:none;}
+/* sprites orientés : mêmes dimensions que la marche de dos */
+#walker img{width:62px;height:auto;}
+/* le prospectus posé au sol */
+#prop-paper{left:52px;width:88px;}

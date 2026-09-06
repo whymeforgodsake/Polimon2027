@@ -45,7 +45,7 @@
 </div>
 
 <nav>
-  <a class="brand" href="#aventure" data-nav="aventure"><img src="images/logo-wordmark.png" alt="Polimon 2027"><!-- version du site : incrémenter à chaque mise en ligne --><span class="site-ver">v1.0</span></a>
+  <a class="brand" href="#aventure" data-nav="aventure"><img src="images/logo-wordmark.png" alt="Polimon 2027"><!-- version du site : incrémenter à chaque mise en ligne --><span class="site-ver">v1.1</span></a>
   <div class="links">
     <a class="navlink" href="#aventure" data-nav="aventure">AVENTURE</a>
     <a class="navlink" href="#polidex" data-nav="polidex">POLIDEX</a>
@@ -157,30 +157,32 @@
         <div class="art interactive proj-art" id="projScreen" title="Clique pour la diapositive suivante">
           <img class="proj-base" src="images/story/ep1/05-three-levels.webp" alt="Le Professeur Chen projette sa présentation dans la salle de classe">
           <div class="proj-window" id="projWindow" aria-hidden="true">
-            <div class="proj-slide">
-              <div class="ps-title">LES POLIMONS</div>
-              <img class="ps-one" src="images/polimons/5.png" alt="">
-              <div class="ps-sub">DES IDEES QUI PRENNENT VIE</div>
-            </div>
-            <div class="proj-slide">
-              <div class="ps-title">L'EVOLUTION « 3P »</div>
-              <div class="ps-row">
-                <img src="images/polimons/3.png" alt=""><span>▶</span><img src="images/polimons/15.png" alt=""><span>▶</span><img src="images/polimons/27.png" alt="">
+            <div class="proj-track" id="projTrack">
+              <div class="proj-slide">
+                <div class="ps-title">LES POLIMONS</div>
+                <img class="ps-one" src="images/polimons/5.png" alt="">
+                <div class="ps-sub">DES IDEES QUI PRENNENT VIE</div>
               </div>
-              <div class="ps-sub">PHILOSOPHIE · PERSPECTIVE · PROGRAMME</div>
-            </div>
-            <div class="proj-slide">
-              <div class="ps-title">LES 5 DIMENSIONS</div>
-              <div class="ps-dims">
-                <span>👤 INDIVIDU</span><span>👥 SOCIETE</span><span>💶 ECONOMIE</span><span>🌱 ECOLOGIE</span><span>🌍 GEOPOLITIQUE</span>
+              <div class="proj-slide">
+                <div class="ps-title">L'EVOLUTION « 3P »</div>
+                <div class="ps-row">
+                  <img src="images/polimons/3.png" alt=""><span>▶</span><img src="images/polimons/15.png" alt=""><span>▶</span><img src="images/polimons/27.png" alt="">
+                </div>
+                <div class="ps-sub">PHILOSOPHIE · PERSPECTIVE · PROGRAMME</div>
               </div>
-            </div>
-            <div class="proj-slide">
-              <div class="ps-title">LES GRANDS DRESSEURS</div>
-              <div class="ps-row heads">
-                <img src="images/dresseurs/3-head.png" alt=""><img src="images/dresseurs/7-head.png" alt=""><img src="images/dresseurs/10-head.png" alt="">
+              <div class="proj-slide">
+                <div class="ps-title">LES 5 DIMENSIONS</div>
+                <div class="ps-dims">
+                  <span>👤 INDIVIDU</span><span>👥 SOCIETE</span><span>💶 ECONOMIE</span><span>🌱 ECOLOGIE</span><span>🌍 GEOPOLITIQUE</span>
+                </div>
               </div>
-              <div class="ps-sub">ILS REPANDENT LEURS IDEES DANS TOUT LE PAYS</div>
+              <div class="proj-slide">
+                <div class="ps-title">LES GRANDS DRESSEURS</div>
+                <div class="ps-row heads">
+                  <img src="images/dresseurs/3-head.png" alt=""><img src="images/dresseurs/7-head.png" alt=""><img src="images/dresseurs/10-head.png" alt="">
+                </div>
+                <div class="ps-sub">ILS REPANDENT LEURS IDEES DANS TOUT LE PAYS</div>
+              </div>
             </div>
             <div class="proj-flick"></div>
           </div>
@@ -271,168 +273,14 @@
          Les 7 scènes existent en 3 variantes (une par compagnon) :
          images/story/ep2/<scène>-<compagnon>.webp. Le bon fichier et les
          citations d'idées sont injectés par js/app.js (applyBranchEp2). -->
-    <div id="chapitre2">
-      <div class="scene titlecard tc-nuit">
-        <div class="ep">- EPISODE 2 -</div>
-        <h3>Le Dîner de famille</h3>
-        <div class="bar"></div>
-      </div>
-
-      <!-- Tant qu'aucun compagnon n'est choisi, l'épisode reste verrouillé -->
-      <div class="scene" id="ep2-gate">
-        <div class="pxbox dialog" style="max-width:640px;margin:0 auto;">
-          <div class="speaker blue">NARRATEUR</div>
-          <p>Pour vivre cet épisode, <b>choisis d'abord ton compagnon</b> dans l'épisode 1 : c'est lui qui accompagne Sachez au dîner…</p>
-          <span class="arrow">▼</span>
-        </div>
-      </div>
-
-      <div id="ep2-scenes" hidden>
-
-        <div class="scene">
-          <div class="art"><img data-ep2="01-invitation" src="images/story/ep2/01-invitation-voltatal.webp" alt="Sachez et son compagnon arrivent de nuit devant la maison illuminée de Mamie Rose"></div>
-          <div class="pxbox dialog caption">
-            <div class="speaker blue">NARRATEUR</div>
-            <p>Quelques jours plus tard, à la nuit tombée… Mamie Rose reçoit toute la famille pour son fameux dîner du dimanche. Sachez arrive avec <b data-ep2-name>VOLTATAL</b> trottinant à ses côtés.</p>
-            <span class="arrow">▼</span>
-          </div>
-        </div>
-
-        <div class="scene">
-          <div class="art"><img data-ep2="02-dinner" src="images/story/ep2/02-dinner-voltatal.webp" alt="Le dîner commence autour de la soupière, tonton Gérard croise les bras"></div>
-          <div class="cap-stack right">
-            <div class="pxbox dialog">
-              <div class="speaker green">SACHEZ</div>
-              <p>La soupe de Mamie, il n'y a rien de meilleur au monde ! Par contre… tonton Gérard est là. Et avec lui, la politique n'est jamais bien loin.</p>
-              <span class="arrow">▼</span>
-            </div>
-            <div class="pxbox dialog">
-              <div class="speaker gris">TONTON GERARD</div>
-              <p>Alors comme ça, on « dresse des idées » maintenant ? De mon temps, on écoutait l'expérience au lieu de courir après la nouveauté. Enfin… chacun ses lubies.</p>
-              <span class="arrow">▼</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="scene">
-          <div class="art"><img data-ep2="03-brumedo-appears" src="images/story/ep2/03-brumedo-appears-voltatal.webp" alt="Brumedo, Polimon de brume, se déploie au-dessus de la soupière fumante"></div>
-          <div class="cap-stack">
-            <div class="pxbox dialog">
-              <div class="speaker blue">NARRATEUR</div>
-              <p>Soudain, la vapeur de la soupière s'épaissit, tourbillonne… et prend forme ! Un Polimon de brume déploie ses ailes au-dessus de la table : <b>BRUMEDO</b>. Sans le savoir, Gérard nourrissait cette idée depuis des années.</p>
-              <span class="arrow">▼</span>
-            </div>
-            <div class="pxbox dialog">
-              <div class="speaker gris">TONTON GERARD</div>
-              <p>Nom d'une pipe… Il me ressemble, ce petit ! C'est donc ça, un Polimon ?</p>
-              <span class="arrow">▼</span>
-            </div>
-            <div class="pxbox dialog">
-              <div class="speaker green">SACHEZ</div>
-              <p>Eh oui, tonton : tout le monde porte des idées en lui. Voyons ce que la tienne a dans le ventre : <b>le combat des idées peut commencer !</b></p>
-              <span class="arrow">▼</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="scene">
-          <div class="art"><img data-ep2="04-individual-society" src="images/story/ep2/04-individual-society-voltatal.webp" alt="Premier échange d'idées entre les deux Polimons au-dessus de la table"></div>
-          <div class="cap-stack right">
-            <div class="pxbox dialog">
-              <div class="speaker blue">NARRATEUR</div>
-              <p>Premier échange : <b>l'individu</b> et <b>la société</b>. Les deux Polimons se jaugent, et les idées fusent au-dessus de la nappe.</p>
-              <span class="arrow">▼</span>
-            </div>
-            <div class="pxbox dialog">
-              <div class="speaker gris">BRUMEDO</div>
-              <p>👤 <i data-eq="foe:individu"></i><br><br>👥 <i data-eq="foe:societe"></i></p>
-              <span class="arrow">▼</span>
-            </div>
-            <div class="pxbox dialog">
-              <div class="speaker green" data-ep2-name>VOLTATAL</div>
-              <p>👤 <i data-eq="ally:individu"></i><br><br>👥 <i data-eq="ally:societe"></i></p>
-              <span class="arrow">▼</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="scene">
-          <div class="art"><img data-ep2="05-economy-ecology" src="images/story/ep2/05-economy-ecology-voltatal.webp" alt="Deuxième échange d'idées, plus intense, sous la lampe de la salle à manger"></div>
-          <div class="cap-stack">
-            <div class="pxbox dialog">
-              <div class="speaker blue">NARRATEUR</div>
-              <p>Deuxième service : <b>l'économie</b> et <b>l'écologie</b>. Mamie Rose ressert la soupe sans quitter les Polimons des yeux.</p>
-              <span class="arrow">▼</span>
-            </div>
-            <div class="pxbox dialog">
-              <div class="speaker gris">BRUMEDO</div>
-              <p>💶 <i data-eq="foe:economie"></i><br><br>🌱 <i data-eq="foe:ecologie"></i></p>
-              <span class="arrow">▼</span>
-            </div>
-            <div class="pxbox dialog">
-              <div class="speaker green" data-ep2-name>VOLTATAL</div>
-              <p>💶 <i data-eq="ally:economie"></i><br><br>🌱 <i data-eq="ally:ecologie"></i></p>
-              <span class="arrow">▼</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="scene">
-          <div class="art"><img data-ep2="06-listening-turn" src="images/story/ep2/06-listening-turn-voltatal.webp" alt="La tension retombe, Gérard écoute enfin, la brume se calme au-dessus de la soupière"></div>
-          <div class="cap-stack right">
-            <div class="pxbox dialog">
-              <div class="speaker blue">NARRATEUR</div>
-              <p>Les idées se sont affrontées, pas les personnes. La brume retombe doucement sur la soupière et, pour la première fois de la soirée… Gérard écoute.</p>
-              <span class="arrow">▼</span>
-            </div>
-            <div class="pxbox dialog">
-              <div class="speaker gris">TONTON GERARD</div>
-              <p>Hm. On n'est toujours pas d'accord, gamin. Mais ton Polimon tient debout… et le mien aussi, pas vrai ?</p>
-              <span class="arrow">▼</span>
-            </div>
-            <div class="pxbox dialog">
-              <div class="speaker green">SACHEZ</div>
-              <p>C'est tout ce qui compte, tonton : <b>le combat des hommes est vil, seul le combat des idées compte !</b></p>
-              <span class="arrow">▼</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="scene">
-          <div class="art"><img data-ep2="07-dessert" src="images/story/ep2/07-dessert-voltatal.webp" alt="La famille partage la tarte de Mamie Rose, les deux Polimons installés à table"></div>
-          <div class="cap-stack">
-            <div class="pxbox dialog">
-              <div class="speaker blue">NARRATEUR</div>
-              <p>Autour de la tarte de Mamie Rose, on ressert une part, et une idée. Brumedo picore les miettes ; sur la chaise voisine, <b data-ep2-name>VOLTATAL</b> scintille d'une lueur nouvelle… comme s'il avait grandi ce soir.</p>
-              <span class="arrow">▼</span>
-            </div>
-            <div class="pxbox dialog">
-              <div class="speaker rose">MAMIE ROSE</div>
-              <p>Reviens vite, mon grand ! Et ramène ton petit ami étincelant : lui au moins, il mange moins que ton oncle.</p>
-              <span class="arrow">▼</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="scene titlecard tc-nuit">
-          <div class="ep">FIN DE L'EPISODE 2</div>
-          <h3 style="font-size:15px;margin-top:22px;">Une évolution se prépare…</h3>
-          <p class="tc-invite">Ton compagnon a des idées à défendre. Confronte-les à celles des autres Polimons :</p>
-          <a class="btn tc-btn" href="#combat">⚔️ ESSAYER LE MODE COMBAT ▸</a>
-        </div>
-
-      </div>
-
-      <!-- Épisode 3 : teaser -->
-      <div class="scene titlecard tc-nuit">
-        <div class="ep">- EPISODE 3 -</div>
-        <h3>Consécration</h3>
-        <div class="bar"></div>
-        <div class="wip" style="margin-top:18px;">BIENTÔT DISPONIBLE</div>
-        <p class="tc-invite">En attendant, rencontre les grands dresseurs qui répandent leurs idées à travers le pays :</p>
-        <a class="btn tc-btn" href="#dresseurs">🧢 RENCONTRER LES DRESSEURS ▸</a>
-      </div>
+    <!-- Épisode 2 : retiré le temps de le retravailler -->
+    <div class="scene titlecard tc-nuit">
+      <div class="ep">- EPISODE 2 -</div>
+      <h3>Le Diner de famille</h3>
+      <div class="bar"></div>
+      <p class="tc-invite">Cet episode est en cours d'ecriture… Il sera bientot disponible !</p>
     </div>
+
   </div>
 
   <div class="chapters">

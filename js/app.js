@@ -107,9 +107,11 @@ function scrollToStory(e){
 let sceneObserver = null;
 function observeScenes(){
   if(sceneObserver) return;
+  /* une scène surgit quand son haut franchit la ligne de Sachez
+     (~55% de l'écran) : l'apparition suit la position sur la carte */
   sceneObserver = new IntersectionObserver(entries => {
     entries.forEach(en => { if(en.isIntersecting) activateScene(en.target); });
-  }, {threshold:0.18});
+  }, { rootMargin: '0px 0px -42% 0px', threshold: 0 });
   document.querySelectorAll('.scene').forEach(sc => sceneObserver.observe(sc));
 }
 function activateScene(sc){
@@ -303,6 +305,8 @@ function restartGame(btn){
    On personnalise images, nom du compagnon et citations d'idées
    (les textes viennent de data/polimons.js, jamais dupliqués ici). */
 function applyBranchEp2(branch){
+  /* épisode 2 retiré du site le temps de le retravailler */
+  if(!document.getElementById('chapitre2')) return;
   const B = BRANCHES[branch];
   const ally = byCode(B.code);
   const foe  = byCode(8);   /* Brumedo, l'idée de tonton Gérard */
@@ -1720,7 +1724,17 @@ function adventureDirector(){
   }
   walker.style.transform = `translateX(${tx.toFixed(1)}px)`;
   walker.style.opacity = op.toFixed(2);
-  walker.dataset.facing = inside ? 'in' : facing;   /* prêt pour les sprites orientés */
+  const face = inside ? 'in' : facing;
+  if(walker.dataset.facing !== face){
+    walker.dataset.facing = face;
+    /* sprites orientés : profil droit / profil gauche / dos */
+    const img = walker.querySelector('img');
+    if(img){
+      img.src = face === 'right' ? 'images/story/sachez-right.png'
+              : face === 'left'  ? 'images/story/sachez-left.png'
+              :                    'images/story/sachez-marche.png';
+    }
+  }
   const fol = document.getElementById('follower');
   if(fol){ fol.style.transform = walker.style.transform; fol.style.opacity = walker.style.opacity; }
   /* à l'intérieur : voile sombre, la carte est déjà figée par mapPos */
@@ -1745,25 +1759,21 @@ function initProjector(){
   const outer = document.getElementById('projscene');
   if(!outer) return;
   const win = document.getElementById('projWindow');
-  const slides = Array.from(win.querySelectorAll('.proj-slide'));
+  const track = document.getElementById('projTrack');
+  const slides = Array.from(track.children);
   const caps = Array.from(outer.querySelectorAll('.proj-cap'));
   const count = document.getElementById('projCount');
   const N = slides.length;
   let cur = -1;
-  const show = idx => {
+  const setCap = idx => {
     if(idx === cur) return;
     cur = idx;
-    slides.forEach((sl, i) => sl.classList.toggle('active', i === idx));
     caps.forEach((c, i) => c.classList.toggle('active', i === idx));
     if(count) count.textContent = `DIAPO ${idx + 1} / ${N} ▼`;
-    /* flash de changement de diapositive + la bulle se ré-anime */
-    win.classList.remove('chg');
-    void win.offsetWidth;
-    win.classList.add('chg');
     const cap = caps[idx];
     if(cap && !REDUCED_MOTION){
       delete cap.dataset.typed;
-      setTimeout(() => typeDialog(cap), 180);
+      setTimeout(() => typeDialog(cap), 150);
     }
   };
   const update = () => {
@@ -1771,17 +1781,20 @@ function initProjector(){
     const span = outer.offsetHeight - window.innerHeight;
     if(span <= 0) return;
     const p = Math.min(1, Math.max(0, -r.top / span));
-    show(Math.max(0, Math.min(N - 1, Math.round(p * (N - 1)))));
+    /* léger palier au début et à la fin pour laisser lire */
+    const t = Math.min(N - 1, Math.max(0, p * (N - 1 + 0.4) - 0.2));
+    track.style.transform = `translateX(${(-t * 100).toFixed(2)}%)`;
+    setCap(Math.max(0, Math.min(N - 1, Math.round(t))));
   };
   window.addEventListener('scroll', update, { passive: true });
   window.addEventListener('resize', update);
   const art = document.getElementById('projScreen');
   if(art) art.addEventListener('click', () => {
     const span = outer.offsetHeight - window.innerHeight;
-    const step = span / (N - 1);
+    const step = span / (N - 1 + 0.4);
     window.scrollBy({ top: cur < N - 1 ? step : window.innerHeight * 0.9, behavior: 'smooth' });
   });
-  show(0);
+  setCap(0);
   update();
 }
 window.addEventListener('scroll', adventureDirector, { passive: true });

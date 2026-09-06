@@ -3318,3 +3318,124 @@ body.vs-open{overflow:hidden;}
 #walker img{width:62px;height:auto;}
 /* le prospectus posé au sol */
 #prop-paper{left:52px;width:88px;}
+
+/* ================================================================
+   v36 - CARTES SECRETES SOBRES + COMPARATEUR DE CANDIDATS
+   ================================================================ */
+/* --- carte secrète : dos sombre et élégant, même esprit que la
+       carte spéciale (mais argenté, pas doré) --- */
+.tcg-hidden{
+  padding:8px;cursor:pointer;
+  background:linear-gradient(160deg,#c8ccd8 0%,#7c8294 30%,#3c4150 55%,#a8aebc 80%,#5a6070 100%);
+}
+.sp-back.hid{
+  background:radial-gradient(120% 90% at 50% 42%, #1d2029 0%, #101219 68%, #0a0b10 100%);
+  box-shadow:inset 0 0 0 1px rgba(200,204,216,.5), inset 0 0 0 5px rgba(200,204,216,.1);
+}
+.sp-back.hid .sp-glow{background:radial-gradient(circle, rgba(150,170,255,.16) 0%, transparent 65%);}
+.hid-q{
+  font-family:'Press Start 2P',monospace;
+  font-size:clamp(30px,15cqw,52px);line-height:1;color:#c9d2ea;
+  text-shadow:0 0 16px rgba(150,180,255,.55), 0 0 40px rgba(120,150,255,.25);
+  animation:spStar 3s ease-in-out infinite;
+}
+.sp-back.hid .sp-label{color:#aab3c8;}
+.sp-back.hid .sp-line{background:linear-gradient(90deg,transparent,#7c8294,transparent);}
+.sp-back.hid .sp-owner{color:#dbe1f0;}
+.sp-back.hid .sp-hint{color:#6d7488;}
+.sp-back.hid .sp-shine{background:linear-gradient(115deg, transparent 42%, rgba(200,215,255,.09) 50%, transparent 58%);}
+
+/* --- l'appel au comparateur --- */
+.cmp-cta{
+  display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;
+  background:var(--noir2);border:3px solid var(--jaune);padding:16px 20px;margin-bottom:26px;
+}
+.cmp-cta-txt{display:flex;flex-direction:column;gap:7px;}
+.cmp-cta-txt b{font-family:'Press Start 2P',monospace;font-size:11px;color:var(--jaune);letter-spacing:1px;}
+.cmp-cta-txt span{color:#cfcfc6;font-size:.95rem;}
+
+/* --- le comparateur --- */
+.comparator{
+  background:var(--noir2);border:3px solid #33333c;padding:20px 18px 22px;margin-bottom:30px;
+}
+.cmp-head h3{font-family:'Press Start 2P',monospace;font-size:12px;color:var(--jaune);letter-spacing:1px;margin-bottom:10px;}
+.cmp-head p{color:#9a9a90;font-size:.92rem;margin-bottom:14px;}
+/* le banc des candidats */
+.cmp-bench{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
+.cmp-headtile{
+  display:flex;flex-direction:column;align-items:center;gap:5px;
+  width:64px;padding:6px 2px;background:#1c1c22;border:2px solid #33333c;cursor:grab;
+  transition:border-color .15s, transform .15s;
+}
+.cmp-headtile img{width:44px;height:44px;object-fit:cover;object-position:top center;border-radius:6px;}
+.cmp-headtile span{font-family:'Press Start 2P',monospace;font-size:5px;color:#cfcfc6;letter-spacing:.5px;}
+.cmp-headtile:hover{border-color:#8b8b98;transform:translateY(-2px);}
+.cmp-headtile.picked{border-color:var(--jaune);box-shadow:0 0 0 2px rgba(255,222,0,.3);}
+/* les 4 emplacements */
+.cmp-slots{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px;}
+.cmp-slot{
+  position:relative;min-height:86px;border:2px dashed #4a4a55;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;
+  padding:8px;text-align:center;transition:border-color .15s, background .15s;
+}
+.cmp-slot.over{border-color:var(--jaune);background:rgba(255,222,0,.06);}
+.cmp-slot.full{border-style:solid;border-color:#6b6b78;background:#1c1c22;}
+.cmp-slot img{width:44px;height:44px;object-fit:cover;object-position:top center;border-radius:6px;}
+.cmp-slot b{font-family:'Press Start 2P',monospace;font-size:6px;color:#f0f0e8;letter-spacing:.5px;}
+.cmp-empty{font-family:'Press Start 2P',monospace;font-size:6px;color:#5a5a66;line-height:2;}
+.cmp-x{
+  position:absolute;top:4px;right:4px;background:none;border:none;color:#8b8b98;
+  font-size:12px;cursor:pointer;padding:2px 4px;
+}
+.cmp-x:hover{color:var(--rouge);}
+/* niveaux */
+.cmp-level{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
+.cmp-lv{
+  font-family:'Press Start 2P',monospace;font-size:7px;letter-spacing:.5px;
+  background:#1c1c22;color:#8b8b98;border:2px solid #33333c;padding:10px 12px;cursor:pointer;
+}
+.cmp-lv.on{color:var(--noir);background:var(--jaune);border-color:var(--jaune);}
+/* la table */
+.cmp-table-wrap{overflow-x:auto;}
+.cmp-table{min-width:100%;}
+.cprow{
+  display:grid;grid-template-columns:150px repeat(var(--cols,2), minmax(170px,1fr));
+  gap:0;border-bottom:1px solid #2c2c34;
+}
+.cprow.cprow-header{border-bottom:2px solid var(--jaune);}
+.cplab{
+  font-family:'Press Start 2P',monospace;font-size:7px;color:#9a9a90;
+  padding:12px 10px;line-height:1.9;letter-spacing:.5px;
+  display:flex;align-items:center;
+}
+.cplab.big{color:var(--jaune);font-size:8px;}
+.cpcell{
+  padding:12px 12px;color:#e8e8de;font-size:.88rem;line-height:1.55;
+  border-left:1px solid #2c2c34;
+}
+.cpcell.sec{background:rgba(255,222,0,.04);}
+.cprow-section{background:rgba(255,222,0,.04);}
+.cpcell .tbd{color:#5a5a66;}
+.cmp-hintrow{
+  padding:22px 10px;color:#8b8b98;font-size:.95rem;text-align:center;
+}
+/* en-tête de colonne : candidat + Polimon du niveau */
+.cmp-cand{
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  padding:12px 8px;border-left:1px solid #2c2c34;text-align:center;
+}
+.cmp-cand .cmp-face{width:56px;height:56px;object-fit:cover;object-position:top center;border-radius:8px;}
+.cmp-cand b{font-family:'Press Start 2P',monospace;font-size:6.5px;color:#f0f0e8;line-height:1.8;letter-spacing:.5px;}
+.cmp-cand > span{color:#9a9a90;font-size:.78rem;}
+.cmp-poli{display:flex;flex-direction:column;align-items:center;gap:4px;margin-top:4px;}
+.cmp-poli img{width:52px;height:52px;object-fit:contain;background:#fff;border-radius:6px;padding:2px;}
+.cmp-poli i{font-family:'Press Start 2P',monospace;font-size:5.5px;color:#cfcfc6;font-style:normal;}
+.cmp-poli.locked b{
+  font-family:'Press Start 2P',monospace;font-size:20px;color:#8b8b98;
+  width:52px;height:52px;display:flex;align-items:center;justify-content:center;
+  background:#1c1c22;border:2px dashed #4a4a55;border-radius:6px;
+}
+@media(max-width:680px){
+  .cmp-slots{grid-template-columns:repeat(2,1fr);}
+  .cprow{grid-template-columns:110px repeat(var(--cols,2), minmax(150px,1fr));}
+}

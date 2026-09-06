@@ -951,6 +951,138 @@ function resetCombat(){
   combatScroll('#combat-side', 'start');
 }
 
+
+/* ============ v36 - LE COMPARATEUR DE CANDIDATS ============
+   Dans l'espace Dresseurs : jusqu'à 4 candidats côte à côte,
+   comparés dimension par dimension (niveau 1, 2 ou 3). Le contenu
+   des idées est toujours comparable ; si le Polimon du niveau n'est
+   pas débloqué, son nom et son image restent secrets (« ? » +
+   invitation à le débloquer au combat). */
+const cmpState = { ids: [], level: 1 };
+const SOUSDIMS = (POLIMON_DATA.sousDimensions || []).filter(sd => /^\d\.\d$/.test(sd.code));
+
+function openComparator(){
+  const c = document.getElementById('comparator');
+  if(!c) return;
+  c.hidden = false;
+  renderComparator();
+  c.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+function cmpAdd(id){
+  if(cmpState.ids.includes(id)){ cmpRemove(id); return; }   /* re-clic = retire */
+  if(cmpState.ids.length >= 4) return;
+  cmpState.ids.push(id);
+  renderComparator();
+}
+function cmpRemove(id){
+  cmpState.ids = cmpState.ids.filter(x => x !== id);
+  renderComparator();
+}
+function cmpSetLevel(lv){
+  cmpState.level = lv;
+  document.querySelectorAll('.cmp-lv').forEach(b => b.classList.toggle('on', +b.dataset.lv === lv));
+  renderCmpTable();
+}
+function initComparator(){
+  const bench = document.getElementById('cmpBench');
+  if(!bench) return;
+  document.querySelectorAll('.cmp-lv').forEach(b =>
+    b.addEventListener('click', () => cmpSetLevel(+b.dataset.lv)));
+  renderComparator();
+}
+/* une tête de candidat, glissable */
+function cmpHeadNode(l){
+  const d = document.createElement('button');
+  d.type = 'button';
+  d.className = 'cmp-headtile' + (cmpState.ids.includes(l.id) ? ' picked' : '');
+  d.draggable = true;
+  d.title = l.dresseur;
+  d.innerHTML = `<img src="images/dresseurs/${l.id}-head.png" alt="${l.dresseur}"><span>${UP(l.dresseur.split(' ').pop())}</span>`;
+  d.addEventListener('click', () => cmpAdd(l.id));
+  d.addEventListener('dragstart', e => e.dataTransfer.setData('text/plain', String(l.id)));
+  return d;
+}
+function renderComparator(){
+  const bench = document.getElementById('cmpBench');
+  const slots = document.getElementById('cmpSlots');
+  if(!bench || !slots) return;
+  bench.innerHTML = '';
+  LINEAGES.forEach(l => bench.appendChild(cmpHeadNode(l)));
+  /* 4 emplacements : remplis puis vides */
+  slots.innerHTML = '';
+  for(let i = 0; i < 4; i++){
+    const id = cmpState.ids[i];
+    const sl = document.createElement('div');
+    sl.className = 'cmp-slot' + (id ? ' full' : '');
+    if(id){
+      const l = linById(id);
+      sl.innerHTML = `<img src="images/dresseurs/${l.id}-head.png" alt="">
+        <b>${UP(l.dresseur.split(' ').pop())}</b>
+        <button class="cmp-x" type="button" title="Retirer" onclick="cmpRemove(${l.id})">✕</button>`;
+    } else {
+      sl.innerHTML = `<span class="cmp-empty">+ GLISSE UN<br>CANDIDAT ICI</span>`;
+    }
+    sl.addEventListener('dragover', e => { e.preventDefault(); sl.classList.add('over'); });
+    sl.addEventListener('dragleave', () => sl.classList.remove('over'));
+    sl.addEventListener('drop', e => {
+      e.preventDefault(); sl.classList.remove('over');
+      const id2 = +e.dataTransfer.getData('text/plain');
+      if(id2) cmpAdd(id2);
+    });
+    slots.appendChild(sl);
+  }
+  renderCmpTable();
+}
+/* l'en-tête d'une colonne : candidat + son Polimon du niveau choisi */
+function cmpColHead(l){
+  const p = polOf(l, cmpState.level);
+  const ok = p && isUnlocked(p);
+  const poli = ok
+    ? `<span class="cmp-poli"><img src="${p.image}" alt=""><i>${UP(p.name)}</i></span>`
+    : `<span class="cmp-poli locked"><b>?</b><button class="btn small" type="button" onclick="goCombatFor(${l.id})">⚔ DEBLOQUER</button></span>`;
+  return `<div class="cmp-cand">
+      <img class="cmp-face" src="images/dresseurs/${l.id}-head.png" alt="">
+      <b>${UP(l.dresseur)}</b><span>${l.parti}</span>${poli}
+    </div>`;
+}
+function renderCmpTable(){
+  const t = document.getElementById('cmpTable');
+  if(!t) return;
+  const list = cmpState.ids.map(linById).filter(Boolean);
+  const n = list.length;
+  if(n < 2){
+    t.className = 'cmp-table';
+    t.innerHTML = '<div class="cmp-hintrow">Ajoute au moins 2 candidats pour comparer leurs idées.</div>';
+    return;
+  }
+  t.className = 'cmp-table cols-' + n;
+  t.style.setProperty('--cols', n);
+  let html = '<div class="cprow cprow-header"><div class="cplab"></div>' +
+    list.map(cmpColHead).join('') + '</div>';
+  if(cmpState.level === 1){
+    DIMENSIONS.forEach(d => {
+      html += `<div class="cprow"><div class="cplab">${d.icon} ${UP(d.label)}</div>` +
+        list.map(l => `<div class="cpcell">${(l.dims && l.dims[d.key] && l.dims[d.key] !== 'TBD') ? l.dims[d.key] : '<i class="tbd">A completer…</i>'}</div>`).join('') +
+        '</div>';
+    });
+  } else if(cmpState.level === 2){
+    DIMENSIONS.forEach(d => {
+      html += `<div class="cprow cprow-section"><div class="cplab big">${d.icon} ${UP(d.label)}</div>` +
+        list.map(() => '<div class="cpcell sec"></div>').join('') + '</div>';
+      for(let y = 1; y <= 5; y++){
+        const code = d.num + '.' + y;
+        const sd = SOUSDIMS.find(x => x.code === code);
+        html += `<div class="cprow"><div class="cplab">${sd ? sd.label : code}</div>` +
+          list.map(l => `<div class="cpcell">${(l.dimsDetail && l.dimsDetail[code]) ? l.dimsDetail[code] : '<i class="tbd">A completer…</i>'}</div>`).join('') +
+          '</div>';
+      }
+    });
+  } else {
+    html += `<div class="cmp-hintrow">Le niveau 3 (les programmes detailles) arrive bientot dans le Polidex…</div>`;
+  }
+  t.innerHTML = html;
+}
+
 /* ============ POLIDEX ============ */
 function initDex(){
   const sel = document.getElementById('dex-element');
@@ -1013,39 +1145,23 @@ function tcgNode(p, sprSize){
 /* Carte secrète : même format qu'une vraie carte, mais tout est masqué.
    Cliquer sur une carte secrète de niveau 2 lance le quizz de sa lignée. */
 function secretCardNode(p){
-  const hint = p.level === 2
-    ? 'Remporte un combat d\'idées avec sa lignée pour révéler cette carte !'
-    : 'Remporte un nouveau combat d\'idées avec sa lignée pour révéler cette carte !';
+  const lin = LINEAGES.find(l => l.id === p.lineage);
+  const prev = lin && lin.forms[p.level - 2] ? byCode(lin.forms[p.level - 2].code) : null;
   const el = document.createElement('div');
-  el.className = 'tcg tcg-secret';
+  el.className = 'tcg tcg-hidden';
   el.innerHTML = `
-    <div class="tcg-inner">
-      <div class="tcg-head">
-        <span class="tcg-stage">NIV.${p.level}</span>
-        <span class="tcg-name">???</span>
-        <span class="tcg-pv">PV<b>?</b></span>
-        <span class="tcg-elicon">❓</span>
-      </div>
-      <div class="tcg-art"><span class="secret-q">?</span></div>
-      <div class="tcg-strip">N° ${pad3(p.code)} · CARTE SECRÈTE</div>
-      <div class="tcg-talent">
-        <span class="talent-pill">Secret</span>
-        <span class="talent-name">${lvlInfo(p.level).label}</span>
-        <p>${hint}</p>
-      </div>
-      <div class="tcg-foot">
-        <span>Faiblesse<br><b>?</b></span>
-        <span>Résistance<br><b>?</b></span>
-        <span>Retraite<br><b>?</b></span>
-      </div>
-      <div class="tcg-credits"><span>Illus. ???</span><span>${pad3(p.code)}/${pad3(POLIMONS.length)}</span></div>
+    <div class="sp-back hid">
+      <div class="sp-glow"></div>
+      <div class="hid-q">?</div>
+      <div class="sp-label">CARTE SECRETE</div>
+      <div class="sp-line"></div>
+      <div class="sp-owner">Polimon NIV.${p.level}${lin ? ' · ' + lin.dresseur : ''}</div>
+      <p class="sp-hint">Gagne un combat NIV.${p.level - 1} avec ${prev ? prev.name : 'sa lignee'}<br>pour le faire evoluer et reveler cette carte</p>
+      <div class="sp-shine"></div>
     </div>`;
   return el;
 }
 
-/* Le Polidex en carrousel : toutes les cartes côte à côte, triées par
-   lignée puis par niveau (les 3 évolutions se suivent), défilement
-   horizontal doux (molette, flèches, doigt) avec magnétisme léger. */
 /* La carte spéciale d'une lignée : une illustration unique, traitée
    comme une carte de « niveau 4 ». Cachée : dos doré. Révélée :
    l'illustration complète, avec l'effet holographique. */
@@ -2021,6 +2137,7 @@ initChoixScene();
 initCombat();
 initDex();
 initDresseurs();
+initComparator();
 initParallax();
 initProjector();
 const h0 = location.hash.replace('#','');

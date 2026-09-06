@@ -45,7 +45,7 @@
 </div>
 
 <nav>
-  <a class="brand" href="#aventure" data-nav="aventure"><img src="images/logo-wordmark.png" alt="Polimon 2027"><!-- version du site : incrémenter à chaque mise en ligne --><span class="site-ver">v1.1</span></a>
+  <a class="brand" href="#aventure" data-nav="aventure"><img src="images/logo-wordmark.png" alt="Polimon 2027"><!-- version du site : incrémenter à chaque mise en ligne --><span class="site-ver">v1.2</span></a>
   <div class="links">
     <a class="navlink" href="#aventure" data-nav="aventure">AVENTURE</a>
     <a class="navlink" href="#polidex" data-nav="polidex">POLIDEX</a>
@@ -402,6 +402,32 @@
       <h2>🧢 LES DRESSEURS</h2>
       <p>Fais connaissance avec les <b>grands dresseurs</b> qui répandent leurs Polimons à travers le pays.</p>
     </div>
+
+    <!-- Appel au comparateur -->
+    <div class="cmp-cta">
+      <div class="cmp-cta-txt">
+        <b>⚖️ COMPARE LES CANDIDATS</b>
+        <span>Leurs idées, dimension par dimension, côte à côte.</span>
+      </div>
+      <button class="btn" type="button" onclick="openComparator()">OUVRIR LE COMPARATEUR ▸</button>
+    </div>
+
+    <!-- Le comparateur : glisse (ou clique) jusqu'à 4 candidats -->
+    <div class="comparator" id="comparator" hidden>
+      <div class="cmp-head">
+        <h3>LE COMPARATEUR</h3>
+        <p>Glisse un candidat dans un emplacement (ou clique sur sa tête), choisis le niveau, et compare les idées dimension par dimension.</p>
+      </div>
+      <div class="cmp-bench" id="cmpBench"><!-- têtes des 12 candidats (js) --></div>
+      <div class="cmp-slots" id="cmpSlots"><!-- 4 emplacements (js) --></div>
+      <div class="cmp-level" id="cmpLevel">
+        <button type="button" class="cmp-lv on" data-lv="1">NIV.1 · PHILOSOPHIE</button>
+        <button type="button" class="cmp-lv" data-lv="2">NIV.2 · PERSPECTIVE</button>
+        <button type="button" class="cmp-lv" data-lv="3">NIV.3 · PROGRAMME</button>
+      </div>
+      <div class="cmp-table-wrap"><div class="cmp-table" id="cmpTable"></div></div>
+    </div>
+
     <div class="trainer-grid" id="trainer-grid"><!-- rempli automatiquement depuis data/polimons.js --></div>
   </div>
 </section>
